@@ -57,18 +57,33 @@ controllers.list = async (req, res) =>{
 //Obter Utilizador
 
 controllers.get = async(req,res) =>{
-
     const {id} = req.params;
-    const data = await utilizador.findAll({
-        where: {id: id},
-        include: {all: true}
-    })
-    .then(function(data){return data;})
-    .catch(error => {
-        console.log('Error:'+error)
-        return error;
-    })
-    res.status(200).json({sucesso: true, data: data});
+    if(id){
+        const data = await utilizador.findAll({
+            where: {id: id},
+            include: {all: true}
+        })
+        .then(function(data){return data;})
+        .catch(error => {
+            console.log('Error:'+error)
+            return error;
+        })
+        if (data.id.toString() === id.toString())
+                {   
+                    res.status(200).json({
+                    successo: true,
+                    message:"success",
+                    data: data
+                });
+            }else{
+                res.json({
+                    successo: false, 
+                    message: 'erro',
+                });
+            }
+        }else {
+            res.json({successo: false, message: 'Id não fornecido.'});
+    }
 }
 
 //Editar Utilizador

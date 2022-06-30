@@ -6,7 +6,7 @@ const middleware = require('../middleware');
 //listar
 Router.get('/list', UtilizadoresController.list)
 //Selecionar
-Router.get('/get/:id', middleware.checkToken, UtilizadoresController.get)
+Router.get('/get/:id', UtilizadoresController.get)
 //Editar
 Router.put('/update/:id', middleware.checkToken, UtilizadoresController.update)
 //Eliminar
