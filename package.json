@@ -1,17 +1,11 @@
 {
   "name": "back-end",
-  "engines": {
-    "node": "16.14.2"
-  },
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js",
-    "start:dev": "nodemon app.js",
-    "dev": "nodemon app.js",
-    "heroku-postbuild": "npm run start"
+    "start": "node src/app.js"
   },
   "keywords": [],
   "author": "",
