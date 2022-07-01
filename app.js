@@ -5,7 +5,7 @@ const app = express();
 app.use(express.json());
 //const port = 4000;
 
-app.set('port', process.env.PORT||4000)
+app.listen('port', process.env.PORT||4000)
 
 //Ligar à Base de Dados
 const bd = require('./src/config/basedados');
