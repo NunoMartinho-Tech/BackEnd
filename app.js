@@ -6,7 +6,7 @@ app.use(express.json());
 //const port = 4000;
 
 app.listen(process.env.PORT, () => {
-    console.log(`App listening on port ${PORT}`);
+    console.log(`App iniciada`);
 })
 
 //Ligar à Base de Dados
