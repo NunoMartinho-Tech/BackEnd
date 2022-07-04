@@ -35,20 +35,25 @@ app.use((req, res, next) => {
 
 /* const indexmodels = require('./src/models/index'); */
 
-// Rotas
-const rota = require('./src/routes/RotasTestData');
+// Importação de Rotas
+const rotasAjuda = require('./src/routes/RotasTestData');
 const rotasCentro = require('./src/routes/RotasCentro');
 const rotasSala = require('./src/routes/RotasSala');
 const rotasUtilizador = require('./src/routes/RotasUtilizador'); 
 const rotasReservas = require('./src/routes/RotasReserva');
+const rotasAuth = require('./src/routes/RotasAuth');
 
+// Rotas
 app.use('/centros', rotasCentro);
 app.use('/utilizadores', rotasUtilizador);
 app.use('/salas', rotasSala); 
-app.use('/testdata', middleware.checkToken, rota);
-app.use('/reservas',middleware.checkToken, rotasReservas);  
+app.use('/testdata', rotasAjuda);
+app.use('/reservas', rotasReservas);  
+
+// Rotas login Gestor
+app.use('/auth', rotasAuth);
 
 app.listen(app.get('port'),()=>{
-    console.log("Start server on port "+app.get('port'))
+    console.log("Start server on port "+ app.get('port'))
 })
 

@@ -12,14 +12,12 @@ Router.put('/update/:id', middleware.checkToken, UtilizadoresController.update)
 //Eliminar
 Router.post('/delete/:id', middleware.checkToken, UtilizadoresController.delete)
 //Registar
-Router.post('/register',  UtilizadoresController.register);
+Router.post('/register', middleware.checkToken,UtilizadoresController.register);
 //Desativar
 Router.put('/bloquear/:id', middleware.checkToken, UtilizadoresController.inativar);
 //Ativar
 Router.put('/ativar/:id', middleware.checkToken, UtilizadoresController.ativar);
-//Login
-Router.post('/login', UtilizadoresController.login);
 //Obter Centros que pertence
-//Router.get('/pertence/:id',UtilizadoresController.centros);
+Router.get('/pertence/:id', UtilizadoresController.centros);
 
 module.exports = Router;

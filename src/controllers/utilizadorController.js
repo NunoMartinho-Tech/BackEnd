@@ -2,11 +2,10 @@ var bd = require('../config/basedados');
 var utilizador = require('../models/Utilizador');
 var pertence =  require('../models/Pertence');
 var centro = require('../models/Centros');
+const { QueryTypes } = require('sequelize');
 
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
-const config = require('../config');
 var nodemailer = require('nodemailer');
+const sequelize = require('sequelize');
 
 //Dados para enviar email
 var transporter = nodemailer.createTransport({
@@ -29,18 +28,18 @@ bd.sync()
 
 //Listar Centros com base no id do utilizador include tabela pertence
 
-/* controllers.centros = async(req,res) =>{
+controllers.centros = async(req,res) =>{
     const {id} = req.params;
-    const data = utilizador.findAll({
-        include:  centro
-    })
+    const query = `select "Centros".id, "Centros"."Nome" from public."Centros" inner join public."Utilizador_Centros" on "Centros".id = "Utilizador_Centros"."CentroId"
+    WHERE "Utilizador_Centros"."UtilizadoreId" = ${id}` 
+    const data = await bd.query(query,{ type: QueryTypes.SELECT })
     .then(function(data){return data;})
-    .catch(error => {
-        console.log('Error:'+error)
-        return error;
-    }) 
-    res.status(200).json({sucesso:true, data: data});
-} */
+    .catch(error=>{console.log(error); return error})
+    if(data)
+        res.status(200).json({sucesso: true, data: data});
+    else
+        res.status(403).json({sucesso: false, data: data});
+}
 
 //Listar Utilizadores
 
@@ -68,22 +67,11 @@ controllers.get = async(req,res) =>{
             console.log('Error:'+error)
             return error;
         })
-        if (data.id.toString() === id.toString())
-                {   
-                    res.status(200).json({
-                    successo: true,
-                    message:"success",
-                    data: data
-                });
-            }else{
-                res.json({
-                    successo: false, 
-                    message: 'erro',
-                });
-            }
-        }else {
-            res.json({successo: false, message: 'Id não fornecido.'});
+        res.status(200).json({ sucesso: true, message:"success", user: data});
+    }else {
+        res.json({sucesso: false, message: 'Id não fornecido.'});
     }
+
 }
 
 //Editar Utilizador
@@ -195,36 +183,5 @@ controllers.register = async (req, res) =>{
 
 //Registar utilizador por ficheiro
 
-
-
-//Login Utilizador
-
-controllers.login = async(req,res) =>{
-    if(req.body.email && req.body.password){
-        var email = req.body.email;
-        var password = req.body.password;
-    }
-    var user = await utilizador.findOne({where: {Email: email}})
-    .then(function(data){return data;})
-    .catch(error =>{console.log('Error: ')+error; return error;})
-    if(password == null || typeof password == "undefined"){
-        res.status(403).json({sucesso:false, message:'Campos em Branco'});
-    }else{
-        if(req.body.email && req.body.password && user){
-            const isMatch = bcrypt.compareSync(password, user.PalavraPasse);
-            //console.log(isMatch)
-            if(req.body.email == user.Email && isMatch){
-                //console.log("Passei pela verificação")
-                let token = jwt.sign({email: req.body.email}, config.jwtSecret, {expiresIn: '1h'});
-                //console.log("token")
-                res.status(200).json({sucesso: true, message:'Utilizador autenticado com sucesso', data: token});
-            }else{
-                res.status(403).json({sucesso: false, message: 'Dados de autenticação inválidos.'});
-            }    
-        }else{
-            res.status(403).json({sucesso:false, message:'Erro no processo de autenticação: Por favor tente mais tarde' })
-        }
-    }
-}
 
 module.exports = controllers
