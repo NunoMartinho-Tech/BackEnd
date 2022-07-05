@@ -4,22 +4,22 @@ const SalasController = require('../controllers/salaController');
 const middleware = require('../middleware');
 
 //listar
-Router.get('/list',middleware.checkToken, SalasController.list)
+Router.get('/list', SalasController.list)
 //Criar
-Router.post('/add',middleware.checkToken, SalasController.add)
+Router.post('/add', SalasController.add)
 //Selecionarw
-Router.get('/get/:id',middleware.checkToken, SalasController.get)
+Router.get('/get/:id', SalasController.get)
 //Editar
-Router.put('/update/:id',middleware.checkToken, SalasController.update)
+Router.put('/update/:id', SalasController.update)
 //Eliminar
-Router.post('/delete/:id',middleware.checkToken, SalasController.delete)
+Router.post('/delete/:id', SalasController.delete)
 //Ativada
-Router.put('/ativar/:id',middleware.checkToken, SalasController.ativar);
+Router.put('/ativar/:id', SalasController.ativar);
 //Desativada
-Router.put('/desativar/:id',middleware.checkToken, SalasController.desativar);
+Router.put('/desativar/:id', SalasController.desativar);
 //Obter Codigo
-Router.get('/codigo/:id',middleware.checkToken, SalasController.code);
+Router.get('/codigo/:id', SalasController.code);
 //Obter Lista de Salas com base no centro
-Router.get('/centro/:id',middleware.checkToken, SalasController.Salas);
+Router.get('/centro/:id', SalasController.Salas);
 
 module.exports = Router;

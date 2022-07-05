@@ -8,15 +8,15 @@ Router.get('/list', UtilizadoresController.list)
 //Selecionar
 Router.get('/get/:id', UtilizadoresController.get)
 //Editar
-Router.put('/update/:id', middleware.checkToken, UtilizadoresController.update)
+Router.put('/update/:id', UtilizadoresController.update)
 //Eliminar
-Router.post('/delete/:id', middleware.checkToken, UtilizadoresController.delete)
+Router.post('/delete/:id', UtilizadoresController.delete)
 //Registar
-Router.post('/register', middleware.checkToken,UtilizadoresController.register);
+Router.post('/register', UtilizadoresController.register);
 //Desativar
-Router.put('/bloquear/:id', middleware.checkToken, UtilizadoresController.inativar);
+Router.put('/bloquear/:id', UtilizadoresController.inativar);
 //Ativar
-Router.put('/ativar/:id', middleware.checkToken, UtilizadoresController.ativar);
+Router.put('/ativar/:id', UtilizadoresController.ativar);
 //Obter Centros que pertence
 Router.get('/pertence/:id', UtilizadoresController.centros);
 

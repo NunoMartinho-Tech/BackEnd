@@ -22,7 +22,7 @@ controllers.login = async(req,res) =>{
         if(user){
             if(user.CargoId == 2){ //Gestor
                 if(password == null || typeof password == "undefined"){
-                    res.status(403).json({sucesso:false, message:'Campos em Branco'});
+                    res.json({sucesso:false, message:'Campos em Branco'});
                 }else{
                     if(req.body.email && req.body.password && user){
                         const isMatch = bcrypt.compareSync(password, user.PalavraPasse);
@@ -38,20 +38,20 @@ controllers.login = async(req,res) =>{
                                 user: user
                             });
                         }else{
-                            res.status(403).json({sucesso: false, message: 'Erro no servidor.'});
+                            res.json({sucesso: false, message: 'Erro no servidor.'});
                         }    
                     }else{
-                        res.status(403).json({sucesso:false, message:'Erro no servidor'})
+                        res.json({sucesso:false, message:'Erro no servidor'})
                     }
                 }
             }else{
-                res.status(403).json({sucesso:false, message:'Dados de autenticação inválidos.'});
+                res.json({sucesso:false, message:'Dados de autenticação inválidos.'});
             }
         }else{
-            res.status(403).json({sucesso: false, message: 'Dados de autenticação inválidos.'});
+            res.json({sucesso: false, message: 'Dados de autenticação inválidos.'});
         }
     }else
-        res.status(403).json({sucesso: false, message: 'Campos em branco.'});
+        res.json({sucesso: false, message: 'Campos em branco.'});
 }
 
 module.exports = controllers

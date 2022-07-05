@@ -4,18 +4,18 @@ const CentroController = require('../controllers/centroController');
 const middleware = require('../middleware');
 
  //listar
-Router.get('/list',middleware.checkToken, CentroController.list);
+Router.get('/list', CentroController.list);
 //Criar
-Router.post('/add',middleware.checkToken, CentroController.add);
+Router.post('/add', CentroController.add);
 //Selecionar
-Router.get('/get/:id',middleware.checkToken, CentroController.get);
+Router.get('/get/:id', CentroController.get);
 //Editar
-Router.put('/update/:id',middleware.checkToken, CentroController.update);
+Router.put('/update/:id', CentroController.update);
 //Ativar
-Router.put('/ativar/:id',middleware.checkToken, CentroController.ativar);
+Router.put('/ativar/:id', CentroController.ativar);
 //Desativar
-Router.put('/desativar/:id',middleware.checkToken, CentroController.desativar);
+Router.put('/desativar/:id', CentroController.desativar);
 //Eliminar
-Router.post('/delete/:id',middleware.checkToken, CentroController.delete); 
+Router.post('/delete/:id', CentroController.delete); 
 
 module.exports = Router;
