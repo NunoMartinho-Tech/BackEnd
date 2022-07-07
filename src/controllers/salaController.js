@@ -162,7 +162,7 @@ controllers.ativar= async(req,res) =>{
 
     const data = await sala.update({  
         EstadoId: '1',
-        Motivo_Bloqueio: null
+        Motivo_Bloqueio: ""
     },{where: {id: id}})
 
     .then(function(data){
