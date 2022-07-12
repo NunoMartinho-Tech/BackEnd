@@ -229,85 +229,68 @@ reservas/terminar/:id
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-### Utilizadores POR FAZER
+### Utilizadores 
 
 #### Listar as Utilizadores
 
 utilizadores/list
 
-#### Criar um Utilizador
+#### Registar um Utilizador (Nao funciona)
 
 utilizadores/register
 
 Paramentros de entrada:
 
-->NomeReserva, DataReserva, NumeroParticipantes, HoraInicio, HoraFim, Utilizador, Sala
+->PNome, UNome, Email, PalavraPasse, FotoNome, TipoGestor, Cargos, Centro
 
 Requesitos:
 ->Tudo em string
-->NumeroParticipantes > 0 e inteiro 
-->Formato da DataReserva = ano-mes-dia
-->Formato das horas = hh:mm
-->Sala e o id da sala
-->Utilizador e o id do Utilizador
+->Nao pode ter nomes vazios
+->Cargo e o id
+->TipoGestor e o id
 
 
 #### Obter um Utilizador
 
 utilizadores/get/:id
 
-#### Editar um Utilizador (web)
+#### Editar um Utilizador (web) (Nao funciona)
 
 utilizadores/update/:id
 
 Paramentros de entrada:
 
-->NomeReserva, DataReserva, NumeroParticipantes, HoraInicio, HoraFim, Utilizador, Sala
+->PNome, UNome, Email, PalavraPasse, FotoNome, TipoGestor, Cargos
 
 Requesitos:
 ->Tudo em string
-->NumeroParticipantes > 0 e inteiro 
-->Formato da DataReserva = ano-mes-dia
-->Formato das horas = hh:mm
-->Sala e o id da sala
-->Utilizador e o id do Utilizador
+->Nao pode ter nomes vazios
+->Cargo e o id
+->TipoGestor e o id
 
-#### Editar um Utilizador (Mobile)
+#### Editar um Utilizador (Mobile) (Nao funciona)
 
 utilizadores/updateMobile/:id
 
 Paramentros de entrada:
 
-->NomeReserva, DataReserva, NumeroParticipantes, HoraInicio, HoraFim, Utilizador, Sala
+->PNome, UNome, Email, PalavraPasse, FotoNome
 
 Requesitos:
 ->Tudo em string
-->NumeroParticipantes > 0 e inteiro 
-->Formato da DataReserva = ano-mes-dia
-->Formato das horas = hh:mm
-->Sala e o id da sala
-->Utilizador e o id do Utilizador
+->Nao pode ter nomes vazios
 
 #### Eliminar um Utilizador
 
 utilizadores/delete/:id
 
-#### Ativar um Utilizador
+#### Ativar um Utilizador (Nao funciona)
 
 utilizadores/ativar/:id
 
 #### Desativar um Utilizador
 
 utilizadores/desativar/:id
-
-Paramentros de entrada:
-
-->Motivo
-
-Requesitos:
-
-->Motivo nao pode ser '' 
-
 
 #### Obter centros de um Utilizador
 
@@ -316,6 +299,14 @@ utilizadores/pertence/:id
 #### Atualizar a palavra passe de um Utilizador
 
 utilizadores/editpasse/:id
+
+Paramentros de entrada:
+
+->PalavraPasse
+
+Requesitos:
+
+->PalavraPasse nao pode ser '' 
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -340,6 +331,43 @@ testdata/listTiposGestores
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ### Login
+
+#### Login do gestor
+
+auth/loginGestor 
+
+Parametros de entrada
+
+->email,password
+
+#### Login do Requesitante
+
+auth/loginRequesitante
+
+Parametros de entrada
+
+->email,password
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+### Dashboard
+
+#### % de alocação diária, com visão mensal
+
+
+#### # de reservas por range de datas
+
+
+####  # de utilizadores registados
+
+
+####  % de salas mais utilizadas face à capacidade
+
+
+#### "realtime Data" com a marcação das salas permitindo a gestão + eficiente dos mesmos
+
+
+####  necessidade atual de limpeza de sala
 
 
 

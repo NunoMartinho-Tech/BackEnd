@@ -894,8 +894,6 @@ controllers.delete = async (req, res) =>{
     }
 }
 
-
-
 //Ativar Reserva
 
 controllers.ativar = async (req, res) =>{ 
