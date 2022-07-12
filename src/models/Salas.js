@@ -15,17 +15,17 @@ var Sala = bd.define('Sala',{
         allowNull: false
     },
     Capacidade: {
-        type: Sequelize.SMALLINT,
+        type: Sequelize.INTEGER,
         allowNull: false,
         default: 1
     },
     Alocacao: {
-        type: Sequelize.SMALLINT,
+        type: Sequelize.INTEGER,
         allowNull: false,
         default: 1
     },
     Tempo_Limpeza: {
-        type: Sequelize.SMALLINT,
+        type: Sequelize.INTEGER,
         allowNull: false,
         default: 0
     },

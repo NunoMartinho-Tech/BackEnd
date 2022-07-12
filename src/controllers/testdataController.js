@@ -14,10 +14,10 @@ controllers.listEstados = async ( req, res) => {
     .catch(error =>{
         return error;
     })
-    res.json({
-        sucesso: true,
-        data: data
-    })
+    if(data)
+        res.json({sucesso: true, data: data})
+    else
+        res.json({sucesso: false})
 }
 
 controllers.listCargos = async ( req, res) => {
@@ -26,10 +26,10 @@ controllers.listCargos = async ( req, res) => {
     .catch(error =>{
         return error;
     })
-    res.json({
-        sucesso: true,
-        data: data
-    })
+    if(data)
+        res.json({sucesso: true, data: data})
+    else
+        res.json({sucesso: false})
 }
 
 controllers.listEstadosLimpezas = async ( req, res) => {
@@ -38,10 +38,10 @@ controllers.listEstadosLimpezas = async ( req, res) => {
     .catch(error =>{
         return error;
     })
-    res.json({
-        sucesso: true,
-        data: data
-    })
+    if(data)
+        res.json({sucesso: true, data: data})
+    else
+        res.json({sucesso: false})
 }
 
 controllers.listTiposGestores = async ( req, res) => {
@@ -50,10 +50,10 @@ controllers.listTiposGestores = async ( req, res) => {
     .catch(error =>{
         return error;
     })
-    res.json({
-        sucesso: true,
-        data: data
-    })
+    if(data)
+        res.json({sucesso: true, data: data})
+    else
+        res.json({sucesso: false})
 }
 
 module.exports = controllers;

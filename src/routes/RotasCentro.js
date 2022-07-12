@@ -1,7 +1,6 @@
 const express = require('express');
 const Router = express.Router();
 const CentroController = require('../controllers/centroController');
-const middleware = require('../middleware');
 
  //listar
 Router.get('/list', CentroController.list);

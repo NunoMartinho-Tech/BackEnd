@@ -18,9 +18,8 @@ const HistoricoLimpezaas = require('./Historico_limpezas');
 
 //Criar as instancias associadas aos models
 
-
+/* Cargos.create({descricao: 'Administrador'}) 
 Cargos.create({descricao: 'Requisitante'}) 
-Cargos.create({descricao: 'Administrador'}) 
 
 Estados.create({descricao: 'Ativo'})
 Estados.create({descricao: 'Desativo'})
@@ -29,7 +28,7 @@ EstadoLimpezas.create({descricao: 'Limpo'})
 EstadoLimpezas.create({descricao: 'Por Limpar'})
 
 TipoGestores.create({descricao: 'Administrador Geral'})
-TipoGestores.create({descricao: 'Administrador de Centro'})  
+TipoGestores.create({descricao: 'Administrador de Centro'})   */
 
 
 

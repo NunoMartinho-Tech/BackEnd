@@ -28,9 +28,14 @@ var Utilizador = bd.define('Utilizadores',{
         type: Sequelize.STRING,
         allowNull: false
     },
-    Foto: {
+    FotoNome: {
         type: Sequelize.STRING,
-        allowNull: false
+        default: "nehuma",
+        required: true
+    },
+    FotoData: {
+        type: Sequelize.STRING,
+        required: true
     },
     PrimeiroLogin: {
         type: Sequelize.INTEGER,

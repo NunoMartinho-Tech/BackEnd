@@ -33,10 +33,10 @@ app.use((req, res, next) => {
 
 //Criar Tabelas
 
-/* const indexmodels = require('./src/models/index'); */
+/* const indexmodels = require('./src/models/index');  */
 
 // Importação de Rotas
-const rotasAjuda = require('./src/routes/RotasTestData');
+const rotasData = require('./src/routes/RotasTestData');
 const rotasCentro = require('./src/routes/RotasCentro');
 const rotasSala = require('./src/routes/RotasSala');
 const rotasUtilizador = require('./src/routes/RotasUtilizador'); 
@@ -47,11 +47,13 @@ const rotasAuth = require('./src/routes/RotasAuth');
 app.use('/centros', rotasCentro);
 app.use('/utilizadores', rotasUtilizador);
 app.use('/salas', rotasSala); 
-app.use('/testdata', rotasAjuda);
+app.use('/testdata', rotasData);
 app.use('/reservas', rotasReservas);  
 
-// Rotas login Gestor
+// Rotas login
 app.use('/auth', rotasAuth);
+
+app.use('/uploads', express.static('uploads'));
 
 app.listen(app.get('port'),()=>{
     console.log("Start server on port "+ app.get('port'))

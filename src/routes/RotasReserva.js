@@ -13,8 +13,19 @@ Router.get('/get/:id', ReservasController.get);
 Router.put('/update/:id', ReservasController.update);
 //eliminar
 Router.post('/delete/:id', ReservasController.delete); 
-//Adiar
-//Router.put('/adiar/:id',ReservasController.adiar);
-
+//Ativar
+Router.put('/ativar/:id',ReservasController.ativar);
+//Desativar
+Router.put('/desativar/:id',ReservasController.desativar);
+//Listar Reservas Passadas com base no utilizador
+Router.get('/reservaspassadas/:id', ReservasController.reservasPassadasdeUtilizador);
+//Listar Reservas com base no utilizador
+Router.get('/todasreservas/:id', ReservasController.reservasdoUtilizador);
+//Listar Reservas futuras e ativas com base no utilizador
+Router.get('/reservasfuturas/:id', ReservasController.reservasfuturasdoUtilizador);
+//Adiar Reserva
+Router.put('/adiar/:id',ReservasController.adiar);
+//Terminar mais cedo
+Router.put('/terminar/:id', ReservasController.terminarCedo);
 
 module.exports = Router;

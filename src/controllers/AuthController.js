@@ -20,7 +20,7 @@ controllers.login = async(req,res) =>{
         .catch(error =>{console.log('Error: ')+error; return error;})
 
         if(user){
-            if(user.CargoId == 2){ //Gestor
+            if(user.CargoId == 1){ //Gestor
                 if(password == null || typeof password == "undefined"){
                     res.json({sucesso:false, message:'Campos em Branco'});
                 }else{
