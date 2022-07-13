@@ -72,7 +72,7 @@ controllers.get = async(req,res) =>{
             console.log('Error:'+error)
             return error;
         })
-        res.status(200).json({ sucesso: true, user: data});
+        res.status(200).json({ sucesso: true, data: data});
     }else {
         res.json({sucesso: false, message: 'Utilizador nao existe'});
     }
@@ -524,7 +524,11 @@ controllers.ativar = async(req,res) =>{
                                     console.log('Hora de fechar: ' + horaFimCentroNumber)
 
                                     //Vamos buscar o tempo de limpeza da sala
-                                    const HoraLimpezaSala = Saladata.Tempo_Limpeza
+                                    var HoraLimpezaSala = Saladata.Tempo_Limpeza
+                                    var tempoLimpezaArray = HoraLimpezaSala.split(':')
+                                    var horaLimpeza = tempoLimpezaArray[0]
+                                    var minutoLimpeza = tempoLimpezaArray[1]
+                                    var TempoLimp = Number(horaLimpeza+minutoLimpeza);
                                     //console.log('Horas de Limpeza da Sala: '+HoraLimpezaSala)
                                     if(reservaData[i].EstadoId == 2){ // Se a reserva estiver desativada
                                             //Verificar se a reserva esta em adamento
@@ -561,7 +565,7 @@ controllers.ativar = async(req,res) =>{
                                                     //console.log('Minutos:' + minutosFim)
                                                     const Horas_em_Numero = Number(horaFim+minutosFim)
                                                     //console.log('Horas da reserva desativa (formato Numero): '+Horas_em_Numero)
-                                                    const HorasFim_MaisLimpeza_Desativas = Horas_em_Numero + HoraLimpezaSala
+                                                    const HorasFim_MaisLimpeza_Desativas = Horas_em_Numero + TempoLimp
                                                     console.log('Horas da reserva desativa mais limpeza (formato Numero):' + HorasFim_MaisLimpeza_Desativas)
 
                                                     //Se as horas da reserva a ativar nao estiverem dentro do horario do centro entao continuamos para a proxima reserva

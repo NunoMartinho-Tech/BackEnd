@@ -62,12 +62,16 @@ controllers.add = async (req, res) =>{
                         console.log('Data atual em numero: '+hora_atual_numero)
 
                         var TempLimpSala = data.Tempo_Limpeza
+                        var tempoLimpezaArray = TempLimpSala.split(':')
+                        var horaLimpeza = tempoLimpezaArray[0]
+                        var minutoLimpeza = tempoLimpezaArray[1]
+                        var TempoLimp = Number(horaLimpeza+minutoLimpeza);
                         console.log('Tempo limpeza da Sala: '+TempLimpSala)
 
                         var hora_fim_array =  HoraFim.split(':')
                         var hora_fim_numero = Number(hora_fim_array[0] + hora_fim_array[1])
                         //console.log('Hora fim: '+ hora_fim_numero)
-                        var hora_fim_limpeza_numero = hora_fim_numero + TempLimpSala
+                        var hora_fim_limpeza_numero = hora_fim_numero + TempoLimp
                         console.log('Hora fim como numero mais limpeza: '+hora_fim_limpeza_numero)
 
                         var hora_inicio_array =  HoraInicio.split(':')
@@ -124,7 +128,7 @@ controllers.add = async (req, res) =>{
                                                     console.log('Minutos:' + minutosFim)
                                                     const Horas_em_Numero = Number(horaFim+minutosFim)
                                                     console.log('Horas da reserva desativa (formato Numero): '+Horas_em_Numero)
-                                                    const HorasFim_MaisLimpeza_Desativas = Horas_em_Numero + TempLimpSala
+                                                    const HorasFim_MaisLimpeza_Desativas = Horas_em_Numero + TempoLimp
                                                     console.log('Horas da reserva desativa mais limpeza (formato Numero):' + HorasFim_MaisLimpeza_Desativas)
                                                     for(let i = 0; i < reservas.length; i++){
                                                         //Reserva para comparar
@@ -246,12 +250,16 @@ controllers.add = async (req, res) =>{
                         else{
                             //Reserva no futuro
                             var TempLimpSala = data.Tempo_Limpeza
+                            var tempoLimpezaArray = TempLimpSala.split(':')
+                            var horaLimpeza = tempoLimpezaArray[0]
+                            var minutoLimpeza = tempoLimpezaArray[1]
+                            var TempoLimp = Number(horaLimpeza+minutoLimpeza);
                             //console.log('Tempo limpeza: '+TempLimpSala)
 
                             var hora_fim_array =  HoraFim.split(':')
                             var hora_fim_numero = Number(hora_fim_array[0] + hora_fim_array[1])
                             //console.log('Hora fim: '+ hora_fim_numero)
-                            var hora_fim_limpeza_numero = hora_fim_numero + TempLimpSala
+                            var hora_fim_limpeza_numero = hora_fim_numero + TempoLimp
                             //console.log('Hora fim como numero mais limpeza: '+hora_fim_limpeza_numero)
 
                             var hora_inicio_array =  HoraInicio.split(':')
@@ -305,7 +313,7 @@ controllers.add = async (req, res) =>{
                                                     console.log('Minutos:' + minutosFim)
                                                     const Horas_em_Numero = Number(horaFim+minutosFim)
                                                     console.log('Horas da reserva desativa (formato Numero): '+Horas_em_Numero)
-                                                    const HorasFim_MaisLimpeza_Desativas = Horas_em_Numero + TempLimpSala
+                                                    const HorasFim_MaisLimpeza_Desativas = Horas_em_Numero + TempoLimp
                                                     console.log('Horas da reserva desativa mais limpeza (formato Numero):' + HorasFim_MaisLimpeza_Desativas)
                                                     for(let i = 0; i < reservas.length; i++){
                                                         //Reserva para comparar
@@ -490,12 +498,16 @@ controllers.update = async (req, res) =>{
                                 var hora_atual_numero = Number(horas_atuais + minutos_atuais)
                                 //console.log('Data atual em numero: '+hora_atual_numero)
                                 var TempLimpSala = data.Tempo_Limpeza
+                                var tempoLimpezaArray = TempLimpSala.split(':')
+                                var horaLimpeza = tempoLimpezaArray[0]
+                                var minutoLimpeza = tempoLimpezaArray[1]
+                                var TempoLimp = Number(horaLimpeza+minutoLimpeza);
                                 //console.log('Tempo limpeza da Sala: '+TempLimpSala)
 
                                 var hora_fim_array =  HoraFim.split(':')
                                 var hora_fim_numero = Number(hora_fim_array[0] + hora_fim_array[1])
                                 //console.log('Hora fim: '+ hora_fim_numero)
-                                var hora_fim_limpeza_numero = hora_fim_numero + TempLimpSala
+                                var hora_fim_limpeza_numero = hora_fim_numero + TempoLimp
                                 //console.log('Hora fim como numero mais limpeza: '+hora_fim_limpeza_numero)
 
                                 var hora_inicio_array =  HoraInicio.split(':')
@@ -553,7 +565,7 @@ controllers.update = async (req, res) =>{
                                                             console.log('Minutos:' + minutosFim)
                                                             const Horas_em_Numero = Number(horaFim+minutosFim)
                                                             console.log('Horas da reserva desativa (formato Numero): '+Horas_em_Numero)
-                                                            const HorasFim_MaisLimpeza_Desativas = Horas_em_Numero + TempLimpSala
+                                                            const HorasFim_MaisLimpeza_Desativas = Horas_em_Numero + TempoLimp
                                                             console.log('Horas da reserva desativa mais limpeza (formato Numero):' + HorasFim_MaisLimpeza_Desativas)
 
                                                             for(let i = 0; i < reservas.length; i++){
@@ -671,12 +683,16 @@ controllers.update = async (req, res) =>{
                                 else{
                                     //Reserva no futuro
                                     var TempLimpSala = data.Tempo_Limpeza
+                                    var tempoLimpezaArray = TempLimpSala.split(':')
+                                    var horaLimpeza = tempoLimpezaArray[0]
+                                    var minutoLimpeza = tempoLimpezaArray[1]
+                                    var TempoLimp = Number(horaLimpeza+minutoLimpeza);
                                     //console.log('Tempo limpeza: '+TempLimpSala)
 
                                     var hora_fim_array =  HoraFim.split(':')
                                     var hora_fim_numero = Number(hora_fim_array[0] + hora_fim_array[1])
                                     //console.log('Hora fim: '+ hora_fim_numero)
-                                    var hora_fim_limpeza_numero = hora_fim_numero + TempLimpSala
+                                    var hora_fim_limpeza_numero = hora_fim_numero + TempoLimp
                                     //console.log('Hora fim como numero mais limpeza: '+hora_fim_limpeza_numero)
 
                                     var hora_inicio_array =  HoraInicio.split(':')
@@ -733,7 +749,7 @@ controllers.update = async (req, res) =>{
                                                             //console.log('Minutos:' + minutosFim)
                                                             const Horas_em_Numero = Number(horaFim+minutosFim)
                                                             //console.log('Horas da reserva desativa (formato Numero): '+Horas_em_Numero)
-                                                            const HorasFim_MaisLimpeza_Desativas = Horas_em_Numero + TempLimpSala
+                                                            const HorasFim_MaisLimpeza_Desativas = Horas_em_Numero + TempoLimp
                                                             //console.log('Horas da reserva desativa mais limpeza (formato Numero):' + HorasFim_MaisLimpeza_Desativas)
 
                                                             for(let i = 0; i < reservas.length; i++){

@@ -48,20 +48,14 @@ controllers.add = async (req, res) =>{
             if(AlocacaoNova < 1 || AlocacaoNova > 100){
                 res.json({sucesso: false, message:'A alocacao tem que ser entre 1 e 100'})
             }else{
-                if(TempoLimp < 0){
-                    res.json({sucesso: false, message:'O tempo de limpeza nao pode ser inferior a 0'})
-                }else{
-                    var tempoLimpezaArray = TempoLimpeza.split(':')
-                    var horaLimpeza = tempoLimpezaArray[0]
-                    var minutoLimpeza = tempoLimpezaArray[1]
-                    var TempoLimp = Number(horaLimpeza+minutoLimpeza);
+
                     var Nome_Limpo = Nome.normalize("NFD").replace(/[\u0300-\u036f]/g, '');
                     const data = await sala.create({
                         Nome: Nome_Limpo,
                         Capacidade: CapacidadeNova,
                         Alocacao: AlocacaoNova,
-                        Tempo_Limpeza: TempoLimp,
-                        Motivo_Bloqueio: '',
+                        Tempo_Limpeza: TempoLimpeza,
+                        Motivo_Bloqueio: "",
                         EstadoId: '1',
                         CentroId: Centro,
                         EstadosLimpezaId: '1'
@@ -72,11 +66,10 @@ controllers.add = async (req, res) =>{
                         return error;
                     })
                     res.status(200).json({sucesso: true, data: data, message: 'Sala adicionada com sucesso'});
-                }
             }
         }
     }else
-        res.json({sucesso: false, message:"Nao existe nenhum centro com o id: " + Centro})
+        res.json({sucesso: false, message:"O centro nao existe "})
 }
 
 //Obter Sala
@@ -107,11 +100,6 @@ controllers.update = async (req, res) =>{
     const {Nome, Capacidade, Alocacao, TempoLimpeza, Centro, Estado, MotivoBloqueio} = req.body
 
     var Nome_Limpo = Nome.normalize("NFD").replace(/[\u0300-\u036f]/g, '');
-    var Motivo_Limpo = MotivoBloqueio.normalize("NFD").replace(/[\u0300-\u036f]/g, '');
-    var AlocacaoArray = Alocacao.split(',')
-    var AlocacaoNova = Number(AlocacaoArray[0]);
-    var CapacidadeArray = Capacidade.split(',')
-    var CapacidadeNova = Number(CapacidadeArray[0]);
 
     const saladata = await sala.findOne({
         where:{id:id}
@@ -122,30 +110,23 @@ controllers.update = async (req, res) =>{
 
     if(saladata){
         if(centro){
-            if(CapacidadeNova <= 0)
+            if(Capacidade <= 0)
                 res.json({sucesso: false, message: "A capacidade da sala nao pode ser inferior ou igual a 0"})
             else{
-                if(AlocacaoNova < 1 || AlocacaoNova > 100){
+                if(Alocacao < 1 || Alocacao > 100){
                     res.json({sucesso: false, message:'A alocacao tem que ser entre 1 e 100'})
                 }else{
-                    if(TempoLimp < 0){
-                        res.json({sucesso: false, message:'O tempo de limpeza nao pode ser inferior a 0'})
-                    }else{
                         if(Estado==2){ 
                             if(MotivoBloqueio==""){
                                 res.json({sucesso: false, message:'Insira um motivo de inativação'});
                             }else{
-                                var tempoLimpezaArray = TempoLimpeza.split(':')
-                                var horaLimpeza = tempoLimpezaArray[0]
-                                var minutoLimpeza = tempoLimpezaArray[1]
-                                var TempoLimp = Number(horaLimpeza+minutoLimpeza);
                                 const data = await sala.update({ 
                                     Nome: Nome_Limpo,
-                                    Capacidade: CapacidadeNova,
-                                    Alocacao: AlocacaoNova,
-                                    Tempo_Limpeza: TempoLimp,
+                                    Capacidade: Capacidade,
+                                    Alocacao: Alocacao,
+                                    Tempo_Limpeza: TempoLimpeza,
                                     CentroId: Centro,
-                                    Motivo_Bloqueio: Motivo_Limpo
+                                    Motivo_Bloqueio: MotivoBloqueio
                                 },{where: {id: id}})
                                 .then(function(data){
                                     return data;
@@ -160,9 +141,9 @@ controllers.update = async (req, res) =>{
                             if(Estado==1){
                                 const data = await sala.update({ 
                                     Nome: Nome_Limpo,
-                                    Capacidade: CapacidadeNova,
-                                    Alocacao: AlocacaoNova,
-                                    Tempo_Limpeza: TempoLimp,
+                                    Capacidade: Capacidade,
+                                    Alocacao: Alocacao,
+                                    Tempo_Limpeza: TempoLimpeza,
                                     CentroId: Centro
                                 },{where: {id: id}})
 
@@ -177,7 +158,6 @@ controllers.update = async (req, res) =>{
                             }else
                                 res.json({sucesso:false, message:"O Estado nao e valiudo"});
                         }
-                    }
                 }
             }
         }else

@@ -25,7 +25,7 @@ var Sala = bd.define('Sala',{
         default: 1
     },
     Tempo_Limpeza: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.TIME,
         allowNull: false,
         default: 0
     },
