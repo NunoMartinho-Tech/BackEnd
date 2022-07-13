@@ -1501,7 +1501,7 @@ controllers.terminarCedo = async(req,res) =>{
                                     //A reserva esta a decorrer e a hora atual e menor que a hora fim da reserva e maior que a hora inicio
                                     if(Disponivel){
                                         const reservasdata = await reserva.update({
-                                            HoraFim:HoraAtualString 
+                                            HoraFim:HoraAtualString,
                                         },{where:{id:id}})
                                         .then(function(data){return data;})
                                         .catch(err=>console.log(err))

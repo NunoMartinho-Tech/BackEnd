@@ -23,6 +23,7 @@ Router.put('/ativar/:id', UtilizadoresController.ativar);
 Router.get('/pertence/:id', UtilizadoresController.centros);
 //Atualizar a palavra passe
 Router.put('/editpasse/:id', UtilizadoresController.atualizarPalavraPasse);
-//Primeiro Login
+//Registar Utilizador por ficheiro
+/* Router.get('/ficheiro', UtilizadoresController.ficheiro) */
 
 module.exports = Router;

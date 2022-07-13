@@ -20,6 +20,7 @@
     "dotenv": "^16.0.1",
     "email-validator": "^2.0.4",
     "express": "^4.17.3",
+    "express-fileupload": "^1.4.0",
     "jquery": "^3.6.0",
     "jsonwebtoken": "^8.5.1",
     "multer": "^1.4.5-lts.1",
@@ -29,6 +30,7 @@
     "postgres": "^3.2.4",
     "qrcode": "^1.5.0",
     "save": "^2.5.0",
-    "sequelize": "^6.19.0"
+    "sequelize": "^6.19.0",
+    "xlsx": "^0.18.5"
   }
 }
