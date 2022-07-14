@@ -705,7 +705,7 @@ controllers.atualizarPalavraPasse = async(req,res) =>{
 
     if(utilizadorData){
         if(PalavraPasseNova != "" && PalavraPasseAntiga != ""){
-            if(schema.validate(PalavraPasse)){
+            if(schema.validate(PalavraPasseNova)){
                 const isMatch = bcrypt.compareSync(PalavraPasseAntiga, utilizadorData.PalavraPasse);
                 if(isMatch){
                     bcrypt.genSalt(10, function(err, salt) {
