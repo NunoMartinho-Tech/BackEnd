@@ -33,8 +33,7 @@ controllers.list = async (req, res) =>{
 controllers.add = async (req, res) =>{
     const {NomeReserva, DataReserva, NumeroParticipantes, HoraInicio, HoraFim, Utilizador, Sala} = req.body
 
-    var ParticipantesArray = NumeroParticipantes.split(',')
-    var participantesLimp = Number(ParticipantesArray[0])
+    var participantesLimp = NumeroParticipantes
     var Disponivel = true
 
     const utilizadorData = await utilizador.findOne({
@@ -42,13 +41,11 @@ controllers.add = async (req, res) =>{
     })
     if(utilizadorData){
         if(utilizadorData.EstadoId == 1){
-
             const data = await sala.findOne({
                 where:{id: Sala}
             })
             if(data){
                 if(data.EstadoId == 1){
-
                     var data_reserva = new Date(DataReserva)
                     var data_atual = new Date();
 
@@ -183,7 +180,12 @@ controllers.add = async (req, res) =>{
                                                     //Nao sobrepoem a reserva logo pode ser ativada
                                                     if(Disponivel){
                                                         //Nao existem reservas com essa data entao pode-se dar update 
-                                                        var Nome_Limpo = NomeReserva.normalize("NFD").replace(/[^a-zA-Zs]/, "");
+                                                        if(NomeReserva == ""){
+                                                            Nome_Limpo == ""
+                                                        }
+                                                        else{
+                                                            var Nome_Limpo = NomeReserva.normalize("NFD").replace(/[^a-zA-Zs]/, "");
+                                                        }
                                                         const data = await reserva.create({
                                                             NomeReserva: Nome_Limpo,
                                                             DataReserva: DataReserva,
@@ -200,7 +202,7 @@ controllers.add = async (req, res) =>{
                                                             return error;
                                                         }) 
                                                         if(data)
-                                                            res.status(200).json({sucesso: true,data: data, message: 'Reserva atualizada com sucesso'});
+                                                            res.status(200).json({sucesso: true,data: data, message: 'Reserva lizada com sucesso'});
                                                         else
                                                             res.json({sucesso:false, message: 'Nao foi possivel atualizar a reserva'})
                                                     }else{
@@ -208,7 +210,12 @@ controllers.add = async (req, res) =>{
                                                     }
                                                 }else{
                                                     //Nao existem reservas com essa data entao pode-se dar update 
-                                                    var Nome_Limpo = NomeReserva.normalize("NFD").replace(/[^a-zA-Zs]/, "");
+                                                    if(NomeReserva == ""){
+                                                        Nome_Limpo == ""
+                                                    }
+                                                    else{
+                                                        var Nome_Limpo = NomeReserva.normalize("NFD").replace(/[^a-zA-Zs]/, "");
+                                                    }
                                                     const data = await reserva.create({
                                                         NomeReserva: Nome_Limpo,
                                                         DataReserva: DataReserva,
@@ -229,7 +236,6 @@ controllers.add = async (req, res) =>{
                                                     else
                                                         res.json({sucesso:false, message: 'Nao foi possivel atualizar a reserva'})
                                                 }
-                                                //-------
                                             }
                                         }else{
                                             res.json({sucesso:false, message:'O centro esta desativado'})
@@ -368,32 +374,41 @@ controllers.add = async (req, res) =>{
                                                     //Nao sobrepoem a reserva logo pode ser ativada
                                                     if(Disponivel){
                                                         //Nao existem reservas com essa data entao pode-se dar update 
-                                                        var Nome_Limpo = NomeReserva.normalize("NFD").replace(/[^a-zA-Zs]/, "");
-                                                        const data = await reserva.create({
-                                                            NomeReserva: Nome_Limpo,
-                                                            DataReserva: DataReserva,
-                                                            NumeroParticipantes: participantesLimp,
-                                                            HoraInicio: HoraInicio,
-                                                            HoraFim: HoraFim,
-                                                            EstadoId: 1,
-                                                            SalaId: Sala,
-                                                            UtilizadoreId: Utilizador
-                                                        })
-                                                        .then(function(data){return data;})
-                                                        .catch(error => {
-                                                            console.log('Error:'+error)
-                                                            return error;
-                                                        }) 
-                                                        if(data)
-                                                            res.status(200).json({sucesso: true,data: data, message: 'Reserva atualizada com sucesso'});
-                                                        else
-                                                            res.json({sucesso:false, message: 'Nao foi possivel atualizar a reserva'})
+                                                        if(NomeReserva == ""){
+                                                            Nome_Limpo == ""
+                                                        }
+                                                        else{
+                                                            var Nome_Limpo = NomeReserva.normalize("NFD").replace(/[^a-zA-Zs]/, "");
+                                                        }
+                                                            const data = await reserva.create({
+                                                                NomeReserva: Nome_Limpo,
+                                                                DataReserva: DataReserva,
+                                                                NumeroParticipantes: participantesLimp,
+                                                                HoraInicio: HoraInicio,
+                                                                HoraFim: HoraFim,
+                                                                EstadoId: 1,
+                                                                SalaId: Sala,
+                                                                UtilizadoreId: Utilizador
+                                                            })
+                                                            .then(function(data){return data;})
+                                                            .catch(error => {
+                                                                console.log('Error:'+error)
+                                                                return error;
+                                                            }) 
+                                                            if(data)
+                                                                res.status(200).json({sucesso: true,data: data, message: 'Reserva atualizada com sucesso'});
+                                                            else
+                                                                res.json({sucesso:false, message: 'Nao foi possivel atualizar a reserva'})
                                                     }else{
                                                         res.json({sucesso: false, message: 'A reserva sobrepoem outra reserva'})
                                                     }
                                                 }else{
-                                                    //Nao existem reservas com essa data entao pode-se dar update 
-                                                    var Nome_Limpo = NomeReserva.normalize("NFD").replace(/[^a-zA-Zs]/, "");
+                                                    if(NomeReserva == ""){
+                                                        Nome_Limpo == ""
+                                                    }
+                                                    else{
+                                                        var Nome_Limpo = NomeReserva.normalize("NFD").replace(/[^a-zA-Zs]/, "");
+                                                    }
                                                     const data = await reserva.create({
                                                         NomeReserva: Nome_Limpo,
                                                         DataReserva: DataReserva,
@@ -414,7 +429,6 @@ controllers.add = async (req, res) =>{
                                                     else
                                                         res.json({sucesso:false, message: 'Nao foi possivel atualizar a reserva'})
                                                 }
-                                                //-------
                                             }
                                         }else{
                                             res.json({sucesso:false, message:'O centro esta desativado'})
