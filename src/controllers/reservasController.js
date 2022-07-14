@@ -1168,8 +1168,7 @@ controllers.reservasPassadasdeUtilizador = async (req, res) =>{
         where:{id:id}
     })
     if(utilizadorData){
-        const query = `select * from public."Reservas" inner join public."Utilizadores" on "Reservas"."UtilizadoreId" = "Utilizadores"."id"
-        where "Reservas"."UtilizadoreId" = ${id} and "Reservas"."DataReserva" < CURRENT_DATE`
+        const query = `select * from public."Reservas" where "Reservas"."UtilizadoreId" = ${id} and "Reservas"."DataReserva" < CURRENT_DATE`
         const data = await bd.query(query,{ type: QueryTypes.SELECT })
         .then(function(data){return data;})
         .catch(err=>console.log(err))
@@ -1189,8 +1188,7 @@ controllers.reservasdoUtilizador = async (req, res) =>{
         where:{id:id}
     })
     if(utilizadorData){
-        const query = `select * from public."Reservas" inner join public."Utilizadores" on "Reservas"."UtilizadoreId" = "Utilizadores"."id"
-        where "Reservas"."UtilizadoreId" = ${id}`
+        const query = `select * from public."Reservas" where "Reservas"."UtilizadoreId" = ${id}`
         const data = await bd.query(query,{ type: QueryTypes.SELECT })
         .then(function(data){return data;})
         .catch(err=>console.log(err))
@@ -1210,8 +1208,7 @@ controllers.reservasfuturasdoUtilizador = async (req, res) =>{
         where:{id:id}
     })
     if(utilizadorData){
-        const query = `select * from public."Reservas" inner join public."Utilizadores" on "Reservas"."UtilizadoreId" = "Utilizadores"."id"
-        where "Reservas"."UtilizadoreId" = ${id} and "Reservas"."DataReserva" > CURRENT_DATE and "Reservas"."EstadoId" = 1`
+        const query = `select * from public."Reservas" where "Reservas"."UtilizadoreId" = ${id} and "Reservas"."DataReserva" > CURRENT_DATE and "Reservas"."EstadoId" = 1`
         const data = await bd.query(query,{ type: QueryTypes.SELECT })
         .then(function(data){return data;})
         .catch(err=>console.log(err))
