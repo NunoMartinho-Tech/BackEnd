@@ -763,25 +763,23 @@ controllers.centros = async(req,res) =>{
 
 //Registar utilizador por ficheiro
 
-/* function convertExcelFileToJsonUsingXlsx() {    // Read the file using pathname
-    const file = xlsx.readFile('../FilesImported/UtilizadoresInsert.xlsx');    // Grab the sheet info from the file
-    const sheetNames = file.SheetNames;
-    const totalSheets = sheetNames.length;    // Variable to store our data 
-    let parsedData = [];    // Loop through sheets
-    for (let i = 0; i < totalSheets; i++) {        // Convert to json using xlsx
-        const tempData = xlsx.utils.sheet_to_json(file.Sheets[sheetNames[i]]);        // Skip header row which is the colum names
-        tempData.shift();        // Add the sheet's json to our data array
-        parsedData.push(...tempData);
-    } // call a function to save the data in a json file generateJSONFile(parsedData);
-    var utilizadores = generateJSONFile(parsedData);
-    console.log(generateJSONFile(parsedData))
-    return utilizadores;
-}
-
 controllers.ficheiro = async(req,res)=>{
-    var utilizadoresJson = convertExcelFileToJsonUsingXlsx()
-    console.log(utilizadoresJson)
-} */
+
+    const{ficheiro} = req.body
+
+    console.log(ficheiro)
+
+    if(ficheiro.length != 0){
+        const users = await utilizador.bulkCreate(ficheiro)
+        if(users){
+            res.json({sucesso: true, message:'Utilizadores inseridos com sucesso'})
+        }else{
+            res.json({sucesso: false, message:'Nao foi possivel inserir os utilizadores'});
+        }
+    }else{
+        res.json({sucesso:false, message: "Ficheiro vazio"})
+    }
+}
 
 
 module.exports = controllers

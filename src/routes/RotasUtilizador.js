@@ -24,6 +24,6 @@ Router.get('/pertence/:id', UtilizadoresController.centros);
 //Atualizar a palavra passe
 Router.put('/editpasse/:id', UtilizadoresController.atualizarPalavraPasse);
 //Registar Utilizador por ficheiro
-/* Router.get('/ficheiro', UtilizadoresController.ficheiro) */
+Router.post('/ficheiro', UtilizadoresController.ficheiro)
 
 module.exports = Router;

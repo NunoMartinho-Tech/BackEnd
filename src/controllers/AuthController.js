@@ -3,6 +3,7 @@ var utilizador = require('../models/Utilizador');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const config = require('../config');
+const { use } = require('../routes/RotasUtilizador');
 
 const controllers = {}
 
@@ -80,7 +81,9 @@ controllers.loginRequesitante = async(req,res) =>{
                                 sucesso: true, 
                                 message:'Autenticação feita com sucesso', 
                                 token: token, 
-                                user: user
+                                user: user,
+                                id: user.id,
+                                login: user.PrimeiroLogin
                             });
                         }else{
                             res.json({sucesso: false, message: 'Dados de autenticação inválidos.'});
