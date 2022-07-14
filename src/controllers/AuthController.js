@@ -83,10 +83,10 @@ controllers.loginRequesitante = async(req,res) =>{
                                 user: user
                             });
                         }else{
-                            res.json({sucesso: false, message: 'Erro no servidor.'});
+                            res.json({sucesso: false, message: 'Dados de autenticação inválidos.'});
                         }    
                     }else{
-                        res.json({sucesso:false, message:'Erro no servidor'})
+                        res.json({sucesso:false, message:'Insira uma email e uma palavra passe'})
                     }
                 }
             }else{
