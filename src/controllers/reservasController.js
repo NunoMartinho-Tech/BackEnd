@@ -97,7 +97,7 @@ controllers.add = async (req, res) =>{
                                             var horaFimCentroNumber = Number(horaFimCentroArray[0] + horaFimCentroArray[1])
                                             //console.log('Hora de fechar: ' + horaFimCentroNumber
                                             if((hora_incio_numero < horaInicioCentroNumber) || (hora_fim_limpeza_numero > horaFimCentroNumber)){
-                                                res.json({sucesso: false, message: 'O horário do centro é entre as '+dataCentros.Hora_abertura+' e as ' + dataCentroHora_fecho+ ' !'});
+                                                res.json({sucesso: false, message: 'O horário do centro é entre as '+dataCentros.Hora_abertura+' e as ' + dataCentros.Hora_fecho+ ' !'});
                                             }else{
                                                 const query = `select * from public."Reservas" where "Reservas"."EstadoId" = 1 and "Reservas"."DataReserva" = '${DataReserva}' and "Reservas"."SalaId" = ${Sala} order by "Reservas"."HoraInicio"`
                                                 const reservas = await bd.query(query,{ type: QueryTypes.SELECT })
@@ -291,7 +291,7 @@ controllers.add = async (req, res) =>{
                                             var horaFimCentroNumber = Number(horaFimCentroArray[0] + horaFimCentroArray[1])
                                             //console.log('Hora de fechar: ' + horaFimCentroNumber
                                             if((hora_incio_numero < horaInicioCentroNumber) || (hora_fim_limpeza_numero > horaFimCentroNumber)){
-                                                res.json({sucesso: false, message: 'O horário do centro é entre as '+dataCentros.Hora_abertura+' e as ' + dataCentroHora_fecho+ ' !'});
+                                                res.json({sucesso: false, message: 'O horário do centro é entre as '+dataCentros.Hora_abertura+' e as ' + dataCentros.Hora_fecho+ ' !'});
                                             }else{
                                                 const query = `select * from public."Reservas" where "Reservas"."EstadoId" = 1 and "Reservas"."DataReserva" = '${DataReserva}' and "Reservas"."SalaId" = ${Sala} order by "Reservas"."HoraInicio"`
                                                 const reservas = await bd.query(query,{ type: QueryTypes.SELECT })
