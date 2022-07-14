@@ -174,7 +174,7 @@ controllers.register = async (req, res) =>{
 
 controllers.update = async (req, res) =>{ 
     const {id} = req.params;
-    const {PNome, UNome, Email, PalavraPasse, FotoNome, TipoGestor, Cargos, Centros} = req.body
+    const {PNome, UNome, Email, FotoNome, TipoGestor, Cargos, Centros} = req.body
     var data
     var palavrapasse_cript
     const utilizadorData = await utilizador.findOne({
@@ -183,11 +183,6 @@ controllers.update = async (req, res) =>{
     if(utilizadorData){
         if(PNome != '' && UNome !=''){
             if(validator.validate(Email)){
-                if(schema.validate(PalavraPasse)){
-                    //Encriptamos a palavra passe
-                    bcrypt.hash(PalavraPasse, saltRounds).then(function(hash) {
-                        palavrapasse_cript = hash   
-                    });
                     if(Cargos == 1){
                         if(TipoGestor == null || TipoGestor == ""){
                             res.json({sucesso:false, message: "Insira um tipo de gestor"})
@@ -244,9 +239,6 @@ controllers.update = async (req, res) =>{
                     }else{
                         res.json({sucesso:false, message:'Nao foi possivel atualizar os centros do utilizador'})
                     }
-                }else{
-                    res.json({sucesso:false, message:'A palavra passe nao pode ter espacos, deve ter entre 8 a 100 caracteres, pelo menos uma letra maiscula e minuscula e pelo menos dois digitos'})
-                }
             }else{
                 res.json({sucesso:false, mensagem: 'Insira um email valido'})
             }
@@ -260,7 +252,7 @@ controllers.update = async (req, res) =>{
 
 controllers.updateMobile = async (req, res) =>{ 
     const {id} = req.params;
-    const {PNome, UNome, Email, PalavraPasse, imageData, FotoNome} = req.body
+    const {PNome, UNome, Email, imageData, FotoNome} = req.body
     var palavrapasse_cript
 
     const utilizadorData = await utilizador.findOne({
@@ -269,15 +261,10 @@ controllers.updateMobile = async (req, res) =>{
     if(utilizadorData){
         if(PNome != '' && UNome !=''){
             if(validator.validate(Email)){
-                if(schema.validate(PalavraPasse)){
-                    bcrypt.hash(PalavraPasse, saltRounds).then(function(hash) {
-                        palavrapasse_cript = hash   
-                    });
                     const data = await utilizador.update({
                         Pnome: PNome,
                         Unome: UNome,
                         Email: Email,
-                        PalavraPasse: palavrapasse_cript,
                         FotoNome: "",
                         FotoData: ""
                     },{
@@ -289,9 +276,6 @@ controllers.updateMobile = async (req, res) =>{
                         return error;
                     })
                     res.status(200).json({sucesso: true, data: data, message:'Utilizador atualizado com sucesso'})
-                }else{
-                    res.json({sucesso:false, message:'A palavra passe nao pode ter espacos, deve ter entre 8 a 100 caracteres, pelo menos uma letra maiscula e minuscula e pelo menos dois digitos'})
-                }
             }else{
                 res.json({sucesso:false, mensagem: 'Insira um email valido'})
             }
@@ -721,27 +705,31 @@ controllers.atualizarPalavraPasse = async(req,res) =>{
 
     if(utilizadorData){
         if(PalavraPasseNova != "" && PalavraPasseAntiga != ""){
-            const isMatch = bcrypt.compareSync(PalavraPasseAntiga, utilizadorData.PalavraPasse);
-            if(isMatch){
-                bcrypt.genSalt(10, function(err, salt) {
-                bcrypt.hash(PalavraPasseNova, salt, function(err, hash) {
-                    const data = utilizador.update({
-                        PalavraPasse: hash,
-                        PrimeiroLogin: 0
-                    },{where: {id: id}})
-                    .then(function(data){return data;})
-                    .catch(error =>{
-                        console.log('Error: '+error);
-                        return error;
-                    })
-                    if(data)
-                        res.status(200).json({sucesso: true, message:'Palavra Passe atualizada com sucesso'})
-                    else
-                        res.json({sucesso: false, message:'Nao foi possivel alterar a palavra passe'})
+            if(schema.validate(PalavraPasse)){
+                const isMatch = bcrypt.compareSync(PalavraPasseAntiga, utilizadorData.PalavraPasse);
+                if(isMatch){
+                    bcrypt.genSalt(10, function(err, salt) {
+                    bcrypt.hash(PalavraPasseNova, salt, function(err, hash) {
+                        const data = utilizador.update({
+                            PalavraPasse: hash,
+                            PrimeiroLogin: 0
+                        },{where: {id: id}})
+                        .then(function(data){return data;})
+                        .catch(error =>{
+                            console.log('Error: '+error);
+                            return error;
+                        })
+                        if(data)
+                            res.status(200).json({sucesso: true, message:'Palavra Passe atualizada com sucesso'})
+                        else
+                            res.json({sucesso: false, message:'Nao foi possivel alterar a palavra passe'})
+                        });
                     });
-                });
+                }else{
+                    res.json({sucesso: false, message:'Palavra Passe incorreta'})
+                }
             }else{
-                res.json({sucesso: false, message:'Palavra Passe incorreta'})
+                    res.json({sucesso:false, message:'A palavra passe nao pode ter espacos, deve ter entre 8 a 100 caracteres, pelo menos uma letra maiscula e minuscula e pelo menos dois digitos'})
             }
         }else{
             res.json({sucesso: false, message:'Insira uma palavra passe'})
