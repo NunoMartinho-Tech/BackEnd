@@ -15,7 +15,8 @@ controllers.loginGestor = async(req,res) =>{
         var email = req.body.email;
         var password = req.body.password;
 
-        var user = await utilizador.findOne({where: {Email: email}})
+        var user = await utilizador.findOne({where: {Email: email},
+            include: {all: true}})
         .then(function(data){return data;})
         .catch(error =>{console.log('Error: ')+error; return error;})
 

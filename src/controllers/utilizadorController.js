@@ -713,16 +713,18 @@ controllers.ativar = async(req,res) =>{
 
 controllers.atualizarPalavraPasse = async(req,res) =>{
     const {id} = req.params;
-    const {PalavraPasse} = req.body
+    const {PalavraPasseNova, PalavraPasseAntiga} = req.body
 
     const utilizadorData = await utilizador.findOne({
         where:{id:id}
     })
 
     if(utilizadorData){
-        if(PalavraPasse != ""){
-            bcrypt.genSalt(10, function(err, salt) {
-                bcrypt.hash(PalavraPasse, salt, function(err, hash) {
+        if(PalavraPasseNova != "" && PalavraPasseAntiga != ""){
+            const isMatch = bcrypt.compareSync(PalavraPasseAntiga, utilizadorData.PalavraPasse);
+            if(isMatch){
+                bcrypt.genSalt(10, function(err, salt) {
+                bcrypt.hash(PalavraPasseNova, salt, function(err, hash) {
                     const data = utilizador.update({
                         PalavraPasse: hash,
                         PrimeiroLogin: 0
@@ -736,10 +738,13 @@ controllers.atualizarPalavraPasse = async(req,res) =>{
                         res.status(200).json({sucesso: true, message:'Palavra Passe atualizada com sucesso'})
                     else
                         res.json({sucesso: false, message:'Nao foi possivel alterar a palavra passe'})
+                    });
                 });
-            });
+            }else{
+                res.json({sucesso: false, message:'Palavra Passe incorreta'})
+            }
         }else{
-            res.json({sucesso: false, message:'Insira uma palavra'})
+            res.json({sucesso: false, message:'Insira uma palavra passe'})
         }
     }else{
         res.json({sucesso: false, message:'O utilizador nao existe'})
