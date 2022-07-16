@@ -358,7 +358,7 @@ controllers.ativar = async(req,res) => {
 }
 
 //Utilizadores Registados
-controllers.utilizadores = async(req,res)=>{
+controllers.utilizadorestotal = async(req,res)=>{
     const {id} = req.params
     if(id!=null){
         const centros = await centro.findOne({
@@ -369,9 +369,98 @@ controllers.utilizadores = async(req,res)=>{
                 where:{CentroId: id}
             })
             if(users){
-                res.json({sucesso: true, data: users.length})
+                var data = users.length
+                res.json({sucesso: true, data: data})
             }else{
-                res.json({sucesso: false, message:'Nao foi possivel encontrar os utilizadores'})
+                res.json({sucesso: true, data:0})
+            }
+        }else{
+            res.json({sucesso: false, message:'Centro nao existe'})
+        }
+    }else{
+        res.json({sucesso: false, message:'Forneca um id'})
+    }
+}
+
+//Utilizadores Registados ativos
+controllers.utilizadoresativos = async(req,res)=>{
+    const {id} = req.params
+    var numero = 0;
+
+    if(id!=null){
+        const centros = await centro.findOne({
+            where:{id:id}
+        })
+        if(centros){
+            const users = await pertence.findAll({
+                where:{CentroId: id}
+            })
+            if(users){
+                if(users.length!=0){
+                    for(let i =0; i< users.length; i++){
+                        const usersarray = await utilizador.findOne({
+                            where:{
+                                id:users[i].UtilizadoreId,
+                                EstadoId:1
+                            }
+                        })
+                        console.log(usersarray)
+                        if(usersarray != null){
+                            if(usersarray.length!=0){
+                                numero = numero + 1;
+                            }
+                        }
+                    }
+                    res.json({sucesso:true, data: numero})
+                }else{
+                    res.json({sucesso: true, data: 0})
+                }
+            }else{
+                res.json({sucesso: false, data:0})
+            }
+        }else{
+            res.json({sucesso: false, message:'Centro nao existe'})
+        }
+    }else{
+        res.json({sucesso: false, message:'Forneca um id'})
+    }
+}
+
+//Utilizadores Registados inativos
+controllers.utilizadoresinativos = async(req,res)=>{
+    const {id} = req.params
+    var numero = 0;
+
+    if(id!=null){
+        const centros = await centro.findOne({
+            where:{id:id}
+        })
+        if(centros){
+            const users = await pertence.findAll({
+                where:{CentroId: id}
+            })
+            if(users){
+                if(users.length!=0){
+                    for(let i =0; i< users.length; i++){
+                        const usersarray = await utilizador.findOne({
+                            where:{
+                                id:users[i].UtilizadoreId,
+                                EstadoId:2
+                            }
+                        })
+                        console.log(usersarray)
+                        if(usersarray != null){
+                            if(usersarray.length!=0){
+                                numero = numero + 1;
+                            }
+                        }
+                    }
+                    res.json({sucesso:true, data: numero})
+                }else{
+                    res.json({sucesso: true, data: 0})
+                }
+            }else{
+                res.json({sucesso: false, data:0})
             }
         }else{
             res.json({sucesso: false, message:'Centro nao existe'})

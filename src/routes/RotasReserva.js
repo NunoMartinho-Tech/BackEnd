@@ -21,6 +21,8 @@ Router.put('/desativar/:id',ReservasController.desativar);
 Router.get('/reservaspassadas/:id', ReservasController.reservasPassadasdeUtilizador);
 //Listar Reservas com base no utilizador
 Router.get('/todasreservas/:id', ReservasController.reservasdoUtilizador);
+//Listar Reservas ativas com base no utilizador
+Router.get('/todasreservasativas/:id', ReservasController.reservasativasdoUtilizador);
 //Listar Reservas futuras e ativas com base no utilizador
 Router.get('/reservasfuturas/:id', ReservasController.reservasfuturasdoUtilizador);
 //Adiar Reserva
@@ -28,6 +30,8 @@ Router.put('/adiar/:id',ReservasController.adiar);
 //Terminar mais cedo
 Router.put('/terminar/:id', ReservasController.terminarCedo);
 //# de reservas por range de datas
-/* Router.get('/entredatas/:id', ReservasController.entredatas); */
+Router.put('/entredatas/:id', ReservasController.entredatas);
+//% de alocacao diaria por mes
+Router.get('/alocacaodiaria/:id', ReservasController.alocacaoDiaria)
 
 module.exports = Router;

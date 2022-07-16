@@ -85,7 +85,6 @@ controllers.get = async(req,res) =>{
 
 controllers.register = async (req, res) =>{
     const {PNome, UNome, Email, PalavraPasse, TipoGestor, Cargos, Centros} = req.body
-    var data;
 
     const utilizadorData = await utilizador.findOne({
         where:{Email: Email}
@@ -98,7 +97,7 @@ controllers.register = async (req, res) =>{
                         if(TipoGestor == 0){
                             res.json({sucesso:false, message: "Insira um tipo de gestor"})
                         }else{
-                            data = await utilizador.create({
+                            const data = await utilizador.create({
                                 Pnome: PNome,
                                 Unome: UNome,
                                 Email: Email,
@@ -111,8 +110,7 @@ controllers.register = async (req, res) =>{
                                 CargoId: '1',
                                 CentroId:Centros 
                             })
-                            .then(function(data){return data;})
-                            .catch(error =>{console.log('Error: '+error); return error;})
+                            console.log(data)
                             const util_pertence = await pertence.create({
                                 CentroId: Centros,
                                 UtilizadoreId: data.id
@@ -120,8 +118,31 @@ controllers.register = async (req, res) =>{
                             .then(function(data){return data;})
                             .catch(error =>{console.log('Error: '+error);})
                         }
+                        //Mandar email de registo
+                        var mailOptions = {
+                            from: 'softinsaprojetofinalestgv@gmail.com',
+                            to: data.Email,
+                            subject: 'Confirmação do Registo',
+                            text: ` 
+                                É com muito gosto que confirmamos o seu registo.
+                                
+                                As suas credenciais de acesso encontram-se mais abaixo, por favor mantenha as em segurança.
+                                Email: ${data.Email}
+                                Palavra Passe: ${PalavraPasse}
+
+                                PS:Não responda a este email
+                                `
+                        };
+                        transporter.sendMail(mailOptions, function(error, info){
+                        if (error) {
+                            console.log(error);
+                        } else {
+                            console.log('Email sent: ' + info.response);
+                        }
+                        });
+                        res.status(200).json({sucesso: true, message: 'Utilizador criado com sucesso', data: data})
                     }else{
-                        data = await utilizador.create({
+                        const data = await utilizador.create({
                             Pnome: PNome,
                             Unome: UNome,
                             Email: Email,
@@ -134,47 +155,37 @@ controllers.register = async (req, res) =>{
                             CargoId: Cargos,
                             CentroId:Centros 
                         })
-                        .then(function(data){return data;})
-                        .catch(error =>{console.log('Error: '+error);})
+                        
                         const util_pertence = await pertence.create({
                             CentroId: Centros,
                             UtilizadoreId: data.id
                         })
                         .then(function(data){return data;})
                         .catch(error =>{console.log('Error: '+error);})
-                    }
-                    // adicionar ao centro
+                        //Mandar email de registo
+                        var mailOptions = {
+                            from: 'softinsaprojetofinalestgv@gmail.com',
+                            to: data.Email,
+                            subject: 'Confirmação do Registo',
+                            text: ` 
+                                É com muito gosto que confirmamos o seu registo.
+                                
+                                As suas credenciais de acesso encontram-se mais abaixo, por favor mantenha as em segurança.
+                                Email: ${data.Email}
+                                Palavra Passe: ${PalavraPasse}
 
-                        /* for(let i =0; i < Centros.length; i++){
-                            const util_pertence = await pertence.create({
-                                CentroId: Centros[i],
-                                UtilizadoreId: data.id
-                            })
-                        } */
-
-                    //Mandar email de registo
-                    var mailOptions = {
-                        from: 'softinsaprojetofinalestgv@gmail.com',
-                        to: data.Email,
-                        subject: 'Confirmação do Registo',
-                        text: ` 
-                            É com muito gosto que confirmamos o seu registo.
-                            
-                            As suas credenciais de acesso encontram-se mais abaixo, por favor mantenha as em segurança.
-                            Email: ${data.Email}
-                            Palavra Passe: ${PalavraPasse}
-
-                            PS:Não responda a este email
-                            `
-                    };
-                    transporter.sendMail(mailOptions, function(error, info){
-                    if (error) {
-                        console.log(error);
-                    } else {
-                        console.log('Email sent: ' + info.response);
-                    }
-                    });
-                    res.status(200).json({sucesso: true, message: 'Utilizador criado com sucesso', data: data})
+                                PS:Não responda a este email
+                                `
+                        };
+                        transporter.sendMail(mailOptions, function(error, info){
+                        if (error) {
+                            console.log(error);
+                        } else {
+                            console.log('Email sent: ' + info.response);
+                        }
+                        });
+                        res.status(200).json({sucesso: true, message: 'Utilizador criado com sucesso', data: data})
+                        }
                 }else{
                     res.json({sucesso:false, message:'A palavra passe nao pode ter espacos, deve ter entre 8 a 100 caracteres, pelo menos uma letra maiscula e minuscula e pelo menos dois digitos'})
                 }

@@ -1237,6 +1237,34 @@ controllers.reservasdoUtilizador = async (req, res) =>{
     }
 }
 
+//Listar todas as reservas ativas com base no id do utilizador
+controllers.reservasativasdoUtilizador = async (req, res) =>{ 
+    const {id} = req.params;
+    if(id!=null){
+        const utilizadorData = await utilizador.findOne({
+            where:{id:id}
+        })
+        if(utilizadorData){
+            const data = await reserva.findAll({
+                where:{UtilizadoreId:id,EstadoId:1},
+                include: {all: true}
+            })
+            /* const query = `select * from public."Reservas" where "Reservas"."UtilizadoreId" = ${id}`
+            const data = await bd.query(query,{ type: QueryTypes.SELECT }) */
+            .then(function(data){return data;})
+            .catch(err=>console.log(err))
+            if(data)
+                res.status(200).json({sucesso: true, data: data})
+            else
+                res.json({sucesso: false, message:'Não foi possível obter as reservas desse utilizador'})
+        }else{
+            res.json({sucesso:false, message:'O utilizador nao existe'})
+        }
+    }else{
+        res.json({sucesso: false, message:'Forneca um id'})
+    }
+}
+
 //Listar Reservas futuras com base no id do utilizador, e data e ativas 
 controllers.reservasfuturasdoUtilizador = async (req, res) =>{ 
     const {id} = req.params;
@@ -1245,7 +1273,7 @@ controllers.reservasfuturasdoUtilizador = async (req, res) =>{
             where:{id:id}
         })
         if(utilizadorData){
-            const query = `select * from public."Reservas" where "Reservas"."UtilizadoreId" = ${id} and "Reservas"."DataReserva" > CURRENT_DATE and "Reservas"."EstadoId" = 1`
+            const query = `select * from public."Reservas" where "Reservas"."UtilizadoreId" = ${id} and "Reservas"."DataReserva" >= CURRENT_DATE and "Reservas"."EstadoId" = 1`
             const data = await bd.query(query,{ type: QueryTypes.SELECT })
             .then(function(data){return data;})
             .catch(err=>console.log(err))
@@ -1616,45 +1644,108 @@ controllers.terminarCedo = async(req,res) =>{
 }
 
 //# de Reservas entre datas
-/* controllers.entredatas = async(req,res) =>{
+controllers.entredatas = async(req,res) =>{
     const {id} = req.params
     const {DataInicio, DataFim} = req.body
+
+    console.log(req.body)
+    console.log(DataInicio)
+    console.log(DataFim)
+
     var numeroreservas = 0
 
     if(id!=null){
-        var datainicio = new Date(DataInicio)
-        var datafim = new Date(DataFim)
+        if(DataInicio != "" && DataFim != ""){
 
-        if(datainicio < datafim){
+            /* var datainicioarray = DataInicio.split('/')
+            console.log(datainicioarray)
+            var diainicio = datainicioarray[0]
+            console.log(diainicio)
+            var mesinicio = datainicioarray[1]
+            console.log(mesinicio)
+            var anoinicio = datainicioarray[2]
+            console.log(anoinicio)
+            var datainiciostring = (anoinicio +'-'+mesinicio+'-'+diainicio)
+            console.log(datainiciostring)
 
-            const salasdata = await sala.findAll({
-                where:{CentroId: id,EstadoId:1}
-            }) 
-            if(salasdata){
-                if(salasdata.length!=0){
-                    console.log(salasdata)
-                    for(let i=0;i<salasdata.length;i++){
-                        const query = `select * from public."Reservas" where "Reservas"."SalaId" = ${salasdata[i].id} and "Reservas"."DataReserva" >= ${datainicio} and "Reservas"."DataReserva" <= ${datafim} and "Reservas"."EstadoId" = 1`
-                        const data = await bd.query(query,{ type: QueryTypes.SELECT })
-                        .then(function(data){return data;})
-                        .catch(err=>console.log(err))
-                        console.log(data)
-                        if(data)
-                            numeroreservas = numeroreservas + data.length
+            var datafimarray = DataFim.split('/')
+            console.log(datafimarray)
+            var diafim = datafimarray[0]
+            console.log(diafim)
+            var mesfim = datafimarray[1]
+            console.log(mesfim)
+            var anofim = datafimarray[2]
+            console.log(anofim)
+            var datafimstring = (anofim +'-'+mesfim+'-'+diafim)
+            console.log(datafimstring) */
+
+
+            var datainicio = new Date(DataInicio)
+            var datafim = new Date(DataFim)
+            console.log(datainicio)
+            console.log(datafim)
+
+            if(datainicio < datafim){
+
+                const salasdata = await sala.findAll({
+                    where:{CentroId: id,EstadoId:1}
+                }) 
+                if(salasdata){
+                    if(salasdata.length!=0){
+                        console.log(salasdata)
+                        for(let i=0;i<salasdata.length;i++){
+                            const query = `select * from public."Reservas" where "Reservas"."SalaId" = ${salasdata[i].id} and "Reservas"."DataReserva" >= '${DataInicio}' and "Reservas"."DataReserva" <= '${DataFim}' and "Reservas"."EstadoId" = 1`
+                            const data = await bd.query(query,{ type: QueryTypes.SELECT })
+                            .then(function(data){return data;})
+                            .catch(err=>console.log(err))
+                            console.log(data)
+                            if(data!=null){
+                                if(data.length!=0)
+                                    numeroreservas = numeroreservas + 1
+                            }   
+                        }
+                        res.status(200).json({sucesso: true, data: numeroreservas})
+                    }else{
+                        res.json({sucesso:true, data: 0, message:'Como nao existem salas a partida nao existem reservas'})
                     }
-                    res.status(200).json({sucesso: true, data: numeroreservas})
                 }else{
-                    res.json({sucesso:true, data: 0, message:'Como nao existem salas a partida nao existem reservas'})
+                    res.json({sucesso:false, message:'Nao foi possivel obter as salas do centro'})
                 }
             }else{
-                res.json({sucesso:false, message:'Nao foi possivel obter as salas do centro'})
+                res.json({sucesso: false, message: 'A data fim nao pode ser inferior a data inicio'})
             }
         }else{
-            res.json({sucesso: false, message: 'A data fim nao pode ser inferior a data inicio'})
+            res.json({sucesso:true, data: 0, message:'Datas vazias'})
         }
-
     }else{
         res.json({sucesso: false, message:'Forneca um id'})
     }
-} */
+}
+
+//% de alocacao diaria com base no mes
+controllers.alocacaoDiaria = async(req,res) =>{
+    const {id} = req.params
+    //Verificamos se o id foi fornecido
+    if(id!=null){
+        //Verificamos se o centro existe
+        const centros = await centro.findOne({
+            where:{id:id}
+        })
+        if(centros){
+            //Fazer a querry previamente testada no data base
+            const query = `select * from public."Reservas" where "Reservas"."UtilizadoreId" = ${id} and "Reservas"."DataReserva" >= CURRENT_DATE and "Reservas"."EstadoId" = 1`
+            const data = await bd.query(query,{ type: QueryTypes.SELECT })
+            .then(function(data){return data;})
+            .catch(err=>console.log(err))
+            if(data)
+                res.status(200).json({sucesso: true, data: data})
+            else
+                res.json({sucesso: false, message:'Não foi possível obter as reservas desse utilizador'})
+        }else{
+            res.json({sucesso: false, message:'Nao foi possivel obter o centro'})
+        }
+    }else{
+        res.json({sucesso:false, message:'Insira um id'})
+    }
+}
 module.exports = controllers
