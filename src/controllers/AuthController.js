@@ -21,32 +21,36 @@ controllers.loginGestor = async(req,res) =>{
         .catch(error =>{console.log('Error: ')+error; return error;})
 
         if(user){
-            if(user.CargoId == 1){ //Gestor
-                if(password == null || typeof password == "undefined"){
-                    res.json({sucesso:false, message:'Campos em Branco'});
-                }else{
-                    if(req.body.email && req.body.password && user){
-                        const isMatch = bcrypt.compareSync(password, user.PalavraPasse);
-                        //console.log(isMatch)
-                        if(req.body.email == user.Email && isMatch){
-                            //console.log("Passei pela verificação")
-                            let token = jwt.sign({email: req.body.email}, config.jwtSecret, {expiresIn: '1h'});
-                            //console.log("token")
-                            res.status(200).json({
-                                sucesso: true, 
-                                message:'Autenticação feita com sucesso', 
-                                token: token, 
-                                user: user
-                            });
-                        }else{
-                            res.json({sucesso: false, message: 'Erro no servidor.'});
-                        }    
+            if(user.EstadoId == 1){
+                if(user.CargoId == 1){ //Gestor
+                    if(password == null || typeof password == "undefined"){
+                        res.json({sucesso:false, message:'Campos em Branco'});
                     }else{
-                        res.json({sucesso:false, message:'Erro no servidor'})
+                        if(req.body.email && req.body.password && user){
+                            const isMatch = bcrypt.compareSync(password, user.PalavraPasse);
+                            //console.log(isMatch)
+                            if(req.body.email == user.Email && isMatch){
+                                //console.log("Passei pela verificação")
+                                let token = jwt.sign({email: req.body.email}, config.jwtSecret, {expiresIn: '1h'});
+                                //console.log("token")
+                                res.status(200).json({
+                                    sucesso: true, 
+                                    message:'Autenticação feita com sucesso', 
+                                    token: token, 
+                                    user: user
+                                });
+                            }else{
+                                res.json({sucesso: false, message: 'Erro no servidor.'});
+                            }    
+                        }else{
+                            res.json({sucesso:false, message:'Erro no servidor'})
+                        }
                     }
+                }else{
+                    res.json({sucesso:false, message:'Dados de autenticação inválidos.'});
                 }
             }else{
-                res.json({sucesso:false, message:'Dados de autenticação inválidos.'});
+                res.json({sucesso: false, message:'User não existe'})
             }
         }else{
             res.json({sucesso: false, message: 'Dados de autenticação inválidos.'});
@@ -65,34 +69,38 @@ controllers.loginRequesitante = async(req,res) =>{
         .catch(error =>{console.log('Error: ')+error; return error;})
 
         if(user){
-            if(user.CargoId != 1){ //Requesitante ou limpeza
-                if(password == null || typeof password == "undefined"){
-                    res.json({sucesso:false, message:'Campos em Branco'});
-                }else{
-                    if(req.body.email && req.body.password && user){
-                        const isMatch = bcrypt.compareSync(password, user.PalavraPasse);
-                        //console.log(isMatch)
-                        if(req.body.email == user.Email && isMatch){
-                            //console.log("Passei pela verificação")
-                            let token = jwt.sign({email: req.body.email}, config.jwtSecret, {expiresIn: '1h'});
-                            //console.log("token")
-                            res.status(200).json({
-                                sucesso: true, 
-                                message:'Autenticação feita com sucesso', 
-                                token: token, 
-                                user: user,
-                                id: user.id,
-                                login: user.PrimeiroLogin
-                            });
-                        }else{
-                            res.json({sucesso: false, message: 'Dados de autenticação inválidos.'});
-                        }    
+            if(user.EstadoId == 1){
+                if(user.CargoId != 1){ //Requesitante ou limpeza
+                    if(password == null || typeof password == "undefined"){
+                        res.json({sucesso:false, message:'Campos em Branco'});
                     }else{
-                        res.json({sucesso:false, message:'Insira uma email e uma palavra passe'})
+                        if(req.body.email && req.body.password && user){
+                            const isMatch = bcrypt.compareSync(password, user.PalavraPasse);
+                            //console.log(isMatch)
+                            if(req.body.email == user.Email && isMatch){
+                                //console.log("Passei pela verificação")
+                                let token = jwt.sign({email: req.body.email}, config.jwtSecret, {expiresIn: '1h'});
+                                //console.log("token")
+                                res.status(200).json({
+                                    sucesso: true, 
+                                    message:'Autenticação feita com sucesso', 
+                                    token: token, 
+                                    user: user,
+                                    id: user.id,
+                                    login: user.PrimeiroLogin
+                                });
+                            }else{
+                                res.json({sucesso: false, message: 'Dados de autenticação inválidos.'});
+                            }    
+                        }else{
+                            res.json({sucesso:false, message:'Insira uma email e uma palavra passe'})
+                        }
                     }
+                }else{
+                    res.json({sucesso:false, message:'Dados de autenticação inválidos.'});
                 }
             }else{
-                res.json({sucesso:false, message:'Dados de autenticação inválidos.'});
+                res.json({sucesso: false, message:'User não existe'})
             }
         }else{
             res.json({sucesso: false, message: 'Dados de autenticação inválidos.'});
