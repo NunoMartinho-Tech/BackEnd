@@ -3,7 +3,6 @@ var utilizador = require('../models/Utilizador');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const config = require('../config');
-const { use } = require('../routes/RotasUtilizador');
 
 const controllers = {}
 

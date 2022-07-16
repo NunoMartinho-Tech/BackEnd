@@ -62,6 +62,9 @@ var Utilizador = bd.define('Utilizadores',{
             model: Cargo,
             key: 'id' 
         }
+    },
+    CentroId:{
+        type: Sequelize.INTEGER,
     }
     },{
     timestamps: false,

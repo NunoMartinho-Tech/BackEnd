@@ -27,5 +27,7 @@ Router.get('/reservasfuturas/:id', ReservasController.reservasfuturasdoUtilizado
 Router.put('/adiar/:id',ReservasController.adiar);
 //Terminar mais cedo
 Router.put('/terminar/:id', ReservasController.terminarCedo);
+//# de reservas por range de datas
+/* Router.get('/entredatas/:id', ReservasController.entredatas); */
 
 module.exports = Router;

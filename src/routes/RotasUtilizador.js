@@ -26,4 +26,5 @@ Router.put('/editpasse/:id', UtilizadoresController.atualizarPalavraPasse);
 //Registar Utilizador por ficheiro
 Router.post('/ficheiro', UtilizadoresController.ficheiro)
 
+
 module.exports = Router;

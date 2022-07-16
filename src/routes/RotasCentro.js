@@ -16,5 +16,7 @@ Router.put('/ativar/:id', CentroController.ativar);
 Router.put('/desativar/:id', CentroController.desativar);
 //Eliminar
 Router.post('/delete/:id', CentroController.delete); 
+//Utilizadores registados
+Router.get('/utilizadores/:id', CentroController.utilizadores)
 
 module.exports = Router;
