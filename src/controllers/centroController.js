@@ -452,7 +452,7 @@ controllers.utilizadoresinativos = async(req,res)=>{
                                 EstadoId:2
                             }
                         })
-                        console.log(usersarray)
+                        //console.log(usersarray)
                         if(usersarray != null){
                             if(usersarray.length!=0){
                                 numero = numero + 1;
@@ -612,13 +612,16 @@ controllers.reserasfeitas = async(req,res)=>{
             const query = `select "Salas"."Nome" as "SalaNome", concat("Utilizadores"."Pnome",' ',"Utilizadores"."Unome") as "UtilizadorNome", "Reservas"."DataReserva", "Reservas"."HoraInicio", "Reservas"."HoraFim" 
             from public."Reservas" inner join "public"."Utilizadores" on "Reservas"."UtilizadoreId" = "Utilizadores"."id" inner join public."Salas"
             on "Reservas"."SalaId" = "Salas"."id"
-            where "Salas"."CentroId" = ${id} and "Reservas"."DataReserva" >= Current_date and "Reservas"."EstadoId" = 1 and "Reservas"."HoraInicio" >= current_time
+            where "Salas"."CentroId" = ${id} and "Reservas"."DataReserva" >= CURRENT_DATE and "Reservas"."EstadoId" = 1 and "Reservas"."HoraInicio" > CURRENT_TIME
             order by "Reservas"."DataReserva", "Reservas"."HoraInicio"`
             const data = await bd.query(query,{ type: QueryTypes.SELECT })
             .then(function(data){return data;})
             .catch(err=>console.log(err))
             if(data){
-                res.json({sucesso: true, data: data})
+                if(data.length!=0){
+                    res.json({sucesso: true, data: data})
+                }else
+                    res.json({sucesso: true, data: data, message:'Nao existem reservas'})
             }else
                 res.json({sucesso: false, message:'Nao foi possivel obter as reservas do centro'})
         }else

@@ -110,7 +110,7 @@ controllers.register = async (req, res) =>{
                                 CargoId: '1',
                                 CentroId:Centros 
                             })
-                            console.log(data)
+                            //console.log(data)
                             const util_pertence = await pertence.create({
                                 CentroId: Centros,
                                 UtilizadoreId: data.id
@@ -133,11 +133,11 @@ controllers.register = async (req, res) =>{
                                     `
                             };
                             transporter.sendMail(mailOptions, function(error, info){
-                            if (error) {
+                            /* if (error) {
                                 console.log(error);
                             } else {
                                 console.log('Email sent: ' + info.response);
-                            }
+                            } */
                             });
                             res.status(200).json({sucesso: true, message: 'Utilizador criado com sucesso', data: data})
                         }
@@ -178,12 +178,12 @@ controllers.register = async (req, res) =>{
                                 `
                         };
                         transporter.sendMail(mailOptions, function(error, info){
-                        if (error) {
+                        /* if (error) {
                             console.log(error);
                         } else {
                             console.log('Email sent: ' + info.response);
-                        }
-                        });
+                        }*/
+                        }); 
                         res.status(200).json({sucesso: true, message: 'Utilizador criado com sucesso', data: data})
                     }
                 }else{
@@ -335,23 +335,23 @@ controllers.delete = async (req, res) =>{
                 where: {UtilizadoreId: id}
             })
             if(dataReservas){
-                console.log(dataReservas)
-                console.log(dataReservas.length)
+                //console.log(dataReservas)
+                //console.log(dataReservas.length)
                 if(dataReservas.length != 0){
                     for(let i =0; i <dataReservas.length; i++){
-                        console.log(dataReservas[i])
+                        //console.log(dataReservas[i])
                         var limpezadestroy = await historicoLimpeza.destroy({
                             where:{ReservaId: dataReservas[i].id}
                         })
-                        console.log(limpezadestroy)
+                        //console.log(limpezadestroy)
                         var adiamentosdestroy = await historicoAdiamentos.destroy({
                             where:{ReservaId: dataReservas[i].id}
                         })
-                        console.log(adiamentosdestroy)
+                        //console.log(adiamentosdestroy)
                         var reservadestroy = await reserva.destroy({
                             where: {id: dataReservas[i].id},
                         })
-                        console.log(reservadestroy)
+                        //console.log(reservadestroy)
                     }
                     //Ja eliminou as reservas
                     const query = `delete from public."HistoricoLimpezas" where "UtilizadoresId" = ${id}`
@@ -497,7 +497,7 @@ controllers.ativar = async(req,res) =>{
                 const reservaData = await bd.query(query,{ type: QueryTypes.SELECT })
                 .then(function(data){return data;})
                 .catch(err=>console.log(err))
-                console.log(reservaData)
+                //console.log(reservaData)
                 if(reservaData){
                     //Se existirem reservas com o id do utilizador
                     if(reservaData.length != 0){
@@ -512,7 +512,7 @@ controllers.ativar = async(req,res) =>{
                         /* console.log('Ano atual: ' + AnoAtual)
                         console.log('Mes atual: ' + MesAtual)
                         console.log('Dia atual: ' + DiaAtual) */
-                        console.log('Data Atual final: ' + DataAtualString) 
+                        //console.log('Data Atual final: ' + DataAtualString) 
                         
 
                         //Vamos percorrer as reservas do utilizador
@@ -531,7 +531,7 @@ controllers.ativar = async(req,res) =>{
                             /* console.log('Ano atual: ' + AnoReserva)
                             console.log('Mes atual: ' + MesReserva)
                             console.log('Dia atual: ' + DiaReserva) */
-                            console.log('Data Reserva: ' + DataReservaString) 
+                            //console.log('Data Reserva: ' + DataReservaString) 
 
                             //Obtemos a informacao da sala da reserva
                             const Saladata = await sala.findOne({
@@ -549,11 +549,11 @@ controllers.ativar = async(req,res) =>{
                                         var horaInicioCentro = dataCentros.Hora_abertura
                                         var horaInicioCentroArray = horaInicioCentro.split(':')
                                         var horaInicioCentroNumber = Number(horaInicioCentroArray[0] + horaInicioCentroArray[1])
-                                        console.log('Hora de abertura: ' + horaInicioCentroNumber)
+                                        //console.log('Hora de abertura: ' + horaInicioCentroNumber)
                                         var horaFimCentro = dataCentros.Hora_fecho
                                         var horaFimCentroArray = horaFimCentro.split(':')
                                         var horaFimCentroNumber = Number(horaFimCentroArray[0] + horaFimCentroArray[1])
-                                        console.log('Hora de fechar: ' + horaFimCentroNumber)
+                                        //console.log('Hora de fechar: ' + horaFimCentroNumber)
 
                                         //Vamos buscar o tempo de limpeza da sala
                                         var HoraLimpezaSala = Saladata.Tempo_Limpeza
@@ -575,7 +575,7 @@ controllers.ativar = async(req,res) =>{
 
                                                         //Obtemos as horas inicio e fim da reserva que queremos ativar
 
-                                                        console.log(reservas)
+                                                        //console.log(reservas)
                                                         //Hora Inicio
                                                         const horasInicioReserva = reservaData[i].HoraInicio;
                                                         //console.log('Hora da reserva desativa (formato Data): '+ horasInicioReserva)
@@ -585,7 +585,7 @@ controllers.ativar = async(req,res) =>{
                                                         const minutosInicio = HoraInicio_Array[1]
                                                         //console.log('Minutos:' + minutosInicio)
                                                         const HorasInicio_desativas = Number(horaInicio+minutosInicio)
-                                                        console.log('Horas da reserva desativa (formato Numero): '+HorasInicio_desativas)
+                                                        //console.log('Horas da reserva desativa (formato Numero): '+HorasInicio_desativas)
 
                                                         //Hora Fim
                                                         const horasFimReserva = reservaData[i].HoraFim;
@@ -598,12 +598,12 @@ controllers.ativar = async(req,res) =>{
                                                         const Horas_em_Numero = Number(horaFim+minutosFim)
                                                         //console.log('Horas da reserva desativa (formato Numero): '+Horas_em_Numero)
                                                         const HorasFim_MaisLimpeza_Desativas = Horas_em_Numero + TempoLimp
-                                                        console.log('Horas da reserva desativa mais limpeza (formato Numero):' + HorasFim_MaisLimpeza_Desativas)
+                                                        //console.log('Horas da reserva desativa mais limpeza (formato Numero):' + HorasFim_MaisLimpeza_Desativas)
 
                                                         //Se as horas da reserva a ativar nao estiverem dentro do horario do centro entao continuamos para a proxima reserva
                                                         if((HorasInicio_desativas < horaInicioCentroNumber) || (HorasFim_MaisLimpeza_Desativas > horaFimCentroNumber )){
                                                             //Nao e possivel ativar uma reserva com a hora for do horario do centro
-                                                            console.log('As horas da reserva nao estao de acordo com o horario do centro')
+                                                            //console.log('As horas da reserva nao estao de acordo com o horario do centro')
                                                             continue;
                                                         }else{ //Vamos percorrer as reservas todas da sala e verificar se a reserva a ativar nao se sobrepoem
                                                             for(let i = 0; i < reservas.length; i++){
@@ -617,7 +617,7 @@ controllers.ativar = async(req,res) =>{
                                                                 const minutosI = horasInicio_Array[1]
                                                                 //console.log('Minutos:' + minutosI)
                                                                 const HorasAtivasI = Number(horaI+minutosI)
-                                                                console.log('Horas da reserva ativa (formato Numero): '+HorasAtivasI)
+                                                                //console.log('Horas da reserva ativa (formato Numero): '+HorasAtivasI)
                                                                 //Hora Fim
                                                                 const horasFim = reservas[i].HoraFim;
                                                                 //console.log('Hora da reserva ativa (formato Data): '+ horasFim)
@@ -627,29 +627,29 @@ controllers.ativar = async(req,res) =>{
                                                                 const minutosF = horasFim_Array[1]
                                                                 //console.log('Minutos:' + minutosF)
                                                                 const HorasAtivasF = Number(horaF+minutosF)
-                                                                console.log('Horas da reserva ativa (formato Numero): '+HorasAtivasF)
+                                                                //console.log('Horas da reserva ativa (formato Numero): '+HorasAtivasF)
 
                                                                 //Se a reserva ativada comecar antes e acabar durante a reserva desativada
                                                                 if((HorasAtivasI <= HorasInicio_desativas) && (HorasAtivasF >= HorasInicio_desativas) && (HorasAtivasF <= HorasFim_MaisLimpeza_Desativas)){
-                                                                    console.log('Passei aqui 1')
+                                                                    //console.log('Passei aqui 1')
                                                                     Disponivel = false
                                                                     break
                                                                 }else{
                                                                     //Se a reserva ativada comecar durante a reserva e acabar depois da reserva desativada
                                                                     if((HorasAtivasI >= HorasInicio_desativas) && (HorasAtivasI <= HorasFim_MaisLimpeza_Desativas) && (HorasAtivasF >= HorasFim_MaisLimpeza_Desativas)){
-                                                                        console.log('Passei aqui 2')
+                                                                        //console.log('Passei aqui 2')
                                                                         Disponivel = false
                                                                         break
                                                                     }else{
                                                                         //Se a reserva ativada comecar antes e acabar depois da reserva desativada
                                                                         if((HorasAtivasI <= HorasInicio_desativas) && (HorasAtivasF >= HorasFim_MaisLimpeza_Desativas)){
-                                                                            console.log('Passei aqui 3')
+                                                                            //console.log('Passei aqui 3')
                                                                             Disponivel = false
                                                                             break
                                                                         }else{
                                                                             //Se a reserva ativada comecar depois e acabar antes da reserva desativada
                                                                             if((HorasAtivasI >= HorasInicio_desativas) && (HorasAtivasI <= HorasFim_MaisLimpeza_Desativas) && (HorasAtivasF >= HorasInicio_desativas) &&(HorasAtivasF <= HorasFim_MaisLimpeza_Desativas)){
-                                                                                console.log('Passei aqui 4')
+                                                                                //console.log('Passei aqui 4')
                                                                                 Disponivel = false
                                                                                 break
                                                                             }
@@ -825,18 +825,18 @@ controllers.ficheiro = async(req,res)=>{
 
     const{ficheiro} = req.body
 
-    console.log(ficheiro)
+    //console.log(ficheiro)
 
     if(ficheiro.length != 0){
         const users = await utilizador.bulkCreate(ficheiro)
-        console.log(users)
+        //console.log(users)
         if(users){
             for(let i =0; i< users.length; i++){
                 const pertencedata = await pertence.create({
                     CentroId: users[i].CentroId,
                     UtilizadoreId: users[i].id,
                 })
-                console.log(pertencedata)
+                //console.log(pertencedata)
             }
         } 
         if(users){

@@ -18,7 +18,7 @@ controllers.list = async (req, res) =>{
     const data = await sala.findAll({include: {all: true}})
     .then(function(data){return data;})
     .catch(error => {
-        console.log('Error:'+error)
+        //console.log('Error:'+error)
         return error;
     })
     if(data)
@@ -62,7 +62,7 @@ controllers.add = async (req, res) =>{
                         })
                         .then(function(data){return data;})
                         .catch(error => {
-                            console.log('Error:'+error)
+                            //console.log('Error:'+error)
                             return error;
                         })
                         res.status(200).json({sucesso: true, data: data, message: 'Sala adicionada com sucesso'});
@@ -288,27 +288,27 @@ controllers.delete = async (req, res) =>{
                     const histadiamentos = await historicoAdiamentos.destroy({
                         where:{ReservaId: reservasdata[i].id}
                     })
-                    if(histadiamentos)
+                    /* if(histadiamentos)
                         console.log('Os historicos de adiamentos da reserva '+reservasdata[i].id+' foram eliminados')
                     else
-                        console.log('Nao foram eliminados os registos de adiamentos')
+                        console.log('Nao foram eliminados os registos de adiamentos') */
                     //Eliminar o historico de limpezas
                     const histlimpeza = await historicoLimpezas.destroy({
                         where:{ReservaId: reservasdata[i].id}
                     })
-                    if(histlimpeza)
+                    /* if(histlimpeza)
                         console.log('Os historicos de limpezas da reserva '+reservasdata[i].id+' foram eliminados')
                     else
-                        console.log('Nao foram eliminados os registos de limpezas')
+                        console.log('Nao foram eliminados os registos de limpezas') */
                 }
                 //Eliminar as reservas
                 const deletReservas = await reserva.destroy({
                     where:{SalaId: id} 
                 })
-                if(deletReservas)
+                /* if(deletReservas)
                     console.log('Reservas eliminadas')
                 else
-                    console.log('Reservas nao foram eliminadas')
+                    console.log('Reservas nao foram eliminadas') */
             }
             //Eliminar as salas
             const data = await sala.destroy({
@@ -340,13 +340,13 @@ controllers.code = async(req,res) =>{
             QRCode.toString(info,{type:'terminal'},function (err, code) { 
                 if(err) return console.log("error occurred")
                 // Imprimir o codigo
-                console.log(code)
+                //console.log(code)
             })
             //Converter para base64
             QRCode.toDataURL(info,function (err, code) { 
                 if(err) return console.log("error occurred")
                 // Imprimir o codigo
-                console.log(code)
+                //console.log(code)
                 res.status(200).json({sucesso: true, data: code, message:"Codigo gerado com sucesso"} )
             })
         }else
@@ -384,7 +384,7 @@ controllers.Salas = async(req,res) =>{
 }
 
 //Listar reservas apenas ativas com base no id da sala 
-controllers.listReservas = async (req, res) =>{
+controllers.listReservas = async (req, res) =>{ 
     var {id} = req.params
     if(id!=null){
         const salaData = await sala.findOne({
@@ -394,7 +394,7 @@ controllers.listReservas = async (req, res) =>{
             if(salaData.EstadoId ==1){
                 const query = `select * from public."Reservas" where "Reservas"."EstadoId" = 1 and "Reservas"."SalaId" = ${id} `
                 const data = await bd.query(query,{ type: QueryTypes.SELECT })
-                console.log(data)
+                //console.log(data)
                 if(data)
                     if(data.length != 0)
                         res.json({sucesso: true, data: data})
