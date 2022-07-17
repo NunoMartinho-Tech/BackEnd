@@ -12,7 +12,7 @@ bd.sync()
 
 controllers.loginGestor = async(req,res) =>{
     if(req.body.email !=null && req.body.password != null){
-        if(req.body.email && req.body.password){
+        if(req.body.email != "" && req.body.password != ""){
             var email = req.body.email;
             var password = req.body.password;
 
@@ -58,7 +58,8 @@ controllers.loginGestor = async(req,res) =>{
             }
         }else
             res.json({sucesso: false, message: 'Campos em branco.'});
-    }
+    }else
+        res.json({sucesso: false, message: 'Valores null'});
 }
 
 controllers.loginRequesitante = async(req,res) =>{
