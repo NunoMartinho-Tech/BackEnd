@@ -1650,10 +1650,15 @@ controllers.terminarCedo = async(req,res) =>{
 //Proxima reserva
 controllers.proximareserva = async(req,res) =>{
     const {id} = req.params
+    //console.log(id)
     const {HoraFim, Data, CentroId} = req.body
+    /* console.log(HoraFim)
+    console.log(Data)
+    console.log(CentroId) */
     if(id!=null){
-        if(HoraFim != null && Data != null){
-            if(HoraFim != "" && Data != ""){
+        if(HoraFim != null && Data != null && CentroId != null){
+            if(HoraFim != "" && Data != "" && CentroId != ""){
+                console.log('Passei aqui')
                 const query = `select "Reservas"."HoraInicio", "Salas"."Tempo_Limpeza"
                 from "Reservas" inner join "Salas" on "Reservas"."SalaId" = "Salas"."id"
                 where "Reservas"."DataReserva" = '${Data}' and "Reservas"."HoraFim" > '${HoraFim}' and "Reservas"."EstadoId" = 1 and "Salas"."EstadoId" = 1 
@@ -1662,11 +1667,11 @@ controllers.proximareserva = async(req,res) =>{
                 const data = await bd.query(query,{ type: QueryTypes.SELECT })
                 .then(function(data){return data;})
                 .catch(err=>console.log(err))
+                //console.log(data)
                 if(data)
-                    res.status(200).json({sucesso: true, data: data})
+                    res.json({sucesso: true, data: data})
                 else
-                    res.json({sucesso: false, message:'Não foi possível obter as reservas desse utilizador', data: data})
-
+                    res.json({sucesso: true, message:'Não foi possível obter as reservas desse utilizador', data: data})
             }else
                 res.json({sucesso: false, message:'Valores em branco'})
         }else
