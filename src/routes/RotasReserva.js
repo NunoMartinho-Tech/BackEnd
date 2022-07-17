@@ -31,7 +31,5 @@ Router.put('/adiar/:id',ReservasController.adiar);
 Router.put('/terminar/:id', ReservasController.terminarCedo);
 //# de reservas por range de datas
 Router.put('/entredatas/:id', ReservasController.entredatas);
-//% de alocacao diaria por mes
-Router.get('/alocacaodiaria/:id', ReservasController.alocacaoDiaria)
 
 module.exports = Router;

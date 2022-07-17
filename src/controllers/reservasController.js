@@ -1643,6 +1643,8 @@ controllers.terminarCedo = async(req,res) =>{
     }
 }
 
+//Dashboard
+
 //# de Reservas entre datas
 controllers.entredatas = async(req,res) =>{
     const {id} = req.params
@@ -1656,30 +1658,6 @@ controllers.entredatas = async(req,res) =>{
 
     if(id!=null){
         if(DataInicio != "" && DataFim != ""){
-
-            /* var datainicioarray = DataInicio.split('/')
-            console.log(datainicioarray)
-            var diainicio = datainicioarray[0]
-            console.log(diainicio)
-            var mesinicio = datainicioarray[1]
-            console.log(mesinicio)
-            var anoinicio = datainicioarray[2]
-            console.log(anoinicio)
-            var datainiciostring = (anoinicio +'-'+mesinicio+'-'+diainicio)
-            console.log(datainiciostring)
-
-            var datafimarray = DataFim.split('/')
-            console.log(datafimarray)
-            var diafim = datafimarray[0]
-            console.log(diafim)
-            var mesfim = datafimarray[1]
-            console.log(mesfim)
-            var anofim = datafimarray[2]
-            console.log(anofim)
-            var datafimstring = (anofim +'-'+mesfim+'-'+diafim)
-            console.log(datafimstring) */
-
-
             var datainicio = new Date(DataInicio)
             var datafim = new Date(DataFim)
             console.log(datainicio)
@@ -1722,30 +1700,4 @@ controllers.entredatas = async(req,res) =>{
     }
 }
 
-//% de alocacao diaria com base no mes
-controllers.alocacaoDiaria = async(req,res) =>{
-    const {id} = req.params
-    //Verificamos se o id foi fornecido
-    if(id!=null){
-        //Verificamos se o centro existe
-        const centros = await centro.findOne({
-            where:{id:id}
-        })
-        if(centros){
-            //Fazer a querry previamente testada no data base
-            const query = `select * from public."Reservas" where "Reservas"."UtilizadoreId" = ${id} and "Reservas"."DataReserva" >= CURRENT_DATE and "Reservas"."EstadoId" = 1`
-            const data = await bd.query(query,{ type: QueryTypes.SELECT })
-            .then(function(data){return data;})
-            .catch(err=>console.log(err))
-            if(data)
-                res.status(200).json({sucesso: true, data: data})
-            else
-                res.json({sucesso: false, message:'Não foi possível obter as reservas desse utilizador'})
-        }else{
-            res.json({sucesso: false, message:'Nao foi possivel obter o centro'})
-        }
-    }else{
-        res.json({sucesso:false, message:'Insira um id'})
-    }
-}
 module.exports = controllers

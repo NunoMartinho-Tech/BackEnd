@@ -17,8 +17,6 @@ bd.authenticate()
 .then(console.log('Connection has been established successfully.'))
 .catch(error => console.log('Error: '+error))
 
-app.use('./src/FilesImported', express.static('uploads'))
-
 // Configurar CORS
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');

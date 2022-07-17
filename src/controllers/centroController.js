@@ -7,6 +7,8 @@ var reserva = require('../models/Reservas');
 var pertence = require('../models/Pertence');
 var historicoLimpeza = require('../models/Historico_limpezas');
 var historicoAdiamentos = require('../models/Historico_adiamentos');
+const { QueryTypes } = require('sequelize');
+const { json } = require('body-parser');
 
 const controllers = {};
 
@@ -148,33 +150,33 @@ controllers.delete = async(req,res) => {
                             var deleteHistLimpe = await historicoLimpeza.destroy({
                                 where:{ReservaId: reservas[i].id}
                             })
-                            console.log('Historico de limpezas da reserva com id: '+ reservas[i].id +' eliminada')
+                            //console.log('Historico de limpezas da reserva com id: '+ reservas[i].id +' eliminada')
                             var deleteHistAdiame = await historicoAdiamentos.destroy({
                                 where: {ReservaId: reservas[i].id}
                             })
-                            console.log('Historico de adiamento da reserva com id: '+ reservas[i].id +' eliminada')
+                            //console.log('Historico de adiamento da reserva com id: '+ reservas[i].id +' eliminada')
                         }
                         //Eliminar as reservas
                         var deleteReservas = await reserva.destroy({
                             where: {SalaId: salas[i].id}
                         })
-                        if(deleteReservas){
-                            console.log('Reservas eliminadas')
-                        }else
-                            console.log('Nao foi possivel eliminar as reservas associadas a sala com id: '+ salas[i].id);
-                    }else
-                        console.log('Nao existem reservas na sala' + salas[i].id)
+                        //if(deleteReservas){
+                            //console.log('Reservas eliminadas')
+                        //}else
+                            //console.log('Nao foi possivel eliminar as reservas associadas a sala com id: '+ salas[i].id);
+                    }//else
+                        //console.log('Nao existem reservas na sala' + salas[i].id)
                 }
                 var deletedSalas = await sala.destroy({
                     where:{CentroId: dataCentro.id}
                 })
-                if(deletedSalas)
-                    console.log('Salas Eliminadas');
-                else
-                    console.log('Nao foi possivel eliminar as salas');
-            }else{
-                console.log('Nao existem salas no centro com o id: ' + id)
-            }
+                //if(deletedSalas)
+                    //console.log('Salas Eliminadas');
+                //else
+                    //console.log('Nao foi possivel eliminar as salas');
+            }//else{
+                //console.log('Nao existem salas no centro com o id: ' + id)
+            //}
             //Procurar Utilizadores
             const Utilizadores = await pertence.findAll({
                 where: {CentroId: id}
@@ -198,8 +200,8 @@ controllers.delete = async(req,res) => {
                         where:{id: Utilizadores[i].UtilizadoreId}
                     })   
                 }
-            }else
-                console.log('Nao existem utilizadores associados ao centro com id: ', id)
+            }//else
+                //console.log('Nao existem utilizadores associados ao centro com id: ', id)
 
                 const data = await centro.destroy({
                     where: {id: id}
@@ -248,16 +250,16 @@ controllers.desativar = async(req,res) => {
                         var dataReservas = await reserva.update({
                             EstadoId: 2
                         },{where: {SalaId: salas[i].id}})
-                        if(dataReservas)
-                            console.log("Reservas desativadas");
-                        else
-                            console.log('Nao foi possivel desativar as reservas associadas a sala com id: '+ salas[i].id);
-                    }else
-                        console.log('Nao existem reservas na sala' + salas[i].id)
+                        //if(dataReservas)
+                           // console.log("Reservas desativadas");
+                        //else
+                            //console.log('Nao foi possivel desativar as reservas associadas a sala com id: '+ salas[i].id);
+                    }//else
+                        //console.log('Nao existem reservas na sala' + salas[i].id)
                 }
-            }else{
-                console.log('Nao existem salas no centro com o id: ' + id)
-            }
+            }//else{
+               // console.log('Nao existem salas no centro com o id: ' + id)
+           // }
             //Procurar Utilizadores
             const Utilizadores = await pertence.findAll({
                 where: {CentroId: id}
@@ -269,9 +271,9 @@ controllers.desativar = async(req,res) => {
                         EstadoId: 2
                     },{where:{id: Utilizadores[i].UtilizadoreId}})
                 }
-            }else{
-                console.log('Nao existem utilizadores associados ao centro com id: ', id)
-            }
+            }//else{
+                //console.log('Nao existem utilizadores associados ao centro com id: ', id)
+            //}
 
             const data = await centro.update({
                 EstadoId: '2'
@@ -318,16 +320,16 @@ controllers.ativar = async(req,res) => {
                         var dataReservas = await reserva.update({
                             EstadoId: 1
                         },{where: {SalaId: salas[i].id}})
-                        if(dataReservas)
-                            console.log("Reservas ativadas");
-                        else
-                            console.log('Nao foi possivel ativar as reservas associadas a sala com id: '+ salas[i].id);
-                    }else
-                        console.log('Nao existem reservas na sala' + salas[i].id)
+                        //if(dataReservas)
+                            //console.log("Reservas ativadas");
+                        //else
+                            //console.log('Nao foi possivel ativar as reservas associadas a sala com id: '+ salas[i].id);
+                    }//else
+                        //console.log('Nao existem reservas na sala' + salas[i].id)
                 }
-            }else{
-                console.log('Nao existem salas no centro com o id: ' + id)
-            }
+            }//else{
+               // console.log('Nao existem salas no centro com o id: ' + id)
+            //}
             //Procurar Utilizadores
             const Utilizadores = await pertence.findAll({
                 where: {CentroId: id}
@@ -339,9 +341,9 @@ controllers.ativar = async(req,res) => {
                         EstadoId: 1
                     },{where:{id: Utilizadores[i].UtilizadoreId}})
                 }
-            }else{
-                console.log('Nao existem utilizadores associados ao centro com id: ', id)
-            }
+            }//else{
+                //console.log('Nao existem utilizadores associados ao centro com id: ', id)
+            //}
 
             const data = await centro.update({
                 EstadoId: '1'
@@ -356,6 +358,8 @@ controllers.ativar = async(req,res) => {
         res.json({sucesso: false, message:'Forneca um id'})
     }
 }
+
+//DASHBOARD
 
 //Utilizadores Registados
 controllers.utilizadorestotal = async(req,res)=>{
@@ -404,7 +408,7 @@ controllers.utilizadoresativos = async(req,res)=>{
                                 EstadoId:1
                             }
                         })
-                        console.log(usersarray)
+                        //console.log(usersarray)
                         if(usersarray != null){
                             if(usersarray.length!=0){
                                 numero = numero + 1;
@@ -470,4 +474,156 @@ controllers.utilizadoresinativos = async(req,res)=>{
     }
 }
 
+//% de salas face a capacidade por centro
+controllers.salaporcapacidade = async(req,res)=>{
+    const {id} = req.params
+
+    if(id!=null){
+        const centros = await centro.findOne({
+            where:{id:id}
+        })
+        if(centros){
+            const query = `select "Salas"."Capacidade" as "id",  "Salas"."Capacidade" as "label", Cast(count("Salas"."Capacidade")/0.100 AS INTEGER) as "value"
+            from public."Reservas" inner join public."Salas" on "Reservas"."SalaId" = "Salas"."id"
+            where "Reservas"."EstadoId" = 1 and "Salas"."CentroId" = ${id}
+            group by "Salas"."Capacidade"`
+            const data = await bd.query(query,{ type: QueryTypes.SELECT })
+            .then(function(data){return data;})
+            .catch(err=>console.log(err))
+            if(data)
+                res.status(200).json({sucesso: true, data: data})
+            else
+                res.json({sucesso: false, message:'Não foi possível obter a % de salas face a capacidade'})
+        }else{
+            res.json({sucesso: false, message:'Centro nao existe'})
+        }
+    }else{
+        res.json({sucesso: false, message:'Forneca um id'})
+    }
+}
+
+//% de alocacao diaria com base no mes
+controllers.alocacaoDiaria = async(req,res) =>{
+    const {id} = req.params
+    //Verificamos se o id foi fornecido
+    if(id!=null){
+        //Verificamos se o centro existe
+        const centros = await centro.findOne({
+            where:{id:id}
+        })
+        if(centros){
+            //Fazer a querry previamente testada no data base
+            const query = `select  cast(cast(count("Salas"."id")as float)/cast((select count(*) from public."Salas" where "Salas"."CentroId" = 1)as float)*100 as integer)  as "value", "Reservas"."DataReserva" as "day"
+            from public."Reservas" inner join public."Salas" on "Reservas"."SalaId" = "Salas"."id"
+            where "Reservas"."EstadoId" = 1 and "Salas"."EstadoId" = 1 and "Salas"."CentroId" = ${id} 
+            group by "Reservas"."DataReserva"`
+            const data = await bd.query(query,{ type: QueryTypes.SELECT })
+            .then(function(data){return data;})
+            .catch(err=>console.log(err))
+            if(data)
+                res.status(200).json({sucesso: true, data: data})
+            else
+                res.json({sucesso: false, message:'Não foi possível obter as reservas desse utilizador'})
+        }else{
+            res.json({sucesso: false, message:'Nao foi possivel obter o centro'})
+        }
+    }else{
+        res.json({sucesso:false, message:'Insira um id'})
+    }
+}
+
+//Necessidade atual de limpeza
+controllers.limpezaDiaria = async(req,res) =>{
+    const {id} = req.params
+    const ArrayReservas = []
+    if(id!=null){
+        const centros = await centro.findOne({
+            where:{id:id}
+        })
+        if(centros){
+            const query = `select "Reservas"."HoraFim", "Salas"."Nome", "Salas"."Tempo_Limpeza"
+            from public."Reservas" inner join public."Salas" on "Reservas"."SalaId" = "Salas"."id"
+            where "Reservas"."EstadoId" = 1 and "Salas"."EstadoId" = 1 and "Salas"."CentroId" = ${id} and "Reservas"."DataReserva" = Current_Date order by "Reservas"."HoraFim"`
+            const data = await bd.query(query,{ type: QueryTypes.SELECT })
+            .then(function(data){return data;})
+            .catch(err=>console.log(err))
+            if(data){
+                //console.log(data)
+                //Ir buscar a hora atual
+                var data_atual = new Date();
+                var horas_atuais = (data_atual.getHours()).toString()
+                //console.log(horas_atuais)
+                var minutos_atuais = (data_atual.getMinutes()).toString()
+                //console.log( minutos_atuais)
+                var hora_atual_numero = Number(horas_atuais + minutos_atuais)
+                //console.log(hora_atual_numero)
+
+                if(data.length!=0){
+                    for(let i =0; i< data.length;i++){
+                         //Vamos buscar a hora fim
+                        //var horafinal = data[i].HoraFim
+                        var horaFimArray = (data[i].HoraFim).split(':')
+                        var horaFim = horaFimArray[0]
+                        var minutosFim = horaFimArray[1]
+                        var horaFimNumero = Number(horaFim+minutosFim)
+                        //console.log(horaFimNumero)
+                        //Vamos buscar o tempo de limpeza da sala
+                        //var tempolimpeza = data[i].Tempo_Limpeza
+                        var tempoLimpezaArray = (data[i].Tempo_Limpeza).split(':')
+                        var horaLimpeza = tempoLimpezaArray[0]
+                        var minutosLimpeza = tempoLimpezaArray[1]
+                        var tempoLimpezaNumero = Number(horaLimpeza+minutosLimpeza)
+                        //console.log(tempoLimpezaNumero)
+                        //Calcular a hora final
+                        var horafinalLimpeza = horaFimNumero + tempoLimpezaNumero
+                        //console.log(horafinalLimpeza)
+                        //Verificamos se a hora fim e menor que a hora atual e se a hora fim com limpeza e maior que a hora atual
+                        if(horaFimNumero <= hora_atual_numero && horafinalLimpeza > hora_atual_numero){
+                            //console.log('entrei no if')
+                            ArrayReservas.push(data[i])
+                        }else{
+                            continue;
+                        }
+                    }
+                    res.json({sucesso: true, data: ArrayReservas })
+                    
+                }else{
+                    res.json({sucesso: true, message:'Nao existem reservas', data: ArrayReservas})
+                }
+            }else
+                res.json({sucesso: false, message:'Não foi possível obter as reservas desse utilizador'})
+        }else{
+            res.json({sucesso: false, message: 'Nao existem centros com esse id'})
+        }
+    }else{
+        res.json({sucesso: false, message: 'Insira um id'})
+    }
+}
+
+//Reservas feitas hoje depois no centro no centro
+
+controllers.reserasfeitas = async(req,res)=>{
+    const {id} = req.params
+    if(id!=null){
+        const centros = await centro.findOne({
+            where:{id:id}
+        })
+        if(centros){
+            const query = `select "Salas"."Nome" as "SalaNome", concat("Utilizadores"."Pnome",' ',"Utilizadores"."Unome") as "UtilizadorNome", "Reservas"."DataReserva", "Reservas"."HoraInicio", "Reservas"."HoraFim" 
+            from public."Reservas" inner join "public"."Utilizadores" on "Reservas"."UtilizadoreId" = "Utilizadores"."id" inner join public."Salas"
+            on "Reservas"."SalaId" = "Salas"."id"
+            where "Salas"."CentroId" = ${id} and "Reservas"."DataReserva" >= Current_date and "Reservas"."EstadoId" = 1 and "Reservas"."HoraInicio" >= current_time
+            order by "Reservas"."DataReserva", "Reservas"."HoraInicio"`
+            const data = await bd.query(query,{ type: QueryTypes.SELECT })
+            .then(function(data){return data;})
+            .catch(err=>console.log(err))
+            if(data){
+                res.json({sucesso: true, data: data})
+            }else
+                res.json({sucesso: false, message:'Nao foi possivel obter as reservas do centro'})
+        }else
+            res.json({sucesso:false, message: 'O centro nao existe'})
+    }else
+        res.json({sucesso:false, message: 'Forneca um id'})
+}
 module.exports = controllers

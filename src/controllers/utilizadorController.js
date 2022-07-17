@@ -117,30 +117,30 @@ controllers.register = async (req, res) =>{
                             })
                             .then(function(data){return data;})
                             .catch(error =>{console.log('Error: '+error);})
-                        }
-                        //Mandar email de registo
-                        var mailOptions = {
-                            from: 'softinsaprojetofinalestgv@gmail.com',
-                            to: data.Email,
-                            subject: 'Confirmação do Registo',
-                            text: ` 
-                                É com muito gosto que confirmamos o seu registo.
-                                
-                                As suas credenciais de acesso encontram-se mais abaixo, por favor mantenha as em segurança.
-                                Email: ${data.Email}
-                                Palavra Passe: ${PalavraPasse}
+                            //Mandar email de registo
+                            var mailOptions = {
+                                from: 'softinsaprojetofinalestgv@gmail.com',
+                                to: data.Email,
+                                subject: 'Confirmação do Registo',
+                                text: ` 
+                                    É com muito gosto que confirmamos o seu registo.
+                                    
+                                    As suas credenciais de acesso encontram-se mais abaixo, por favor mantenha as em segurança.
+                                    Email: ${data.Email}
+                                    Palavra Passe: ${PalavraPasse}
 
-                                PS:Não responda a este email
-                                `
-                        };
-                        transporter.sendMail(mailOptions, function(error, info){
-                        if (error) {
-                            console.log(error);
-                        } else {
-                            console.log('Email sent: ' + info.response);
+                                    PS:Não responda a este email
+                                    `
+                            };
+                            transporter.sendMail(mailOptions, function(error, info){
+                            if (error) {
+                                console.log(error);
+                            } else {
+                                console.log('Email sent: ' + info.response);
+                            }
+                            });
+                            res.status(200).json({sucesso: true, message: 'Utilizador criado com sucesso', data: data})
                         }
-                        });
-                        res.status(200).json({sucesso: true, message: 'Utilizador criado com sucesso', data: data})
                     }else{
                         const data = await utilizador.create({
                             Pnome: PNome,
@@ -185,7 +185,7 @@ controllers.register = async (req, res) =>{
                         }
                         });
                         res.status(200).json({sucesso: true, message: 'Utilizador criado com sucesso', data: data})
-                        }
+                    }
                 }else{
                     res.json({sucesso:false, message:'A palavra passe nao pode ter espacos, deve ter entre 8 a 100 caracteres, pelo menos uma letra maiscula e minuscula e pelo menos dois digitos'})
                 }
@@ -356,8 +356,8 @@ controllers.delete = async (req, res) =>{
                     //Ja eliminou as reservas
                     const query = `delete from public."HistoricoLimpezas" where "UtilizadoresId" = ${id}`
                     const LimpezasData = await bd.query(query,{ type: QueryTypes.DELETE })
-                    query = `delete from public."Utilizador_Centros" where "UtilizadoreId" = ${id} `
-                    const PertenceData = await bd.query(query,{ type: QueryTypes.DELETE })
+                    const query1 = `delete from public."Utilizador_Centros" where "UtilizadoreId" = ${id} `
+                    const PertenceData = await bd.query(query1,{ type: QueryTypes.DELETE })
                     const dataUser = await utilizador.destroy({
                         where: {id: id},
                     }) 
@@ -367,10 +367,10 @@ controllers.delete = async (req, res) =>{
                         res.json({sucesso:false, message:'Nao foi possivel eliminar o utilizador'})
                 }else{
                     //Nao existem reservas logo elimina utilizador
-                    query = `delete from public."HistoricoLimpezas" where "UtilizadoresId" = ${id}`
+                    const query = `delete from public."HistoricoLimpezas" where "UtilizadoresId" = ${id}`
                     const LimpezasData = await bd.query(query,{ type: QueryTypes.DELETE })
-                    query = `delete from public."Utilizador_Centros" where "UtilizadoreId" = ${id} `
-                    const PertenceData = await bd.query(query,{ type: QueryTypes.DELETE })
+                    const query1 = `delete from public."Utilizador_Centros" where "UtilizadoreId" = ${id} `
+                    const PertenceData = await bd.query(query1,{ type: QueryTypes.DELETE })
                     const data = await utilizador.destroy({
                         where: {id: id},
                     }) 
