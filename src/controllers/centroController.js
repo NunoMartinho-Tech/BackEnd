@@ -626,4 +626,5 @@ controllers.reserasfeitas = async(req,res)=>{
     }else
         res.json({sucesso:false, message: 'Forneca um id'})
 }
+
 module.exports = controllers

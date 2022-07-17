@@ -1244,6 +1244,10 @@ controllers.reservasativasdoUtilizador = async (req, res) =>{
         const utilizadorData = await utilizador.findOne({
             where:{id:id}
         })
+        .then(function(data){return data})
+        .catch(err=>{
+            console.log(err)
+        })
         if(utilizadorData){
             const data = await reserva.findAll({
                 where:{UtilizadoreId:id,EstadoId:1},
