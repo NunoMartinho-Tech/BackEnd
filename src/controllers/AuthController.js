@@ -11,52 +11,54 @@ bd.sync()
 //Falta garantir que o utilizador está ativo
 
 controllers.loginGestor = async(req,res) =>{
-    if(req.body.email && req.body.password){
-        var email = req.body.email;
-        var password = req.body.password;
+    if(req.body.email !=null && req.body.password != null){
+        if(req.body.email && req.body.password){
+            var email = req.body.email;
+            var password = req.body.password;
 
-        var user = await utilizador.findOne({where: {Email: email},
-            include: {all: true}})
-        .then(function(data){return data;})
-        .catch(error =>{console.log('Error: ')+error; return error;})
+            var user = await utilizador.findOne({where: {Email: email},
+                include: {all: true}})
+            .then(function(data){return data;})
+            .catch(error =>{console.log('Error: ')+error; return error;})
 
-        if(user){
-            if(user.EstadoId == 1){
-                if(user.CargoId == 1){ //Gestor
-                    if(password == null || typeof password == "undefined"){
-                        res.json({sucesso:false, message:'Campos em Branco'});
-                    }else{
-                        if(req.body.email && req.body.password && user){
-                            const isMatch = bcrypt.compareSync(password, user.PalavraPasse);
-                            //console.log(isMatch)
-                            if(req.body.email == user.Email && isMatch){
-                                //console.log("Passei pela verificação")
-                                let token = jwt.sign({email: req.body.email}, config.jwtSecret, {expiresIn: '1h'});
-                                //console.log("token")
-                                res.status(200).json({
-                                    sucesso: true, 
-                                    message:'Autenticação feita com sucesso', 
-                                    token: token, 
-                                    user: user
-                                });
-                            }else{
-                                res.json({sucesso: false, message: 'Erro no servidor.'});
-                            }    
+            if(user){
+                if(user.EstadoId == 1){
+                    if(user.CargoId == 1){ //Gestor
+                        if(password == null || typeof password == "undefined"){
+                            res.json({sucesso:false, message:'Campos em Branco'});
                         }else{
-                            res.json({sucesso:false, message:'Erro no servidor'})
+                            if(req.body.email && req.body.password && user){
+                                const isMatch = bcrypt.compareSync(password, user.PalavraPasse);
+                                //console.log(isMatch)
+                                if(req.body.email == user.Email && isMatch){
+                                    //console.log("Passei pela verificação")
+                                    let token = jwt.sign({email: req.body.email}, config.jwtSecret, {expiresIn: '1h'});
+                                    //console.log("token")
+                                    res.status(200).json({
+                                        sucesso: true, 
+                                        message:'Autenticação feita com sucesso', 
+                                        token: token, 
+                                        user: user
+                                    });
+                                }else{
+                                    res.json({sucesso: false, message: 'Erro no servidor.'});
+                                }    
+                            }else{
+                                res.json({sucesso:false, message:'Erro no servidor'})
+                            }
                         }
+                    }else{
+                        res.json({sucesso:false, message:'Dados de autenticação inválidos.'});
                     }
                 }else{
-                    res.json({sucesso:false, message:'Dados de autenticação inválidos.'});
+                    res.json({sucesso: false, message:'User não existe'})
                 }
             }else{
-                res.json({sucesso: false, message:'User não existe'})
+                res.json({sucesso: false, message: 'Dados de autenticação inválidos.'});
             }
-        }else{
-            res.json({sucesso: false, message: 'Dados de autenticação inválidos.'});
-        }
-    }else
-        res.json({sucesso: false, message: 'Campos em branco.'});
+        }else
+            res.json({sucesso: false, message: 'Campos em branco.'});
+    }
 }
 
 controllers.loginRequesitante = async(req,res) =>{
