@@ -1,7 +1,6 @@
 const express = require('express');
 const Router = express.Router();
 const ReservasController = require('../controllers/reservasController');
-const middleware = require('../middleware');
 
  //listar
 Router.get('/list', ReservasController.list);

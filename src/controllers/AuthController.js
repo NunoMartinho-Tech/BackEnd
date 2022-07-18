@@ -8,8 +8,6 @@ const controllers = {}
 
 bd.sync()
 
-//Falta garantir que o utilizador está ativo
-
 controllers.loginGestor = async(req,res) =>{
     if(req.body.email !=null && req.body.password != null){
         if(req.body.email != "" && req.body.password != ""){
@@ -32,7 +30,7 @@ controllers.loginGestor = async(req,res) =>{
                                 //console.log(isMatch)
                                 if(req.body.email == user.Email && isMatch){
                                     //console.log("Passei pela verificação")
-                                    let token = jwt.sign({email: req.body.email}, config.jwtSecret, {expiresIn: '1h'});
+                                    let token = jwt.sign({email: req.body.email}, config.jwtSecret, {expiresIn: '24h'});
                                     //console.log("token")
                                     res.status(200).json({
                                         sucesso: true, 

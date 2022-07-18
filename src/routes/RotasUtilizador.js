@@ -1,7 +1,7 @@
 const express = require('express');
 const Router = express.Router();
 const UtilizadoresController = require('../controllers/utilizadorController');
-const middleware = require('../middleware');
+
 
 //listar
 Router.get('/list', UtilizadoresController.list)

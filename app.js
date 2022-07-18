@@ -53,8 +53,6 @@ app.use('/reservas', rotasReservas);
 // Rotas login
 app.use('/auth', rotasAuth);
 
-app.use('/uploads', express.static('uploads'));
-
 app.listen(app.get('port'),()=>{
     console.log("Start server on port "+ app.get('port'))
 })

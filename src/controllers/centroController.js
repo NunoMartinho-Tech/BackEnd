@@ -483,7 +483,9 @@ controllers.salaporcapacidade = async(req,res)=>{
             where:{id:id}
         })
         if(centros){
-            const query = `select "Salas"."Capacidade" as "id",  "Salas"."Capacidade" as "label", Cast(count("Salas"."Capacidade")/0.100 AS INTEGER) as "value"
+            const query = `select "Salas"."Capacidade" as "id",  "Salas"."Capacidade" as "label" , cast(cast(count("Salas"."Nome")as float)/cast((select count(*) 
+            from public."Reservas" inner join public."Salas" on "Reservas"."SalaId" = "Salas"."id"
+            where "Reservas"."EstadoId" = 1 and "Salas"."CentroId" = ${id})as float)*100 as integer)  as "value"
             from public."Reservas" inner join public."Salas" on "Reservas"."SalaId" = "Salas"."id"
             where "Reservas"."EstadoId" = 1 and "Salas"."CentroId" = ${id}
             group by "Salas"."Capacidade"`
@@ -513,10 +515,12 @@ controllers.alocacaoDiaria = async(req,res) =>{
         })
         if(centros){
             //Fazer a querry previamente testada no data base
-            const query = `select  cast(cast(count("Salas"."id")as float)/cast((select count(*) from public."Salas" where "Salas"."CentroId" = 1)as float)*100 as integer)  as "value", "Reservas"."DataReserva" as "day"
+            const query = `select cast(cast(count(distinct "Salas"."Nome")as float)/cast((select count(*) 
+            from public."Salas" where "Salas"."CentroId" = ${id} )as float)*100 as integer)  as "value", "Reservas"."DataReserva" as "day"
             from public."Reservas" inner join public."Salas" on "Reservas"."SalaId" = "Salas"."id"
             where "Reservas"."EstadoId" = 1 and "Salas"."EstadoId" = 1 and "Salas"."CentroId" = ${id} 
-            group by "Reservas"."DataReserva"`
+            group by "Reservas"."DataReserva"
+            order by "Reservas"."DataReserva"`
             const data = await bd.query(query,{ type: QueryTypes.SELECT })
             .then(function(data){return data;})
             .catch(err=>console.log(err))
@@ -600,7 +604,7 @@ controllers.limpezaDiaria = async(req,res) =>{
     }
 }
 
-//Reservas feitas hoje depois da hora no centro
+//Reservas feitas hoje depois da hora no centro "Real time data"
 
 controllers.reserasfeitas = async(req,res)=>{
     const {id} = req.params
