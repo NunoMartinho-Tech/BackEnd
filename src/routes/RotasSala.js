@@ -6,7 +6,7 @@ const middleware = require('../middleware')
 //listar
 Router.get('/list',middleware.checkToken ,SalasController.list)
 //Criar
-Router.post('/add', SalasController.add)
+Router.post('/add',middleware.checkToken, SalasController.add)
 //Selecionarw
 Router.get('/get/:id', SalasController.get)
 //Editar

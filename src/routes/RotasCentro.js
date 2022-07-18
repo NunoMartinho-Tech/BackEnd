@@ -1,9 +1,10 @@
 const express = require('express');
 const Router = express.Router();
 const CentroController = require('../controllers/centroController');
+const middleware = require('../middleware')
 
  //listar
-Router.get('/list', CentroController.list);
+Router.get('/list', middleware.checkToken, CentroController.list);
 //Criar
 Router.post('/add', CentroController.add);
 //Selecionar

@@ -1687,9 +1687,9 @@ controllers.entredatas = async(req,res) =>{
     const {id} = req.params
     const {DataInicio, DataFim} = req.body
 
-    /* console.log(req.body)
+    console.log(req.body)
     console.log(DataInicio)
-    console.log(DataFim) */
+    console.log(DataFim) 
 
     var numeroreservas = 0
 
@@ -1697,8 +1697,8 @@ controllers.entredatas = async(req,res) =>{
         if(DataInicio != "" && DataFim != ""){
             var datainicio = new Date(DataInicio)
             var datafim = new Date(DataFim)
-            //console.log(datainicio)
-            //console.log(datafim)
+            console.log(datainicio)
+            console.log(datafim)
 
             if(datainicio < datafim){
 
@@ -1713,12 +1713,14 @@ controllers.entredatas = async(req,res) =>{
                             const data = await bd.query(query,{ type: QueryTypes.SELECT })
                             .then(function(data){return data;})
                             .catch(err=>console.log(err))
-                            //console.log(data)
+                            console.log(data)
                             if(data!=null){
                                 if(data.length!=0)
-                                    numeroreservas = numeroreservas + 1
+                                    numeroreservas = numeroreservas + data.length
                             }   
+                            
                         }
+                        console.log(numeroreservas)
                         res.status(200).json({sucesso: true, data: numeroreservas})
                     }else{
                         res.json({sucesso:true, data: 0, message:'Como nao existem salas a partida nao existem reservas'})

@@ -203,8 +203,7 @@ controllers.register = async (req, res) =>{
 
 controllers.update = async (req, res) =>{ 
     const {id} = req.params;
-    const {PNome, UNome, Email, FotoNome, TipoGestor, Cargos, Centros} = req.body
-    var data
+    const {PNome, UNome, Email, TipoGestor, Cargos, Centros} = req.body
     var palavrapasse_cript
     if(id!=null){
         const utilizadorData = await utilizador.findOne({
@@ -213,10 +212,11 @@ controllers.update = async (req, res) =>{
         if(utilizadorData){
             if(PNome != '' && UNome !=''){
                 if(validator.validate(Email)){
+                    console.log(Cargos)
                         if(Cargos == 1){
                             console.log(TipoGestor)
-                            if(TipoGestor != null || TipoGestor != ""){
-                                data = await utilizador.update({
+                            
+                                const data = await utilizador.update({
                                     Pnome: PNome,
                                     Unome: UNome,
                                     Email: Email,
@@ -224,7 +224,7 @@ controllers.update = async (req, res) =>{
                                     FotoNome: "",
                                     FotoData: "",
                                     TiposGestorId: TipoGestor,
-                                    CargoId: '1',
+                                    CargoId: Cargos,
                                     CentroId:Centros 
                                 },{
                                     where: {id: id},
@@ -238,10 +238,9 @@ controllers.update = async (req, res) =>{
                                     CentroId: Centros,
                                 },{where:{UtilizadoreId: id}})
                                 res.status(200).json({sucesso: true,data: data, message:'Utilizador atualizado com sucesso'})
-                            }else
-                                res.json({sucesso:false, message: "Insira um tipo de gestor"})
+                            
                         }else{
-                            data = await utilizador.update({
+                            const data = await utilizador.update({
                                 Pnome: PNome,
                                 Unome: UNome,
                                 Email: Email,
