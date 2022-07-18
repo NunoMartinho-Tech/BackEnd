@@ -36,7 +36,7 @@ controllers.add = async (req, res) =>{
     var AlocacaoNova = Number(AlocacaoArray[0]);
     var CapacidadeArray = Capacidade.split(',')
     var CapacidadeNova = Number(CapacidadeArray[0]);
-    if(Centro==null){
+    if(Centro!=null || Centro == 0 || Centro == ""){
         const centro = await centros.findOne({
             where:{ id: Centro}
         })
@@ -71,7 +71,7 @@ controllers.add = async (req, res) =>{
         }else
             res.json({sucesso: false, message:"O centro nao existe "})
     }else{
-        res.json({sucesso: false, message:'Forneca um id'})
+        res.json({sucesso: false, message:'Selecione um centro'})
     }
 }
 

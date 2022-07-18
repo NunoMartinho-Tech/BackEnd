@@ -600,7 +600,7 @@ controllers.limpezaDiaria = async(req,res) =>{
     }
 }
 
-//Reservas feitas hoje depois no centro no centro
+//Reservas feitas hoje depois da hora no centro
 
 controllers.reserasfeitas = async(req,res)=>{
     const {id} = req.params
@@ -612,7 +612,7 @@ controllers.reserasfeitas = async(req,res)=>{
             const query = `select "Salas"."Nome" as "SalaNome", concat("Utilizadores"."Pnome",' ',"Utilizadores"."Unome") as "UtilizadorNome", "Reservas"."DataReserva", "Reservas"."HoraInicio", "Reservas"."HoraFim" 
             from public."Reservas" inner join "public"."Utilizadores" on "Reservas"."UtilizadoreId" = "Utilizadores"."id" inner join public."Salas"
             on "Reservas"."SalaId" = "Salas"."id"
-            where "Salas"."CentroId" = ${id} and "Reservas"."DataReserva" >= CURRENT_DATE and "Reservas"."EstadoId" = 1 and "Reservas"."HoraInicio" > CURRENT_TIME
+            where "Salas"."CentroId" = ${id} and "Reservas"."DataReserva" >= CURRENT_DATE and "Reservas"."EstadoId" = 1
             order by "Reservas"."DataReserva", "Reservas"."HoraInicio"`
             const data = await bd.query(query,{ type: QueryTypes.SELECT })
             .then(function(data){return data;})

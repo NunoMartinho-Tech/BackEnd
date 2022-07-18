@@ -1,9 +1,10 @@
 const express = require('express');
 const Router = express.Router();
 const SalasController = require('../controllers/salaController');
+const middleware = require('../middleware')
 
 //listar
-Router.get('/list', SalasController.list)
+Router.get('/list',middleware.checkToken ,SalasController.list)
 //Criar
 Router.post('/add', SalasController.add)
 //Selecionarw
@@ -23,4 +24,4 @@ Router.get('/centro/:id', SalasController.Salas);
  //listar reservas ativas
 Router.get('/listativas/:id', SalasController.listReservas);
 
-module.exports = Router;
+module.exports = Router; 

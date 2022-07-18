@@ -201,9 +201,9 @@ controllers.add = async (req, res) =>{
                                                             return error;
                                                         }) 
                                                         if(data)
-                                                            res.status(200).json({sucesso: true,data: data, message: 'Reserva lizada com sucesso'});
+                                                            res.status(200).json({sucesso: true,data: data, message: 'Reserva adicionada com sucesso'});
                                                         else
-                                                            res.json({sucesso:false, message: 'Nao foi possivel atualizar a reserva'})
+                                                            res.json({sucesso:false, message: 'Nao foi possivel adicionar a reserva'})
                                                     }else{
                                                         res.json({sucesso: false, message: 'A reserva sobrepoem outra reserva'})
                                                     }
@@ -231,9 +231,9 @@ controllers.add = async (req, res) =>{
                                                         return error;
                                                     }) 
                                                     if(data)
-                                                        res.status(200).json({sucesso: true,data: data, message: 'Reserva atualizada com sucesso'});
+                                                        res.status(200).json({sucesso: true,data: data, message: 'Reserva adicionada com sucesso'});
                                                     else
-                                                        res.json({sucesso:false, message: 'Nao foi possivel atualizar a reserva'})
+                                                        res.json({sucesso:false, message: 'Nao foi possivel adicionar a reserva'})
                                                 }
                                             }
                                         }else{
@@ -395,9 +395,9 @@ controllers.add = async (req, res) =>{
                                                                 return error;
                                                             }) 
                                                             if(data)
-                                                                res.status(200).json({sucesso: true,data: data, message: 'Reserva atualizada com sucesso'});
+                                                                res.status(200).json({sucesso: true,data: data, message: 'Reserva adicionada com sucesso'});
                                                             else
-                                                                res.json({sucesso:false, message: 'Nao foi possivel atualizar a reserva'})
+                                                                res.json({sucesso:false, message: 'Nao foi possivel adicionada a reserva'})
                                                     }else{
                                                         res.json({sucesso: false, message: 'A reserva sobrepoem outra reserva'})
                                                     }
@@ -424,9 +424,9 @@ controllers.add = async (req, res) =>{
                                                         return error;
                                                     }) 
                                                     if(data)
-                                                        res.status(200).json({sucesso: true,data: data, message: 'Reserva atualizada com sucesso'});
+                                                        res.status(200).json({sucesso: true,data: data, message: 'Reserva adicionada com sucesso'});
                                                     else
-                                                        res.json({sucesso:false, message: 'Nao foi possivel atualizar a reserva'})
+                                                        res.json({sucesso:false, message: 'Nao foi possivel adicionada a reserva'})
                                                 }
                                             }
                                         }else{
@@ -1125,19 +1125,19 @@ controllers.desativar = async (req, res) =>{
                 var dateReserva = new Date(reservaData.DataReserva)
                 if(date.isSameDay(data_atual,dateReserva)){
                     var horas_atuais = (data_atual.getHours()).toString()
-                    //console.log('Horas atuas: ' + horas_atuais)
+                    console.log('Horas atuas: ' + horas_atuais)
                     var minutos_atuais = (data_atual.getMinutes()).toString()
-                    //console.log('Minutos atuais: ' + minutos_atuais)
+                    console.log('Minutos atuais: ' + minutos_atuais)
                     var hora_atual_numero = Number(horas_atuais + minutos_atuais)
-                    //console.log('Data atual em numero: '+hora_atual_numero)
+                    console.log('Data atual em numero: '+hora_atual_numero)
                     
                     var hora_fim_array =  reservaData.HoraFim.split(':')
                     var hora_fim_numero = Number(hora_fim_array[0] + hora_fim_array[1])
-                    //console.log('Hora fim: '+ hora_fim_numero)
+                    console.log('Hora fim: '+ hora_fim_numero)
                     
                     var hora_inicio_array =  reservaData.HoraInicio.split(':')
                     var hora_incio_numero = Number(hora_inicio_array[0] + hora_inicio_array[1])
-                    //console.log('Hora Inicio: ' + hora_incio_numero);
+                    console.log('Hora Inicio: ' + hora_incio_numero);
                     if(hora_incio_numero < hora_atual_numero && hora_fim_numero > hora_atual_numero){
                         //Esta a decorrer logo nao pode desativar
                         res.json({sucesso: false, message:'Nao e possivel desativar uma reserva em andamento'})
@@ -1270,7 +1270,7 @@ controllers.reservasativasdoUtilizador = async (req, res) =>{
 }
 
 //Listar Reservas futuras com base no id do utilizador, e data e ativas 
-controllers.reservasfuturasdoUtilizador = async (req, res) =>{ 
+controllers.reservasfuturasdoUtilizador = async (req, res) =>{
     const {id} = req.params;
     if(id!=null){
         const utilizadorData = await utilizador.findOne({

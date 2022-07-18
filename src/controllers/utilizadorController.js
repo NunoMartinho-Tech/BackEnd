@@ -89,13 +89,59 @@ controllers.register = async (req, res) =>{
     const utilizadorData = await utilizador.findOne({
         where:{Email: Email}
     })
-    if(!utilizadorData){
-        if(PNome != '' && UNome !=''){
-            if(validator.validate(Email)){
-                if(schema.validate(PalavraPasse)){
-                    if(Cargos==1){
-                        if(TipoGestor == 0){
-                            res.json({sucesso:false, message: "Insira um tipo de gestor"})
+    console.log(utilizadorData)
+    if(utilizadorData == null){
+            if(PNome != '' && UNome !=''){
+                if(validator.validate(Email)){
+                    if(schema.validate(PalavraPasse)){
+                        if(Cargos==1){
+                            if(TipoGestor == 0){
+                                res.json({sucesso:false, message: "Insira um tipo de gestor"})
+                            }else{
+                                const data = await utilizador.create({
+                                    Pnome: PNome,
+                                    Unome: UNome,
+                                    Email: Email,
+                                    PalavraPasse: PalavraPasse,
+                                    FotoNome: "", 
+                                    FotoData: "", 
+                                    PrimeiroLogin: '1',
+                                    EstadoId: '1',
+                                    TiposGestorId: TipoGestor,
+                                    CargoId: '1',
+                                    CentroId:Centros 
+                                })
+                                //console.log(data)
+                                const util_pertence = await pertence.create({
+                                    CentroId: Centros,
+                                    UtilizadoreId: data.id
+                                })
+                                .then(function(data){return data;})
+                                .catch(error =>{console.log('Error: '+error);})
+                                //Mandar email de registo
+                                var mailOptions = {
+                                    from: 'softinsaprojetofinalestgv@gmail.com',
+                                    to: data.Email,
+                                    subject: 'Confirmação do Registo',
+                                    text: ` 
+                                        É com muito gosto que confirmamos o seu registo.
+                                        
+                                        As suas credenciais de acesso encontram-se mais abaixo, por favor mantenha as em segurança.
+                                        Email: ${data.Email}
+                                        Palavra Passe: ${PalavraPasse}
+
+                                        PS:Não responda a este email
+                                        `
+                                };
+                                transporter.sendMail(mailOptions, function(error, info){
+                                /* if (error) {
+                                    console.log(error);
+                                } else {
+                                    console.log('Email sent: ' + info.response);
+                                } */
+                                });
+                                res.status(200).json({sucesso: true, message: 'Utilizador criado com sucesso', data: data})
+                            }
                         }else{
                             const data = await utilizador.create({
                                 Pnome: PNome,
@@ -106,11 +152,11 @@ controllers.register = async (req, res) =>{
                                 FotoData: "", 
                                 PrimeiroLogin: '1',
                                 EstadoId: '1',
-                                TiposGestorId: TipoGestor,
-                                CargoId: '1',
+                                TiposGestorId: null,
+                                CargoId: Cargos,
                                 CentroId:Centros 
                             })
-                            //console.log(data)
+                            
                             const util_pertence = await pertence.create({
                                 CentroId: Centros,
                                 UtilizadoreId: data.id
@@ -137,63 +183,18 @@ controllers.register = async (req, res) =>{
                                 console.log(error);
                             } else {
                                 console.log('Email sent: ' + info.response);
-                            } */
-                            });
+                            }*/
+                            }); 
                             res.status(200).json({sucesso: true, message: 'Utilizador criado com sucesso', data: data})
                         }
                     }else{
-                        const data = await utilizador.create({
-                            Pnome: PNome,
-                            Unome: UNome,
-                            Email: Email,
-                            PalavraPasse: PalavraPasse,
-                            FotoNome: "", 
-                            FotoData: "", 
-                            PrimeiroLogin: '1',
-                            EstadoId: '1',
-                            TiposGestorId: null,
-                            CargoId: Cargos,
-                            CentroId:Centros 
-                        })
-                        
-                        const util_pertence = await pertence.create({
-                            CentroId: Centros,
-                            UtilizadoreId: data.id
-                        })
-                        .then(function(data){return data;})
-                        .catch(error =>{console.log('Error: '+error);})
-                        //Mandar email de registo
-                        var mailOptions = {
-                            from: 'softinsaprojetofinalestgv@gmail.com',
-                            to: data.Email,
-                            subject: 'Confirmação do Registo',
-                            text: ` 
-                                É com muito gosto que confirmamos o seu registo.
-                                
-                                As suas credenciais de acesso encontram-se mais abaixo, por favor mantenha as em segurança.
-                                Email: ${data.Email}
-                                Palavra Passe: ${PalavraPasse}
-
-                                PS:Não responda a este email
-                                `
-                        };
-                        transporter.sendMail(mailOptions, function(error, info){
-                        /* if (error) {
-                            console.log(error);
-                        } else {
-                            console.log('Email sent: ' + info.response);
-                        }*/
-                        }); 
-                        res.status(200).json({sucesso: true, message: 'Utilizador criado com sucesso', data: data})
+                        res.json({sucesso:false, message:'A palavra passe nao pode ter espacos, deve ter entre 8 a 100 caracteres, pelo menos uma letra maiscula e minuscula e pelo menos dois digitos'})
                     }
                 }else{
-                    res.json({sucesso:false, message:'A palavra passe nao pode ter espacos, deve ter entre 8 a 100 caracteres, pelo menos uma letra maiscula e minuscula e pelo menos dois digitos'})
+                    res.json({sucesso:false, mensagem: 'Insira um email valido'})
                 }
-            }else{
-                res.json({sucesso:false, mensagem: 'Insira um email valido'})
-            }
-        }else
-            res.json({sucesso: false, message:'Por favor insira um nome'})
+            }else
+                res.json({sucesso: false, message:'Por favor insira um nome'})
     }else
         res.json({sucesso: false, message:'Ja existe um utilizador com o mesmo email'})
 }
@@ -213,9 +214,8 @@ controllers.update = async (req, res) =>{
             if(PNome != '' && UNome !=''){
                 if(validator.validate(Email)){
                         if(Cargos == 1){
-                            if(TipoGestor == null || TipoGestor == ""){
-                                res.json({sucesso:false, message: "Insira um tipo de gestor"})
-                            }else{
+                            console.log(TipoGestor)
+                            if(TipoGestor != null || TipoGestor != ""){
                                 data = await utilizador.update({
                                     Pnome: PNome,
                                     Unome: UNome,
@@ -234,7 +234,12 @@ controllers.update = async (req, res) =>{
                                     console.log('Error: '+error);
                                     return error;
                                 })
-                            }
+                                const util_pertence = await pertence.update({
+                                    CentroId: Centros,
+                                },{where:{UtilizadoreId: id}})
+                                res.status(200).json({sucesso: true,data: data, message:'Utilizador atualizado com sucesso'})
+                            }else
+                                res.json({sucesso:false, message: "Insira um tipo de gestor"})
                         }else{
                             data = await utilizador.update({
                                 Pnome: PNome,
@@ -254,21 +259,11 @@ controllers.update = async (req, res) =>{
                                 console.log('Error: '+error);
                                 return error;
                             })
-                        }
-                        // adicionar ao centro
-                        /* const centrosdeleted = await pertence.destroy({
-                            where:{UtilizadoreId:id}
-                        })
-                        if(centrosdeleted){
-                            for(let i =0; i < Centros.length; i++){ */
-                                const util_pertence = await pertence.update({
-                                    CentroId: Centros,
-                                },{where:{UtilizadoreId: id}})
-                            //}
+                            const util_pertence = await pertence.update({
+                                CentroId: Centros,
+                            },{where:{UtilizadoreId: id}})
                             res.status(200).json({sucesso: true,data: data, message:'Utilizador atualizado com sucesso'})
-                        /* }else{
-                            res.json({sucesso:false, message:'Nao foi possivel atualizar os centros do utilizador'})
-                        } */
+                        }
                 }else{
                     res.json({sucesso:false, mensagem: 'Insira um email valido'})
                 }
@@ -309,7 +304,7 @@ controllers.updateMobile = async (req, res) =>{
                             console.log('Error: '+error);
                             return error;
                         })
-                        res.status(200).json({sucesso: true, data: data, message:'Utilizador atualizado com sucesso'})
+                        res.status(200).json({sucesso: true, message:'Utilizador atualizado com sucesso'})
                 }else{
                     res.json({sucesso:false, mensagem: 'Insira um email valido'})
                 }
@@ -362,7 +357,7 @@ controllers.delete = async (req, res) =>{
                         where: {id: id},
                     }) 
                     if(dataUser)
-                        res.status(200).json({ sucesso: true, message: "Utilizador eliminado com sucesso", deleted: data + ' ' +LimpezasData + ' ' +PertenceData + ' ' + limpezadestroy + ' ' +adiamentosdestroy + ' ' +reservadestroy});
+                        res.status(200).json({ sucesso: true, message: "Utilizador eliminado com sucesso"});
                     else
                         res.json({sucesso:false, message:'Nao foi possivel eliminar o utilizador'})
                 }else{
@@ -375,7 +370,7 @@ controllers.delete = async (req, res) =>{
                         where: {id: id},
                     }) 
                     if(data)
-                        res.status(200).json({ sucesso: true, message: "Utilizador eliminado com sucesso", deleted: data + ' ' +LimpezasData + ' ' +PertenceData});
+                        res.status(200).json({ sucesso: true, message: "Utilizador eliminado com sucesso"});
                     else
                         res.json({sucesso:false, message:'Nao foi possivel eliminar o utilizador'})
                 }
@@ -408,10 +403,14 @@ controllers.inativar = async(req,res) =>{
                 //console.log('Minutos atuais: ' + minutos_atuais)
                 var hora_atual_numero = Number(horas_atuais + minutos_atuais)
                 //console.log('Data atual em numero: '+hora_atual_numero)
+
                 var reservaData = await reserva.findAll({
                     where:{UtilizadoreId:id}
                 })
-                if(reservaData.length != 0){
+                //console.log(reservaData)
+                //console.log(reservaData.length)
+                if(reservaData.length != 0 ){
+                    ///console.log("Entrei")
                     for(let i =0; i < reservaData.length; i++){
                         //Verificar se a reserva esta em adamento
                         var dateReserva = new Date(reservaData[i].DataReserva)
@@ -440,7 +439,7 @@ controllers.inativar = async(req,res) =>{
                         }else{
                             //Verificar se ja passou
                             if(data_atual.getTime() > dateReserva.getTime())
-                                break;
+                                continue;
                             else{
                                 //Se nao passou entao inativa nas tabelas que precisa e depois nas resevas
                                 const reservaupdated = await reserva.update({
@@ -501,7 +500,7 @@ controllers.ativar = async(req,res) =>{
                 if(reservaData){
                     //Se existirem reservas com o id do utilizador
                     if(reservaData.length != 0){
-
+                        //console.log('Entrei no if')
                         //Obtermos a data atual
                         var data_atual = new Date() 
                         //console.log('Data atual: '+data_atual)
@@ -568,7 +567,7 @@ controllers.ativar = async(req,res) =>{
                                             if(DataAtualString > DataReservaString)  //Se a resera for no passado continua para a proxima reserva
                                                 continue;
                                             else{ //Se nao vamos buscar todas as reservas com o mesmo id da sala e com a data igual a da reserva
-                                                const query = `select * from public."Reservas" where "Reservas"."EstadoId" = 1 and "Reservas"."DataReserva" = '${reservaData[i].DataReserva}' and "Reservas"."SalaId" = ${Saladata.id} and "Reservas"."id" != ${reservaid} order by "Reservas"."HoraInicio"`
+                                                const query = `select * from public."Reservas" where "Reservas"."EstadoId" = 1 and "Reservas"."DataReserva" = '${reservaData[i].DataReserva}' and "Reservas"."SalaId" = ${reservaData[i].SalaId} order by "Reservas"."HoraInicio"`
                                                 const reservas = await bd.query(query,{ type: QueryTypes.SELECT })
                                                     //console.log(reservas.length)
                                                 if(reservas.length != 0){ //Se existirem reservas para a mesma data na mesma sala
@@ -676,7 +675,7 @@ controllers.ativar = async(req,res) =>{
                                                     const minutosInicio = HoraInicio_Array[1]
                                                     //console.log('Minutos:' + minutosInicio)
                                                     const HorasInicio_desativas = Number(horaInicio+minutosInicio)
-                                                    console.log('Horas da reserva desativa (formato Numero): '+HorasInicio_desativas)
+                                                    //console.log('Horas da reserva desativa (formato Numero): '+HorasInicio_desativas)
                                                     //Hora Fim
                                                     const horasFimReserva = reservaData[i].HoraFim;
                                                     //console.log('Hora da reserva desativa (formato Data): '+ horasFimReserva)
@@ -686,10 +685,10 @@ controllers.ativar = async(req,res) =>{
                                                     const minutosFim = HoraFim_Array[1]
                                                     //console.log('Minutos:' + minutosFim)
                                                     const Horas_em_Numero = Number(horaFim+minutosFim)
-                                                    console.log('Horas da reserva desativa (formato Numero): '+Horas_em_Numero)
+                                                    //console.log('Horas da reserva desativa (formato Numero): '+Horas_em_Numero)
                                                     const HorasFim_MaisLimpeza_Desativas = Horas_em_Numero + HoraLimpezaSala
                                                     //Nao existem reservas com essa data entao pode-se ativar 
-                                                    if((horaInicioCentroNumber < HorasInicio_desativas) || (horaFimCentroNumber > HorasFim_MaisLimpeza_Desativas)){
+                                                    if((HorasInicio_desativas < horaInicioCentroNumber ) || (HorasFim_MaisLimpeza_Desativas > horaFimCentroNumber)){
                                                         //Nao e possivel ativar uma reserva com a hora for do horario do centro
                                                         continue;
                                                     }else{
