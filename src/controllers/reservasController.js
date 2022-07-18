@@ -1669,7 +1669,7 @@ controllers.proximareserva = async(req,res) =>{
                 .catch(err=>console.log(err))
                 //console.log(data)
                 if(data)
-                    res.json({sucesso: true, data: data})
+                    res.json({sucesso: true, data: data, message:'Reuniao adiada com sucesso'})
                 else
                     res.json({sucesso: true, message:'Não foi possível obter as reservas desse utilizador', data: data})
             }else
