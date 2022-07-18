@@ -82,7 +82,7 @@ controllers.loginRequesitante = async(req,res) =>{
                             //console.log(isMatch)
                             if(req.body.email == user.Email && isMatch){
                                 //console.log("Passei pela verificação")
-                                let token = jwt.sign({email: req.body.email}, config.jwtSecret, {expiresIn: '1h'});
+                                let token = jwt.sign({email: req.body.email}, config.jwtSecret, {expiresIn: '24h'});
                                 //console.log("token")
                                 res.status(200).json({
                                     sucesso: true, 
