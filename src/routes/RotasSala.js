@@ -20,7 +20,7 @@ Router.put('/desativar/:id', SalasController.desativar);
 //Obter Codigo
 Router.get('/codigo/:id', SalasController.code);
 //Obter Lista de Salas com base no centro
-Router.get('/centro/:id', SalasController.Salas);
+Router.get('/centro/:id',middleware.checkToken, SalasController.Salas);
  //listar reservas ativas
 Router.get('/listativas/:id', SalasController.listReservas);
 
