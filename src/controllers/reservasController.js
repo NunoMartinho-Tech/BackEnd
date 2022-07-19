@@ -29,16 +29,45 @@ controllers.list = async (req, res) =>{
 
 //Listar reservas com base no centro e no user WebSite
 controllers.listReservas = async (req, res) =>{
-    const {id} = req.params
+    const {idUser} = req.params
+    console.log(idUser)
     const {centroId} = req.body
+    console.log(centroId)
 
-    if(id!=null){
+    if(idUser!=null){
         if(centroId !=null){
             const query = `select * from "Reservas" inner join "Salas" on "Reservas"."SalaId" = "Salas"."id" inner join "Utilizadores" on "Reservas"."UtilizadoreId" = "Utilizadores"."id"
-            where "Utilizadores"."id" = ${id} and "Salas"."CentroId" = ${centroId}`
+            where "Utilizadores"."id" = ${idUser} and "Salas"."CentroId" = ${centroId}`
             const data = await bd.query(query,{ type: QueryTypes.SELECT })
             .then(function(data){return data;})
             .catch(err=>console.log(err))
+            console.log(data)
+            if(data)
+                res.status(200).json({sucesso: true, data: data})
+            else
+                res.json({sucesso: false, message:'Não foi possível obter as reservas desse utilizador'})
+        }else
+            res.json({sucesso: false, message: 'Insira um centro'})
+    }else
+        res.json({sucesso: false, message: 'Insira um id'})
+}
+
+//Listar reservas com base no centro e no user mobile
+controllers.listReservasMobile = async (req, res) =>{
+   
+    const {centroId, idUser} = req.body
+
+    console.log(idUser)
+    console.log(centroId)
+
+    if(idUser!=null){
+        if(centroId !=null){
+            const query = `select "Reservas"."id","Reservas"."NomeReserva","Reservas"."NumeroParticipantes","Reservas"."SalaId", "Reservas"."DataReserva","Reservas"."HoraInicio","Reservas"."HoraFim"   from "Reservas" inner join "Salas" on "Reservas"."SalaId" = "Salas"."id" inner join "Utilizadores" on "Reservas"."UtilizadoreId" = "Utilizadores"."id"
+            where "Reservas"."UtilizadoreId" = '${idUser}' and "Salas"."CentroId" = '${centroId}'`
+            const data = await bd.query(query,{ type: QueryTypes.SELECT })
+            .then(function(data){return data;})
+            .catch(err=>console.log(err))
+            console.log(data)
             if(data)
                 res.status(200).json({sucesso: true, data: data})
             else

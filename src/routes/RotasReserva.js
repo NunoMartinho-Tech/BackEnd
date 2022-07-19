@@ -7,7 +7,7 @@ Router.get('/list', ReservasController.list);
 //Listar reservas com base no centro e no user
 Router.get('/listReservas/:id',ReservasController.listReservas)
 //Listar reservas com base no centro e no user MOBILE
-Router.post('/listReservasUserCentro/:id',ReservasController.listReservas)
+Router.post('/listReservasUserCentro',ReservasController.listReservasMobile)
 //criar
 Router.post('/add', ReservasController.add);
 //Selecionar
