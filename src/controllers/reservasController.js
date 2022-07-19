@@ -62,19 +62,31 @@ controllers.listReservasMobile = async (req, res) =>{
     //console.log(centroId)
 
     if(id!=null){
-        if(centroId !=null){
-            const query = `select "Reservas"."EstadoId","Reservas"."id","Reservas"."NomeReserva","Reservas"."NumeroParticipantes","Reservas"."SalaId", "Reservas"."DataReserva","Reservas"."HoraInicio","Reservas"."HoraFim"   from "Reservas" inner join "Salas" on "Reservas"."SalaId" = "Salas"."id" inner join "Utilizadores" on "Reservas"."UtilizadoreId" = "Utilizadores"."id"
-            where "Reservas"."UtilizadoreId" = '${id}' and "Salas"."CentroId" = '${centroId}'`
-            const data = await bd.query(query,{ type: QueryTypes.SELECT })
-            .then(function(data){return data;})
-            .catch(err=>console.log(err))
-            //console.log(data)
-            if(data)
-                res.status(200).json({sucesso: true, data: data})
-            else
-                res.json({sucesso: false, message:'Não foi possível obter as reservas desse utilizador'})
+        const userData = await utilizador.findOne({
+            where:{id:id}
+        })
+        if(userData){
+            if(centroId !=null){
+                const centroData = await centro.findOne({
+                    where:{id:centroId}
+                })
+                if(centroData){
+                    const query = `select "Reservas"."EstadoId","Reservas"."id","Reservas"."NomeReserva","Reservas"."NumeroParticipantes","Reservas"."SalaId", "Reservas"."DataReserva","Reservas"."HoraInicio","Reservas"."HoraFim"   from "Reservas" inner join "Salas" on "Reservas"."SalaId" = "Salas"."id" inner join "Utilizadores" on "Reservas"."UtilizadoreId" = "Utilizadores"."id"
+                    where "Reservas"."UtilizadoreId" = '${id}' and "Salas"."CentroId" = '${centroId}'`
+                    const data = await bd.query(query,{ type: QueryTypes.SELECT })
+                    .then(function(data){return data;})
+                    .catch(err=>console.log(err))
+                    //console.log(data)
+                    if(data)
+                        res.status(200).json({sucesso: true, data: data})
+                    else
+                        res.json({sucesso: false, message:'Não foi possível obter as reservas desse utilizador'})
+                }else
+                    res.json({sucesso: false, message: 'Centro nao existe'})
+            }else
+                res.json({sucesso: false, message: 'Insira um centro'})
         }else
-            res.json({sucesso: false, message: 'Insira um centro'})
+            res.json({sucesso: false, message: 'User não existe'})
     }else
         res.json({sucesso: false, message: 'Insira um id'})
 }
