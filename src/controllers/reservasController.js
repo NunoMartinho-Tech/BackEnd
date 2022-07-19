@@ -27,7 +27,7 @@ controllers.list = async (req, res) =>{
         res.json({sucesso: false})
 }
 
-//Listar reservas com base no centro e no user
+//Listar reservas com base no centro e no user WebSite
 controllers.listReservas = async (req, res) =>{
     const {id} = req.params
     const {centroId} = req.body
