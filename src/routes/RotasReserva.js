@@ -20,8 +20,12 @@ Router.post('/delete/:id', ReservasController.delete);
 Router.put('/ativar/:id',ReservasController.ativar);
 //Desativar
 Router.put('/desativar/:id',ReservasController.desativar);
+
+
 //Lista a proxima reuniao
 Router.post('/proximareuniao/:id', ReservasController.proximareserva)
+
+
 //Listar Reservas Passadas com base no utilizador
 Router.get('/reservaspassadas/:id', ReservasController.reservasPassadasdeUtilizador);
 //Listar Reservas com base no utilizador

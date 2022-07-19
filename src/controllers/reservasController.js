@@ -75,7 +75,7 @@ controllers.listReservasMobile = async (req, res) =>{
 "Reservas"."SalaId" as "SalaId", "Reservas"."DataReserva","Reservas"."HoraInicio","Reservas"."HoraFim",
 "Salas"."Nome", "Utilizadores"."id" as "UtilizadoreId", "Utilizadores"."Pnome", "Utilizadores"."Unome"   
 from "Reservas" inner join "Salas" on "Reservas"."SalaId" = "Salas"."id" inner join "Utilizadores" on "Reservas"."UtilizadoreId" = "Utilizadores"."id"
-where "Reservas"."UtilizadoreId" = ${id} and "Salas"."CentroId" = ${centroId}`
+where "Reservas"."UtilizadoreId" = ${id} and "Salas"."CentroId" = ${centroId} and "Reservas"."EstadoId"=1`
                     const data = await bd.query(query,{ type: QueryTypes.SELECT })
                     .then(function(data){return data;})
                     .catch(err=>console.log(err))
@@ -1755,16 +1755,16 @@ controllers.proximareserva = async(req,res) =>{
     if(id!=null){
         if(HoraFim != null && Data != null && CentroId != null){
             if(HoraFim != "" && Data != "" && CentroId != ""){
-                console.log('Passei aqui')
+                //console.log('Passei aqui')
                 const query = `select "Reservas"."HoraInicio", "Salas"."Tempo_Limpeza"
                 from "Reservas" inner join "Salas" on "Reservas"."SalaId" = "Salas"."id"
-                where "Reservas"."DataReserva" = '${Data}' and "Reservas"."HoraFim" > '${HoraFim}' and "Reservas"."EstadoId" = 1 and "Salas"."EstadoId" = 1 
+                where "Reservas"."DataReserva" = '${Data}' and "Reservas"."HoraInicio" > '${HoraFim}' and "Reservas"."EstadoId" = 1 and "Salas"."EstadoId" = 1 
                 and "Salas"."CentroId" = ${CentroId} and "Salas"."id" = ${id}
                 order by "Reservas"."HoraInicio"`
                 const data = await bd.query(query,{ type: QueryTypes.SELECT })
                 .then(function(data){return data;})
                 .catch(err=>console.log(err))
-                //console.log(data)
+                console.log(data)
                 if(data)
                     res.json({sucesso: true, data: data, message:'Reuniao adiada com sucesso'})
                 else
