@@ -529,10 +529,11 @@ controllers.get = async(req,res) =>{
 
     const {id} = req.params;
     if(id!=null){
-        const data = await reserva.findOne({
-            where: {id: id},
-            include: {all: true}
-        })
+        const query = `select "Reservas"."id", "Reservas"."NomeReserva", "Reservas"."DataReserva" , "Reservas"."NumeroParticipantes", "Reservas"."HoraInicio", "Reservas"."HoraFim",
+"Reservas"."EstadoId", "Reservas"."UtilizadoreId", "Reservas"."SalaId", "Centros"."Nome" as "CentroNome", "Salas"."Nome" as "SalaNome"
+from "Reservas" inner join "Salas" on "Reservas"."SalaId" = "Salas"."id" inner join "Centros" on "Salas"."CentroId" = "Centros"."id"
+where "Reservas"."id" = ${id}`
+        const data = await bd.query(query,{ type: QueryTypes.SELECT })
         .then(function(data){return data;})
         .catch(error => {
             console.log('Error:'+error)
