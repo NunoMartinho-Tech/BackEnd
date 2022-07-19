@@ -62,7 +62,7 @@ controllers.listReservasMobile = async (req, res) =>{
 
     if(idUser!=null){
         if(centroId !=null){
-            const query = `select "Reservas"."id","Reservas"."NomeReserva","Reservas"."NumeroParticipantes","Reservas"."SalaId", "Reservas"."DataReserva","Reservas"."HoraInicio","Reservas"."HoraFim"   from "Reservas" inner join "Salas" on "Reservas"."SalaId" = "Salas"."id" inner join "Utilizadores" on "Reservas"."UtilizadoreId" = "Utilizadores"."id"
+            const query = `select "Reservas"."EstadoId","Reservas"."id","Reservas"."NomeReserva","Reservas"."NumeroParticipantes","Reservas"."SalaId", "Reservas"."DataReserva","Reservas"."HoraInicio","Reservas"."HoraFim"   from "Reservas" inner join "Salas" on "Reservas"."SalaId" = "Salas"."id" inner join "Utilizadores" on "Reservas"."UtilizadoreId" = "Utilizadores"."id"
             where "Reservas"."UtilizadoreId" = '${idUser}' and "Salas"."CentroId" = '${centroId}'`
             const data = await bd.query(query,{ type: QueryTypes.SELECT })
             .then(function(data){return data;})
