@@ -55,19 +55,20 @@ controllers.listReservas = async (req, res) =>{
 //Listar reservas com base no centro e no user mobile
 controllers.listReservasMobile = async (req, res) =>{
    
-    const {centroId, idUser} = req.body
+    const {id} = req.params;
+    const {centroId} = req.body
 
-    console.log(idUser)
-    console.log(centroId)
+    //console.log(id)
+    //console.log(centroId)
 
-    if(idUser!=null){
+    if(id!=null){
         if(centroId !=null){
             const query = `select "Reservas"."EstadoId","Reservas"."id","Reservas"."NomeReserva","Reservas"."NumeroParticipantes","Reservas"."SalaId", "Reservas"."DataReserva","Reservas"."HoraInicio","Reservas"."HoraFim"   from "Reservas" inner join "Salas" on "Reservas"."SalaId" = "Salas"."id" inner join "Utilizadores" on "Reservas"."UtilizadoreId" = "Utilizadores"."id"
-            where "Reservas"."UtilizadoreId" = '${idUser}' and "Salas"."CentroId" = '${centroId}'`
+            where "Reservas"."UtilizadoreId" = '${id}' and "Salas"."CentroId" = '${centroId}'`
             const data = await bd.query(query,{ type: QueryTypes.SELECT })
             .then(function(data){return data;})
             .catch(err=>console.log(err))
-            console.log(data)
+            //console.log(data)
             if(data)
                 res.status(200).json({sucesso: true, data: data})
             else
