@@ -54,6 +54,42 @@ controllers.list = async (req, res) =>{
         res.json({sucesso: false, message:'Nao foi possivel listar os utilizadores', data: data})
 }
 
+//Listar Utilizadores com base no centro
+
+controllers.listUtilizadores = async (req, res) =>{
+    const {id} = req.params
+    const users = []
+
+    if(id!=null){
+
+        const perte = await pertence.findAll({
+            where:{CentroId:id}
+        })
+        if(perte){
+            for(let i = 0; i<perte.length;i++){
+                const data = await utilizador.findOne({
+                    where:{id:perte[i].UtilizadoreId},
+                    include: {all: true}
+                })
+                .then(function(data){return data;})
+                .catch(error => {
+                    console.log('Error:'+error)
+                    return error;
+                }) 
+                if(data)
+                    users.push(data)
+                else
+                    continue;
+            }
+            if(users)
+                res.status(200).json({sucesso:true, data: users});
+            else
+                res.json({sucesso: false, message:'Nao foi possivel listar os utilizadores', data: data})
+        }
+    }else
+        res.json({sucesso: false, message:'Insira um id'})
+}
+
 //Obter Utilizador
 
 controllers.get = async(req,res) =>{

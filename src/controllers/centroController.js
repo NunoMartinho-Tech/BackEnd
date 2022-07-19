@@ -28,6 +28,28 @@ controllers.list = async (req, res) =>{
         res.json({sucesso: false, message: 'Nao existem centros, por favor adicione.'});
 }
 
+//Listar Centros com base no id do centro
+
+controllers.listCentro = async (req, res) =>{
+
+    const {id} = req.params
+
+    if(id!=null){
+
+        const data = await centro.findOne({
+            where: {id: id},
+        })
+        .then(function(data){return data;})
+        .catch(error =>{return error;})
+        if(data)
+            res.status(200).json({sucesso: true, data: data});
+        else
+            res.json({sucesso: false, message: 'Nao existem centros, por favor adicione.'});
+    }else{
+        res.json({sucesso: false, message:'Forneca um id'})
+    }
+}
+
 //Adicionar Centro
 
 controllers.add = async(req, res) => {

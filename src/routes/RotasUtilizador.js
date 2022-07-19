@@ -5,6 +5,8 @@ const UtilizadoresController = require('../controllers/utilizadorController');
 
 //listar
 Router.get('/list', UtilizadoresController.list)
+//Listar utilizadores com base no centro
+Router.get('/listUsers/:id', UtilizadoresController.listUtilizadores)
 //Selecionar
 Router.get('/get/:id', UtilizadoresController.get)
 //Editar

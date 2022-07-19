@@ -27,6 +27,32 @@ controllers.list = async (req, res) =>{
         res.status({sucesso: false, message:"Nao foi possivel obter as salas"});
 }
 
+//Listar Salas com base no centro
+controllers.ListarSalas = async(req,res)=>{
+    const {id} = req.params;
+
+    if(id!=null){
+        const centroData = await centros.findOne({
+            where:{id:id}
+        })
+        if(centroData){
+            const data = await sala.findAll({
+                where: {CentroId: id},
+                include: {all: true}
+            })
+            if(data){
+                res.status(200).json({sucesso: true, data: data});
+            }else{
+                res.json({sucesso:false, message:'Nao foi possivel obter as salas do centro '})
+            }
+        }else{
+            res.json({sucesso:false, message:'Nao existe nenhum centro com o id ' + id})
+        }
+    }else{
+        res.json({sucesso: false, message:'Forneca um id'})
+    }
+}
+
 //Adicionar Sala
 
 controllers.add = async (req, res) =>{

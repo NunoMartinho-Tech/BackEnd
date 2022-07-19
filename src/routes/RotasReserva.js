@@ -4,6 +4,8 @@ const ReservasController = require('../controllers/reservasController');
 
  //listar
 Router.get('/list', ReservasController.list);
+//Listar reservas com base no centro e no user
+Router.get('/listReservas/:id',ReservasController.listReservas)
 //criar
 Router.post('/add', ReservasController.add);
 //Selecionar

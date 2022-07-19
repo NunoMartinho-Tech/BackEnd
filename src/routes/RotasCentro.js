@@ -4,6 +4,8 @@ const CentroController = require('../controllers/centroController');
 
  //listar
 Router.get('/list', CentroController.list);
+//Listar Centros com base no id do centro
+Router.get('/listCentro/:id', CentroController.listCentro)
 //Criar
 Router.post('/add', CentroController.add);
 //Selecionar

@@ -5,6 +5,8 @@ const SalasController = require('../controllers/salaController');
 
 //listar
 Router.get('/list',SalasController.list)
+//Listar salas com base no centro
+Router.get('/listSalas/:id', SalasController.ListarSalas)
 //Criar
 Router.post('/add', SalasController.add)
 //Selecionarw
