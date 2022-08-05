@@ -1,6 +1,8 @@
 var bd = require('../config/basedados');
 var sala = require('../models/Salas');
 var centros = require('../models/Centros');
+var utilizadores = require('../models/Utilizador')
+var pertence = require('../models/Pertence')
 var historicoLimpezas = require('../models/Historico_limpezas')
 var historicoAdiamentos = require('../models/Historico_adiamentos')
 var reserva = require('../models/Reservas');
@@ -433,6 +435,47 @@ controllers.listReservas = async (req, res) =>{
             }else{
                 res.json({sucesso:false, message:'A sala nao esta ativa'})
             }
+        }else{
+            res.json({sucesso:false, message:'A sala nao existe'})
+        }
+    }else{
+        res.json({sucesso: false, message:'Forneca um id'})
+    }
+}
+
+//Validar se o utilizador pertence ao centro da sala dada 
+controllers.user = async (req,res) =>{
+    const {iduser, idsala} = req.params
+    console.log(req.params)
+    console.log(iduser)
+    console.log(idsala)
+
+    if(iduser!=null  || idsala != null){
+        const salaData = await sala.findOne({
+            where:{id:idsala}
+        })
+        if(salaData){
+            const utilizadorData = await utilizadores.findOne({
+                where:{id:iduser}
+            })    
+            if(utilizadorData){
+                const centroid = salaData.CentroId
+
+                const userpertence = await pertence.findOne({
+                    where:{
+                        CentroId:centroid,
+                        UtilizadoreId: iduser
+                    }
+                })
+                console.log(userpertence)
+                if(userpertence!=null){
+                    res.json({sucesso: true, dados: true})
+                }else{
+                    res.json({sucesso: false, dados: false})
+                }
+            }else{
+                res.json({sucesso: false, message:'O utilizador nao existe'})
+            }         
         }else{
             res.json({sucesso:false, message:'A sala nao existe'})
         }

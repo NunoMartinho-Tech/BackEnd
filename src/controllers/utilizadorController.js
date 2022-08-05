@@ -15,9 +15,6 @@ var schema = new passwordValidator();
 var nodemailer = require('nodemailer');
 
 
-
-
-
 schema
     .is().min(8)
     .is().max(100)

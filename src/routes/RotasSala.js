@@ -26,4 +26,7 @@ Router.get('/centro/:id', SalasController.Salas);
  //listar reservas ativas
 Router.get('/listativas/:id', SalasController.listReservas);
 
+//Validar utilizador com base na sala
+Router.get('/utilizador/:iduser/:idsala', SalasController.user);
+
 module.exports = Router; 
