@@ -364,19 +364,17 @@ controllers.code = async(req,res) =>{
         })
         if(data){
             let info = JSON.stringify(data);
-            //Print na Consola
-            QRCode.toString(info,{type:'terminal'},function (err, code) { 
-                if(err) return console.log("error occurred")
-                // Imprimir o codigo
-                //console.log(code)
-            })
+            //console.log(info)
+            var arraydejson = [];
+            arraydejson.push(info)
+            console.log(1)
+            console.log(arraydejson)
             //Converter para base64
-            QRCode.toDataURL(info,function (err, code) { 
+            QRCode.toDataURL(arraydejson,function (err, code) { 
                 if(err) return console.log("error occurred")
-                // Imprimir o codigo
-                //console.log(code)
-                res.status(200).json({sucesso: true, data: code, message:"Codigo gerado com sucesso"} )
+                res.json({sucesso: true, data: code, message:"Codigo gerado com sucesso"})          
             })
+
         }else
             res.json({sucesso:false, message:"A sala com o id "+id+' nao existe'})
     }else{
