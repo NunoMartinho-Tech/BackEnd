@@ -8,14 +8,10 @@ var historicoAdiamentos = require('../models/Historico_adiamentos')
 var reserva = require('../models/Reservas');
 const QRCode = require('qrcode');
 const { QueryTypes } = require('sequelize');
-
-
 const controllers = {}
-
 bd.sync()
 
 //Listar Salas
-
 controllers.list = async (req, res) =>{
     const data = await sala.findAll({include: {all: true}})
     .then(function(data){return data;})
@@ -26,13 +22,13 @@ controllers.list = async (req, res) =>{
     if(data)
         res.status(200).json({sucesso:true, data: data});
     else
-        res.status({sucesso: false, message:"Nao foi possivel obter as salas"});
+        res.status({sucesso: false, message:"Impossível obter as salas"});
 }
 
 //Listar Salas com base no centro
 controllers.ListarSalas = async(req,res)=>{
     const {id} = req.params;
-
+    //Validar o id fornecido
     if(id!=null){
         const centroData = await centros.findOne({
             where:{id:id}
@@ -45,21 +41,19 @@ controllers.ListarSalas = async(req,res)=>{
             if(data){
                 res.status(200).json({sucesso: true, data: data});
             }else{
-                res.json({sucesso:false, message:'Nao foi possivel obter as salas do centro '})
+                res.json({sucesso:false, message:'Impossível obter as salas do centro'})
             }
         }else{
-            res.json({sucesso:false, message:'Nao existe nenhum centro com o id ' + id})
+            res.json({sucesso:false, message:'O centro não existe'})
         }
     }else{
-        res.json({sucesso: false, message:'Forneca um id'})
+        res.json({sucesso: false, message:'O id é null'})
     }
 }
 
 //Adicionar Sala
-
 controllers.add = async (req, res) =>{
     const {Nome, Capacidade, Alocacao, TempoLimpeza, Centro} = req.body
-
     var AlocacaoArray = Alocacao.split(',')
     var AlocacaoNova = Number(AlocacaoArray[0]);
     var CapacidadeArray = Capacidade.split(',')
@@ -68,45 +62,41 @@ controllers.add = async (req, res) =>{
         const centro = await centros.findOne({
             where:{ id: Centro}
         })
-        
         if(centro){
             if(CapacidadeNova <= 0)
-                res.json({sucesso: false, message: "A capacidade da sala nao pode ser inferior ou igual a 0"})
+                res.json({sucesso: false, message: 'Capacidade não pode ser inferior ou igual a 0'})
             else{
                 if(AlocacaoNova < 1 || AlocacaoNova > 100){
-                    res.json({sucesso: false, message:'A alocacao tem que ser entre 1 e 100'})
+                    res.json({sucesso: false, message:'Alocação tem que estar entre 1 e 100'})
                 }else{
-
-                        var Nome_Limpo = Nome.normalize("NFD").replace(/[\u0300-\u036f]/g, '');
-                        const data = await sala.create({
-                            Nome: Nome_Limpo,
-                            Capacidade: CapacidadeNova,
-                            Alocacao: AlocacaoNova,
-                            Tempo_Limpeza: TempoLimpeza,
-                            Motivo_Bloqueio: "",
-                            EstadoId: '1',
-                            CentroId: Centro,
-                            EstadosLimpezaId: '1'
-                        })
-                        .then(function(data){return data;})
-                        .catch(error => {
-                            //console.log('Error:'+error)
-                            return error;
-                        })
-                        res.status(200).json({sucesso: true, data: data, message: 'Sala adicionada com sucesso'});
+                    var Nome_Limpo = Nome.normalize("NFD").replace(/[\u0300-\u036f]/g, '');
+                    const data = await sala.create({
+                        Nome: Nome_Limpo,
+                        Capacidade: CapacidadeNova,
+                        Alocacao: AlocacaoNova,
+                        Tempo_Limpeza: TempoLimpeza,
+                        Motivo_Bloqueio: "",
+                        EstadoId: '1',
+                        CentroId: Centro,
+                        EstadosLimpezaId: '1'
+                    })
+                    .then(function(data){return data;})
+                    .catch(error => {
+                        //console.log('Error:'+error)
+                        return error;
+                    })
+                    res.status(200).json({sucesso: true, data: data, message: 'Sala adicionada com sucesso'});
                 }
             }
         }else
-            res.json({sucesso: false, message:"O centro nao existe "})
+            res.json({sucesso: false, message:'O centro não existe'});
     }else{
-        res.json({sucesso: false, message:'Selecione um centro'})
+        res.json({sucesso: false, message:'Selecione um centro'});
     }
 }
 
 //Obter Sala
-
 controllers.get = async(req,res) =>{
-
     const {id} = req.params;
     if(id!=null){
         const data = await sala.findOne({
@@ -121,41 +111,35 @@ controllers.get = async(req,res) =>{
         if(data)
             res.status(200).json({sucesso: true, data: data});
         else
-            res.json({sucesso:false, message:'Nao foi possivel encontrar a sala com o id: ' + id})
+            res.json({sucesso:false, message:'Impossível obter a info da sala'})
     }else{
-        res.json({sucesso: false, message:'Forneca um id'})
+        res.json({sucesso: false, message:'O id é null'})
     }
 }
 
 //Editar Sala
-
 controllers.update = async (req, res) =>{ 
     const {id} = req.params;
-
     const {Nome, Capacidade, Alocacao, TempoLimpeza, Centro, Estado, MotivoBloqueio} = req.body
-
     var Nome_Limpo = Nome.normalize("NFD").replace(/[\u0300-\u036f]/g, '');
-
     if(id!=null){
-
         const saladata = await sala.findOne({
             where:{id:id}
         })
         const centro = await centros.findOne({
             where:{ id: Centro}
         })
-
         if(saladata){
             if(centro){
                 if(Capacidade <= 0)
-                    res.json({sucesso: false, message: "A capacidade da sala nao pode ser inferior ou igual a 0"})
+                    res.json({sucesso: false, message: 'Capacidade não pode ser inferior ou igual a 0'})
                 else{
                     if(Alocacao < 1 || Alocacao > 100){
-                        res.json({sucesso: false, message:'A alocacao tem que ser entre 1 e 100'})
+                        res.json({sucesso: false, message:'Alocação tem que estar entre 1 e 100'})
                     }else{
                             if(Estado==2){ 
                                 if(MotivoBloqueio==""){
-                                    res.json({sucesso: false, message:'Insira um motivo de inativação'});
+                                    res.json({sucesso: false, message:'Insira um motivo'});
                                 }else{
                                     const data = await sala.update({ 
                                         Nome: Nome_Limpo,
@@ -193,26 +177,24 @@ controllers.update = async (req, res) =>{
                                     })
                                     res.status(200).json({sucesso: true, data: data, message:'Sala atualizada com sucesso'})
                                 }else
-                                    res.json({sucesso:false, message:"O Estado nao e valiudo"});
+                                    res.json({sucesso:false, message:"O estado não é válido"});
                             }
                     }
                 }
             }else
-                res.json({sucesso: false, message:"Nao existe nenhum centro com o id: " + Centro})
+                res.json({sucesso: false, message:'O centro não existe'})
         }else{
-            res.json({sucesso:false, message:"A sala com o id "+id+' nao existe'})
+            res.json({sucesso:false, message:'A sala com o id '+id+' não existe'})
         }
     }else{
-        res.json({sucesso: false, message:'Forneca um id'})
+        res.json({sucesso: false, message:'O id é null'})
     }
 }
 
 //Desativar Sala
-
 controllers.desativar= async (req,res) =>{
     const {id} = req.params;
     const {Motivo} = req.body
-
     var Motivo_Limpo = Motivo.normalize("NFD").replace(/[\u0300-\u036f]/g, '');
     if(id!=null){
         const saladata = await sala.findOne({
@@ -222,18 +204,16 @@ controllers.desativar= async (req,res) =>{
             var estado= saladata.EstadoId;
             if(estado == 1){
                 if(Motivo == ""){
-                    res.json({sucesso: false, message:'Insira o motivo de inativação'})
+                    res.json({sucesso: false, message:'Insira um motivo'})
                 }else{
                     //Desativar as reservas associadas a sala
                     const query = `update public."Reservas" set "EstadoId" = 2 
                     where "SalaId" = ${id} and "DataReserva" >= CURRENT_DATE `
                     const datareserva = await bd.query(query,{ type: QueryTypes.UPDATE })
-
                     const data = await sala.update({ 
                         Motivo_Bloqueio: Motivo_Limpo,
                         EstadoId: '2'
                     },{where: {id: id}})
-
                     .then(function(data){
                         return data;
                     })  
@@ -247,19 +227,16 @@ controllers.desativar= async (req,res) =>{
                     res.json({sucesso: false, message:"A sala "+saladata.Nome+' ja se encontra desativada'})
                 }
         }else
-            res.json({sucesso:false, message:"A sala com o id "+id+' nao existe'})
+            res.json({sucesso:false, message:'A sala com o id '+id+' não existe'})
     }else{
-        res.json({sucesso: false, message:'Forneca um id'})
+        res.json({sucesso: false, message:'O id é null'})
     }
 }
 
 //Ativar Sala
-
 controllers.ativar= async(req,res) =>{
     const {id} = req.params;
-
     if(id!=null){
-
         const saladata = await sala.findOne({
             where:{id:id}
         })
@@ -270,12 +247,10 @@ controllers.ativar= async(req,res) =>{
                     const query = `update public."Reservas" set "EstadoId" = 1 
                     where "SalaId" = ${id} and "DataReserva" >= CURRENT_DATE `
                     const datareserva = await bd.query(query,{ type: QueryTypes.UPDATE })
-
                     const data = await sala.update({ 
                         Motivo_Bloqueio: "",
                         EstadoId: '1'
                     },{where: {id: id}})
-
                     .then(function(data){
                         return data;
                     })
@@ -285,26 +260,22 @@ controllers.ativar= async(req,res) =>{
                     })
                     res.status(200).json({sucesso: true, data: data + ' ' + datareserva, message:'Sala ativada com sucesso'})
             }else{
-                res.json({sucesso: false, message:"A sala "+saladata.Nome+' ja se encontra ativada'})
+                res.json({sucesso: false, message:'A sala '+saladata.Nome+' já se encontra ativada'})
             }
         }else
-            res.json({sucesso:false, message:"A sala com o id "+id+' nao existe'})
+            res.json({sucesso:false, message:'A sala com o id '+id+' não existe'})
     }else{
-        res.json({sucesso: false, message:'Forneca um id'})
+        res.json({sucesso: false, message:'O id é null'})
     }
 }
 
 //Eliminar Sala
-
 controllers.delete = async (req, res) =>{
     const {id} = req.params;
-
     if(id!=null){
-
         const saladata = await sala.findOne({
             where:{id:id}
         })
-
         if(saladata){
             //Buscar as reservas
             const reservasdata = await reserva.findAll({
@@ -345,19 +316,17 @@ controllers.delete = async (req, res) =>{
             if(data)
                 res.status(200).json({sucesso: true, message: "Sala eliminada com sucesso",deleted: data});
             else
-                res.json({sucesso:false, message:'A sala nao foi eliminada'})
+                res.json({sucesso:false, message:'Impossível eliminar a sala'})
         }else
-            res.json({sucesso:false, message:"A sala com o id "+id+' nao existe'})
+            res.json({sucesso:false, message:"A sala com o id "+id+' não existe'})
     }else{
-        res.json({sucesso: false, message:'Forneca um id'})
+        res.json({sucesso: false, message:'O id é null'})
     }
 }
 
 //Obter QR Code
-
 controllers.code = async(req,res) =>{
     const {id} = req.params;
-
     if(id!=null){
         const data = await sala.findOne({
             where: {id: id}
@@ -367,26 +336,24 @@ controllers.code = async(req,res) =>{
             //console.log(info)
             var arraydejson = [];
             arraydejson.push(info)
-            console.log(1)
-            console.log(arraydejson)
+            /* console.log(1)
+            console.log(arraydejson) */
             //Converter para base64
             QRCode.toDataURL(arraydejson,function (err, code) { 
                 if(err) return console.log("error occurred")
-                res.json({sucesso: true, data: code, message:"Codigo gerado com sucesso"})          
+                res.json({sucesso: true, data: code, message:"Código gerado com sucesso"})          
             })
 
         }else
-            res.json({sucesso:false, message:"A sala com o id "+id+' nao existe'})
+            res.json({sucesso:false, message:"A sala com o id "+id+' não existe'})
     }else{
-        res.json({sucesso: false, message:'Forneca um id'})
+        res.json({sucesso: false, message:'O id é null'})
     }
 }
 
 //Listar Salas com base no id do centro e com o estado ativo
-
 controllers.Salas = async(req,res) =>{
     const {id} = req.params;
-
     if(id!=null){
         const centroData = await centros.findOne({
             where:{id:id}
@@ -399,13 +366,13 @@ controllers.Salas = async(req,res) =>{
             if(data){
                 res.status(200).json({sucesso: true, data: data});
             }else{
-                res.json({sucesso:false, message:'Nao foi possivel obter as salas do centro '})
+                res.json({sucesso:false, message:'Impossível obter as salas do centro'})
             }
         }else{
-            res.json({sucesso:false, message:'Nao existe nenhum centro com o id ' + id})
+            res.json({sucesso:false, message:'Não existe nenhum centro com o id ' + id})
         }
     }else{
-        res.json({sucesso: false, message:'Forneca um id'})
+        res.json({sucesso: false, message:'O id é null'})
     }
 }
 
@@ -425,29 +392,28 @@ controllers.listReservas = async (req, res) =>{
                     if(data.length != 0)
                         res.json({sucesso: true, data: data})
                     else{
-                        res.json({sucesso: true, data: data, message:'Nao existem reservas para esta sala'})
+                        res.json({sucesso: true, data: data, message:'Não existem reservas para esta sala'})
                     }
                 else{
-                    res.json({sucesso: false, message:'Nao foi possivel obter as reservas da sala'})
+                    res.json({sucesso: false, message:'Não foi possível obter as reservas da sala'})
                 }
             }else{
-                res.json({sucesso:false, message:'A sala nao esta ativa'})
+                res.json({sucesso:false, message:'A sala está desativada'})
             }
         }else{
-            res.json({sucesso:false, message:'A sala nao existe'})
+            res.json({sucesso:false, message:'Impossível obter a sala'})
         }
     }else{
-        res.json({sucesso: false, message:'Forneca um id'})
+        res.json({sucesso: false, message:'O id é null'})
     }
 }
 
 //Validar se o utilizador pertence ao centro da sala dada 
 controllers.user = async (req,res) =>{
     const {iduser, idsala} = req.params
-    console.log(req.params)
+    /* console.log(req.params)
     console.log(iduser)
-    console.log(idsala)
-
+    console.log(idsala) */
     if(iduser!=null  || idsala != null){
         const salaData = await sala.findOne({
             where:{id:idsala}
@@ -458,29 +424,27 @@ controllers.user = async (req,res) =>{
             })    
             if(utilizadorData){
                 const centroid = salaData.CentroId
-
                 const userpertence = await pertence.findOne({
                     where:{
                         CentroId:centroid,
                         UtilizadoreId: iduser
                     }
                 })
-                console.log(userpertence)
+                //console.log(userpertence)
                 if(userpertence!=null){
                     res.json({sucesso: true, dados: true})
                 }else{
                     res.json({sucesso: false, dados: false})
                 }
             }else{
-                res.json({sucesso: false, message:'O utilizador nao existe'})
+                res.json({sucesso: false, message:'O utilizador não existe'})
             }         
         }else{
-            res.json({sucesso:false, message:'A sala nao existe'})
+            res.json({sucesso:false, message:'A sala não existe'})
         }
     }else{
-        res.json({sucesso: false, message:'Forneca um id'})
+        res.json({sucesso: false, message:'O id é null'})
     }
 }
-
 
 module.exports = controllers

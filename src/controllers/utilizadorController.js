@@ -13,7 +13,8 @@ var validator = require("email-validator");
 var passwordValidator = require('password-validator');
 var schema = new passwordValidator();
 var nodemailer = require('nodemailer');
-
+const controllers = {};
+bd.sync()
 
 schema
     .is().min(8)
@@ -32,12 +33,7 @@ var transporter = nodemailer.createTransport({
     }
 });
 
-const controllers = {}
-
-bd.sync()
-
 //Listar Utilizadores
-
 controllers.list = async (req, res) =>{
     const data = await utilizador.findAll({include: {all: true}})
     .then(function(data){return data;})
@@ -48,17 +44,14 @@ controllers.list = async (req, res) =>{
     if(data)
         res.status(200).json({sucesso:true, data: data});
     else
-        res.json({sucesso: false, message:'Nao foi possivel listar os utilizadores', data: data})
+        res.json({sucesso: false, message:'Impossível listar os utilizadores', data: data})
 }
 
 //Listar Utilizadores com base no centro
-
 controllers.listUtilizadores = async (req, res) =>{
     const {id} = req.params
     const users = []
-
     if(id!=null){
-
         const perte = await pertence.findAll({
             where:{CentroId:id}
         })
@@ -81,14 +74,13 @@ controllers.listUtilizadores = async (req, res) =>{
             if(users)
                 res.status(200).json({sucesso:true, data: users});
             else
-                res.json({sucesso: false, message:'Nao foi possivel listar os utilizadores', data: data})
+                res.json({sucesso: false, message:'Impossível listar os utilizadores', data: data})
         }
     }else
-        res.json({sucesso: false, message:'Insira um id'})
+        res.json({sucesso: false, message:'Forneça um id'})
 }
 
 //Obter Utilizador
-
 controllers.get = async(req,res) =>{
     const {id} = req.params;
     if(id!=null){
@@ -107,22 +99,20 @@ controllers.get = async(req,res) =>{
             })
             res.status(200).json({ sucesso: true, data: data});
         }else {
-            res.json({sucesso: false, message: 'Utilizador nao existe'});
+            res.json({sucesso: false, message: 'Utilizador não existe'});
         }
     }else{
-        res.json({sucesso: false, message:'Forneca um id'})
+        res.json({sucesso: false, message:'Forneça um id'})
     }
 }
 
 //Registar Utilizador 
-
 controllers.register = async (req, res) =>{
     const {PNome, UNome, Email, PalavraPasse, TipoGestor, Cargos, Centros} = req.body
-
     const utilizadorData = await utilizador.findOne({
         where:{Email: Email}
     })
-    console.log(utilizadorData)
+    //console.log(utilizadorData)
     if(utilizadorData == null){
             if(PNome != '' && UNome !=''){
                 if(validator.validate(Email)){
@@ -221,19 +211,18 @@ controllers.register = async (req, res) =>{
                             res.status(200).json({sucesso: true, message: 'Utilizador criado com sucesso', data: data})
                         }
                     }else{
-                        res.json({sucesso:false, message:'A palavra passe nao pode ter espacos, deve ter entre 8 a 100 caracteres, pelo menos uma letra maiscula e minuscula e pelo menos dois digitos'})
+                        res.json({sucesso:false, message:'A palavra passe não pode ter espacos, deve ter entre 8 a 100 caracteres, pelo menos uma letra maiscula e minuscula e pelo menos dois digitos'})
                     }
                 }else{
-                    res.json({sucesso:false, mensagem: 'Insira um email valido'})
+                    res.json({sucesso:false, mensagem: 'Insira um email válido'})
                 }
             }else
-                res.json({sucesso: false, message:'Por favor insira um nome'})
+                res.json({sucesso: false, message:'Insira um nome'})
     }else
-        res.json({sucesso: false, message:'Ja existe um utilizador com o mesmo email'})
+        res.json({sucesso: false, message:'Utilizador já existe'})
 }
 
 //Editar Utilizador lado gestor
-
 controllers.update = async (req, res) =>{ 
     const {id} = req.params;
     const {PNome, UNome, Email, TipoGestor, Cargos, Centros} = req.body
@@ -245,10 +234,9 @@ controllers.update = async (req, res) =>{
         if(utilizadorData){
             if(PNome != '' && UNome !=''){
                 if(validator.validate(Email)){
-                    console.log(Cargos)
+                    //console.log(Cargos)
                         if(Cargos == 1){
-                            console.log(TipoGestor)
-                            
+                            //console.log(TipoGestor)
                                 const data = await utilizador.update({
                                     Pnome: PNome,
                                     Unome: UNome,
@@ -297,24 +285,22 @@ controllers.update = async (req, res) =>{
                             res.status(200).json({sucesso: true,data: data, message:'Utilizador atualizado com sucesso'})
                         }
                 }else{
-                    res.json({sucesso:false, mensagem: 'Insira um email valido'})
+                    res.json({sucesso:false, mensagem: 'Insira um email válido'})
                 }
             }else
-                res.json({sucesso: false, message:'Por favor insira um nome'})
+                res.json({sucesso: false, message:'Insira um nome'})
         }else
-            res.json({sucesso: false, message:'Utilizador nao existe'})
+            res.json({sucesso: false, message:'Utilizador não existe'})
     }else{
-        res.json({sucesso: false, message:'Forneca um id'})
+        res.json({sucesso: false, message:'Forneça um id'})
     }
 }
 
 //Editar Utilizador lado requesitante
-
 controllers.updateMobile = async (req, res) =>{ 
     const {id} = req.params;
     const {PNome, UNome, Email, imageData, FotoNome} = req.body
     var palavrapasse_cript
-
     if(id!=null){
         const utilizadorData = await utilizador.findOne({
             where:{id:id}
@@ -338,19 +324,18 @@ controllers.updateMobile = async (req, res) =>{
                         })
                         res.status(200).json({sucesso: true, message:'Utilizador atualizado com sucesso'})
                 }else{
-                    res.json({sucesso:false, mensagem: 'Insira um email valido'})
+                    res.json({sucesso:false, mensagem: 'Insira um email válido'})
                 }
             }else
-                res.json({sucesso: false, message:'Por favor insira um nome'})
+                res.json({sucesso: false, message:'Insira um nome'})
         }else
-            res.json({sucesso: false, message:'Utilizador nao existe'})
+            res.json({sucesso: false, message:'Utilizador não existe'})
     }else{
-        res.json({sucesso: false, message:'Forneca um id'})
+        res.json({sucesso: false, message:'Forneça um id'})
     }
 }
 
 //Eliminar Utilizador
-
 controllers.delete = async (req, res) =>{
     const {id} = req.params;
     if(id!=null){
@@ -391,7 +376,7 @@ controllers.delete = async (req, res) =>{
                     if(dataUser)
                         res.status(200).json({ sucesso: true, message: "Utilizador eliminado com sucesso"});
                     else
-                        res.json({sucesso:false, message:'Nao foi possivel eliminar o utilizador'})
+                        res.json({sucesso:false, message:'Impossível eliminar utilizador'})
                 }else{
                     //Nao existem reservas logo elimina utilizador
                     const query = `delete from public."HistoricoLimpezas" where "UtilizadoresId" = ${id}`
@@ -404,13 +389,13 @@ controllers.delete = async (req, res) =>{
                     if(data)
                         res.status(200).json({ sucesso: true, message: "Utilizador eliminado com sucesso"});
                     else
-                        res.json({sucesso:false, message:'Nao foi possivel eliminar o utilizador'})
+                        res.json({sucesso:false, message:'Impossível eliminar utilizador'})
                 }
             }else{
-                res.json({sucesso: false, message:'Nao foi possivel eliminar o utilizador'})
+                res.json({sucesso: false, message:'Impossível eliminar utilizador'})
             }
         }else{
-            res.json({sucesso:false, message:'Utilizador nao existe'})
+            res.json({sucesso:false, message:'Utilizador não existe'})
         }
     }else{
         res.json({sucesso: false, message:'Insira um id'})
@@ -418,10 +403,8 @@ controllers.delete = async (req, res) =>{
 }
 
 //Desativar Utilizador
-
 controllers.inativar = async(req,res) =>{
     const {id} = req.params;
-
     if(id!=null){
         const dataUtilizador = await utilizador.findOne({
             where:{id:id}
@@ -435,7 +418,6 @@ controllers.inativar = async(req,res) =>{
                 //console.log('Minutos atuais: ' + minutos_atuais)
                 var hora_atual_numero = Number(horas_atuais + minutos_atuais)
                 //console.log('Data atual em numero: '+hora_atual_numero)
-
                 var reservaData = await reserva.findAll({
                     where:{UtilizadoreId:id}
                 })
@@ -447,17 +429,15 @@ controllers.inativar = async(req,res) =>{
                         //Verificar se a reserva esta em adamento
                         var dateReserva = new Date(reservaData[i].DataReserva)
                         if(date.isSameDay(data_atual,dateReserva)){
-                            
                             var hora_fim_array =  reservaData[i].HoraFim.split(':')
                             var hora_fim_numero = Number(hora_fim_array[0] + hora_fim_array[1])
                             //console.log('Hora fim: '+ hora_fim_numero)
-                            
                             var hora_inicio_array =  reservaData[i].HoraInicio.split(':')
                             var hora_incio_numero = Number(hora_inicio_array[0] + hora_inicio_array[1])
                             //console.log('Hora Inicio: ' + hora_incio_numero);
                             if(hora_incio_numero < hora_atual_numero && hora_fim_numero > hora_atual_numero){
                                 //Esta a decorrer logo nao pode desativar
-                                res.json({sucesso: false, message:'Nao e possivel desativar um utilizador com uma reserva a decorrer'})
+                                res.json({sucesso: false, message:'Impossível desativar um utilizador com uma reserva a decorrer'})
                             }else{
                                 if(hora_incio_numero < hora_atual_numero && hora_fim_numero < hora_atual_numero)
                                     break;
@@ -487,9 +467,9 @@ controllers.inativar = async(req,res) =>{
                     .then(function(data){return data;})
                     .catch(error=>{console.log('Error:' + error); return error;})
                     if(data)
-                        res.status(200).json({sucesso: true, data: data, message: 'Utilizador Desativado com sucesso'})
+                        res.status(200).json({sucesso: true, data: data, message: 'Utilizador desativado com sucesso'})
                     else
-                        res.json({sucesso:false, message:'Nao foi possivel desativar o utilizador'})
+                        res.json({sucesso:false, message:'Impossível desativar o utilizador'})
                 }else{
                     //Nao existem reservas logo e so desativar
                     const data = await utilizador.update({
@@ -498,25 +478,23 @@ controllers.inativar = async(req,res) =>{
                     .then(function(data){return data;})
                     .catch(error=>{console.log('Error:' + error); return error;})
                     if(data)
-                        res.status(200).json({sucesso: true, data: data, message: 'Utilizador Desativado com sucesso'})
+                        res.status(200).json({sucesso: true, data: data, message: 'Utilizador desativado com sucesso'})
                     else
-                        res.json({sucesso:false, message:'Nao foi possivel desativar o utilizador'})
+                        res.json({sucesso:false, message:'Impossível desativar o utilizador'})
                 }
             }else
-                res.json({sucesso:false, message:'O utilizador ja se encontra desativado'})
+                res.json({sucesso:false, message:'O utilizador já se encontra desativado'})
         }else
-            res.json({sucesso:false, message:'O utilizador nao existe'})
+            res.json({sucesso:false, message:'O utilizador não existe'})
     }else{
-        res.json({sucesso: false, message:'Forneca um id'})
+        res.json({sucesso: false, message:'Forneça um id'})
     }
 }
 
 //Ativar Utilizador
-
 controllers.ativar = async(req,res) =>{
     const {id} = req.params;
     var Disponivel = true
-
     if(id!=null){
         const dataUtilizador = await utilizador.findOne({
             where:{id:id}
@@ -544,14 +522,9 @@ controllers.ativar = async(req,res) =>{
                         console.log('Mes atual: ' + MesAtual)
                         console.log('Dia atual: ' + DiaAtual) */
                         //console.log('Data Atual final: ' + DataAtualString) 
-                        
-
                         //Vamos percorrer as reservas do utilizador
-
                         for(let i =0; i < reservaData.length; i++){
-                            
                             const reservaid = reservaData[i].id;
-
                             //Obtemos a data da reserva
                             var dateReserva = new Date(reservaData[i].DataReserva) 
                             //console.log('Data da reserva: '+dateReserva)
@@ -563,7 +536,6 @@ controllers.ativar = async(req,res) =>{
                             console.log('Mes atual: ' + MesReserva)
                             console.log('Dia atual: ' + DiaReserva) */
                             //console.log('Data Reserva: ' + DataReservaString) 
-
                             //Obtemos a informacao da sala da reserva
                             const Saladata = await sala.findOne({
                                 where:{id: reservaData[i].SalaId}
@@ -575,7 +547,6 @@ controllers.ativar = async(req,res) =>{
                                 })
                                 if(dataCentros){
                                     if(dataCentros.EstadoId == 1){ //Se o centro estiver ativado
-
                                         //Vamos buscar o horario do centro
                                         var horaInicioCentro = dataCentros.Hora_abertura
                                         var horaInicioCentroArray = horaInicioCentro.split(':')
@@ -585,7 +556,6 @@ controllers.ativar = async(req,res) =>{
                                         var horaFimCentroArray = horaFimCentro.split(':')
                                         var horaFimCentroNumber = Number(horaFimCentroArray[0] + horaFimCentroArray[1])
                                         //console.log('Hora de fechar: ' + horaFimCentroNumber)
-
                                         //Vamos buscar o tempo de limpeza da sala
                                         var HoraLimpezaSala = Saladata.Tempo_Limpeza
                                         var tempoLimpezaArray = HoraLimpezaSala.split(':')
@@ -603,9 +573,7 @@ controllers.ativar = async(req,res) =>{
                                                 const reservas = await bd.query(query,{ type: QueryTypes.SELECT })
                                                     //console.log(reservas.length)
                                                 if(reservas.length != 0){ //Se existirem reservas para a mesma data na mesma sala
-
                                                         //Obtemos as horas inicio e fim da reserva que queremos ativar
-
                                                         //console.log(reservas)
                                                         //Hora Inicio
                                                         const horasInicioReserva = reservaData[i].HoraInicio;
@@ -617,7 +585,6 @@ controllers.ativar = async(req,res) =>{
                                                         //console.log('Minutos:' + minutosInicio)
                                                         const HorasInicio_desativas = Number(horaInicio+minutosInicio)
                                                         //console.log('Horas da reserva desativa (formato Numero): '+HorasInicio_desativas)
-
                                                         //Hora Fim
                                                         const horasFimReserva = reservaData[i].HoraFim;
                                                         //console.log('Hora da reserva desativa (formato Data): '+ horasFimReserva)
@@ -630,7 +597,6 @@ controllers.ativar = async(req,res) =>{
                                                         //console.log('Horas da reserva desativa (formato Numero): '+Horas_em_Numero)
                                                         const HorasFim_MaisLimpeza_Desativas = Horas_em_Numero + TempoLimp
                                                         //console.log('Horas da reserva desativa mais limpeza (formato Numero):' + HorasFim_MaisLimpeza_Desativas)
-
                                                         //Se as horas da reserva a ativar nao estiverem dentro do horario do centro entao continuamos para a proxima reserva
                                                         if((HorasInicio_desativas < horaInicioCentroNumber) || (HorasFim_MaisLimpeza_Desativas > horaFimCentroNumber )){
                                                             //Nao e possivel ativar uma reserva com a hora for do horario do centro
@@ -659,7 +625,6 @@ controllers.ativar = async(req,res) =>{
                                                                 //console.log('Minutos:' + minutosF)
                                                                 const HorasAtivasF = Number(horaF+minutosF)
                                                                 //console.log('Horas da reserva ativa (formato Numero): '+HorasAtivasF)
-
                                                                 //Se a reserva ativada comecar antes e acabar durante a reserva desativada
                                                                 if((HorasAtivasI <= HorasInicio_desativas) && (HorasAtivasF >= HorasInicio_desativas) && (HorasAtivasF <= HorasFim_MaisLimpeza_Desativas)){
                                                                     //console.log('Passei aqui 1')
@@ -729,7 +694,7 @@ controllers.ativar = async(req,res) =>{
                                                         },{where:{id:reservaid}})
                                                         .then(function(data){return data;})
                                                         .catch(err=>console.log(err))
-                                                        console.log(reservasupdated)
+                                                        //console.log(reservasupdated)
                                                     }
                                                 }
                                                 }
@@ -751,7 +716,7 @@ controllers.ativar = async(req,res) =>{
                         if(data)
                             res.status(200).json({sucesso: true, data: data, message: 'Utilizador ativado com sucesso'})
                         else
-                            res.json({sucesso:false, message:'Nao foi possivel ativar o utilizador'})
+                            res.json({sucesso:false, message:'Impossível ativar o utilizador'})
                     }else{
                         //Nao existem reservas logo e so ativar 
                         const data = await utilizador.update({
@@ -762,25 +727,23 @@ controllers.ativar = async(req,res) =>{
                         if(data)
                             res.status(200).json({sucesso: true, data: data, message: 'Utilizador ativado com sucesso'})
                         else
-                            res.json({sucesso:false, message:'Nao foi possivel ativar o utilizador'})
+                            res.json({sucesso:false, message:'Impossível ativar o utilizador'})
                     }
                 }else
-                    res.json({sucesso: false, message:'Não foi possível obter as reservas desse utilizador'})
+                    res.json({sucesso: false, message:'Impossível obter as reservas do utilizador'})
             }else
-                res.json({sucesso:false, message:'O utilizador ja se encontra ativado'})
+                res.json({sucesso:false, message:'O utilizador já se encontra ativado'})
         }else
-            res.json({sucesso:false, message:'O utilizador nao existe'})
+            res.json({sucesso:false, message:'O utilizador não existe'})
     }else{
-        res.json({sucesso: false, message:'Forneca um id'})
+        res.json({sucesso: false, message:'Forneça um id'})
     }
 }
 
 //Atualizar a palavraPasse
-
 controllers.atualizarPalavraPasse = async(req,res) =>{
     const {id} = req.params;
     const {PalavraPasseNova, PalavraPasseAntiga} = req.body
-
     if(id!=null){
         const utilizadorData = await utilizador.findOne({
             where:{id:id}
@@ -804,31 +767,29 @@ controllers.atualizarPalavraPasse = async(req,res) =>{
                             if(data)
                                 res.status(200).json({sucesso: true, message:'Palavra Passe atualizada com sucesso'})
                             else
-                                res.json({sucesso: false, message:'Nao foi possivel alterar a palavra passe'})
+                                res.json({sucesso: false, message:'Impossível alterar a palavra passe'})
                             });
                         });
                     }else{
                         res.json({sucesso: false, message:'Palavra Passe incorreta'})
                     }
                 }else{
-                        res.json({sucesso:false, message:'A palavra passe nao pode ter espacos, deve ter entre 8 a 100 caracteres, pelo menos uma letra maiscula e minuscula e pelo menos dois digitos'})
+                        res.json({sucesso:false, message:'A palavra passe não pode ter espacos, deve ter entre 8 a 100 caracteres, pelo menos uma letra maiscula e minuscula e pelo menos dois digitos'})
                 }
             }else{
                 res.json({sucesso: false, message:'Insira uma palavra passe'})
             }
         }else{
-            res.json({sucesso: false, message:'O utilizador nao existe'})
+            res.json({sucesso: false, message:'O utilizador não existe'})
         }
     }else{
-        res.json({sucesso: false, message:'Forneca um id'})
+        res.json({sucesso: false, message:'Forneça um id'})
     }
 }
 
 //Listar Centros com base no id do utilizador include tabela pertence
-
 controllers.centros = async(req,res) =>{
     const {id} = req.params;
-
     if(id!=null){
         const utilizadorData = await utilizador.findOne({
             where:{id:id}
@@ -844,20 +805,16 @@ controllers.centros = async(req,res) =>{
             else
                 res.status(403).json({sucesso: false, data: data});
         }else
-            res.json({sucesso: false, message: 'O utilizador nao existe'})
+            res.json({sucesso: false, message: 'O utilizador não existe'})
     }else{
-        res.json({sucesso: false, message:'Forneca um id'})
+        res.json({sucesso: false, message:'Forneça um id'})
     }
 }
 
 //Registar utilizador por ficheiro
-
 controllers.ficheiro = async(req,res)=>{
-
     const{ficheiro} = req.body
-
     //console.log(ficheiro)
-
     if(ficheiro.length != 0){
         const users = await utilizador.bulkCreate(ficheiro)
         //console.log(users)
@@ -873,14 +830,11 @@ controllers.ficheiro = async(req,res)=>{
         if(users){
             res.json({sucesso: true, message:'Utilizadores inseridos com sucesso'})
         }else{
-            res.json({sucesso: false, message:'Nao foi possivel inserir os utilizadores'});
+            res.json({sucesso: false, message:'Impossível inserir utilizadores'});
         }
     }else{
         res.json({sucesso:false, message: "Ficheiro vazio"})
     }
 }
-
-
-
 
 module.exports = controllers

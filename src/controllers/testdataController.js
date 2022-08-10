@@ -3,11 +3,10 @@ const Estados = require('../models/Estado');
 const EstadoLimpezas = require('../models/EstadoLimpeza');
 const TipoGestores = require('../models/TipoGestor');
 const sequelize = require('../config/basedados');
-
-
 const controllers = {}
 sequelize.sync()
 
+//Listar Estados
 controllers.listEstados = async ( req, res) => {
     const data = await Estados.findAll()
     .then(function(data){return data;})
@@ -20,6 +19,7 @@ controllers.listEstados = async ( req, res) => {
         res.json({sucesso: false})
 }
 
+//Listar Cargos
 controllers.listCargos = async ( req, res) => {
     const data = await Cargos.findAll()
     .then(function(data){return data;})
@@ -32,6 +32,7 @@ controllers.listCargos = async ( req, res) => {
         res.json({sucesso: false})
 }
 
+//Listar Estados de Limpeza
 controllers.listEstadosLimpezas = async ( req, res) => {
     const data = await EstadoLimpezas.findAll()
     .then(function(data){return data;})
@@ -44,6 +45,7 @@ controllers.listEstadosLimpezas = async ( req, res) => {
         res.json({sucesso: false})
 }
 
+//Listar Tipos de Gestor
 controllers.listTiposGestores = async ( req, res) => {
     const data = await TipoGestores.findAll()
     .then(function(data){return data;})

@@ -2,7 +2,6 @@ const express = require('express');
 const Router = express.Router();
 const UtilizadoresController = require('../controllers/utilizadorController');
 
-
 //listar
 Router.get('/list', UtilizadoresController.list)
 //Listar utilizadores com base no centro
@@ -27,6 +26,5 @@ Router.get('/pertence/:id', UtilizadoresController.centros);
 Router.put('/editpasse/:id', UtilizadoresController.atualizarPalavraPasse);
 //Registar Utilizador por ficheiro
 Router.post('/ficheiro', UtilizadoresController.ficheiro)
-
 
 module.exports = Router;

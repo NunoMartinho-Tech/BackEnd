@@ -3,9 +3,7 @@ var utilizador = require('../models/Utilizador');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const config = require('../config');
-
 const controllers = {}
-
 bd.sync()
 
 controllers.loginGestor = async(req,res) =>{
@@ -23,7 +21,7 @@ controllers.loginGestor = async(req,res) =>{
                 if(user.EstadoId == 1){
                     if(user.CargoId == 1){ //Gestor
                         if(password == null || typeof password == "undefined"){
-                            res.json({sucesso:false, message:'Campos em Branco'});
+                            res.json({sucesso:false, message:'Insira uma email ou palavra-passe'});
                         }else{
                             if(req.body.email && req.body.password && user){
                                 const isMatch = bcrypt.compareSync(password, user.PalavraPasse);
@@ -34,30 +32,30 @@ controllers.loginGestor = async(req,res) =>{
                                     //console.log("token")
                                     res.status(200).json({
                                         sucesso: true, 
-                                        message:'Autenticação feita com sucesso', 
+                                        message:'Autenticação com sucesso', 
                                         token: token, 
                                         user: user
                                     });
                                 }else{
-                                    res.json({sucesso: false, message: 'Erro no servidor.'});
+                                    res.json({sucesso: false, message: 'Erro no servidor'});
                                 }    
                             }else{
                                 res.json({sucesso:false, message:'Erro no servidor'})
                             }
                         }
                     }else{
-                        res.json({sucesso:false, message:'Dados de autenticação inválidos.'});
+                        res.json({sucesso:false, message:'Dados inválidos'});
                     }
                 }else{
-                    res.json({sucesso: false, message:'User não existe'})
+                    res.json({sucesso: false, message:'Dados inválidos'})
                 }
             }else{
-                res.json({sucesso: false, message: 'Dados de autenticação inválidos.'});
+                res.json({sucesso: false, message: 'Dados inválidos'});
             }
         }else
-            res.json({sucesso: false, message: 'Campos em branco.'});
+            res.json({sucesso: false, message: 'Insira uma email ou palavra-passe'});
     }else
-        res.json({sucesso: false, message: 'Valores null'});
+        res.json({sucesso: false, message: 'Insira uma email ou palavra-passe'});
 }
 
 controllers.loginRequesitante = async(req,res) =>{
@@ -73,7 +71,7 @@ controllers.loginRequesitante = async(req,res) =>{
             if(user.EstadoId == 1){
                 if(user.CargoId != 1){ //Requesitante ou limpeza
                     if(password == null || typeof password == "undefined"){
-                        res.json({sucesso:false, message:'Campos em Branco'});
+                        res.json({sucesso:false, message:'Insira uma email ou palavra-passe'});
                     }else{
                         if(req.body.email && req.body.password && user){
                             const isMatch = bcrypt.compareSync(password, user.PalavraPasse);
@@ -84,30 +82,30 @@ controllers.loginRequesitante = async(req,res) =>{
                                 //console.log("token")
                                 res.status(200).json({
                                     sucesso: true, 
-                                    message:'Autenticação feita com sucesso', 
+                                    message:'Autenticação com sucesso', 
                                     token: token, 
                                     user: user,
                                     id: user.id,
                                     login: user.PrimeiroLogin
                                 });
                             }else{
-                                res.json({sucesso: false, message: 'Dados de autenticação inválidos.'});
+                                res.json({sucesso: false, message: 'Dados inválidos'});
                             }    
                         }else{
-                            res.json({sucesso:false, message:'Insira uma email e uma palavra passe'})
+                            res.json({sucesso:false, message:'Insira uma email ou palavra-passe'})
                         }
                     }
                 }else{
-                    res.json({sucesso:false, message:'Dados de autenticação inválidos.'});
+                    res.json({sucesso:false, message:'Dados inválidos'});
                 }
             }else{
-                res.json({sucesso: false, message:'User não existe'})
+                res.json({sucesso: false, message:'Dados inválidos'})
             }
         }else{
-            res.json({sucesso: false, message: 'Dados de autenticação inválidos.'});
+            res.json({sucesso: false, message: 'Dados inválidos'});
         }
     }else
-        res.json({sucesso: false, message: 'Campos em branco.'});
+        res.json({sucesso: false, message: 'Insira uma email ou palavra-passe'});
 }
 
 module.exports = controllers

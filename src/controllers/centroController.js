@@ -8,14 +8,10 @@ var pertence = require('../models/Pertence');
 var historicoLimpeza = require('../models/Historico_limpezas');
 var historicoAdiamentos = require('../models/Historico_adiamentos');
 const { QueryTypes } = require('sequelize');
-const { json } = require('body-parser');
-
 const controllers = {};
-
 bd.sync()
 
 //Listar Centros
-
 controllers.list = async (req, res) =>{
     const data = await centro.findAll({
         include: [estado]
@@ -25,17 +21,13 @@ controllers.list = async (req, res) =>{
     if(data)
         res.status(200).json({sucesso: true, data: data});
     else
-        res.json({sucesso: false, message: 'Nao existem centros, por favor adicione.'});
+        res.json({sucesso: false, message: 'Não existem centros'});
 }
 
 //Listar Centros com base no id do centro
-
 controllers.listCentro = async (req, res) =>{
-
     const {id} = req.params
-
     if(id!=null){
-
         const data = await centro.findOne({
             where: {id: id},
         })
@@ -44,20 +36,17 @@ controllers.listCentro = async (req, res) =>{
         if(data)
             res.status(200).json({sucesso: true, data: data});
         else
-            res.json({sucesso: false, message: 'Nao existem centros, por favor adicione.'});
+            res.json({sucesso: false, message: 'Não existem centros'});
     }else{
-        res.json({sucesso: false, message:'Forneca um id'})
+        res.json({sucesso: false, message:'Forneça um id'})
     }
 }
 
 //Adicionar Centro
-
 controllers.add = async(req, res) => {
     const {Nome, Endereco, Hora_abertura, Hora_fecho, Telefone} = req.body
-
     const abertura = new Date('2022-01-01 ' + Hora_abertura);
     const fecho = new Date('2022-01-01 ' + Hora_fecho);
-    
     if(fecho.getTime() > abertura.getTime()){
         var Nome_Limpo = Nome.normalize("NFD").replace(/[\u0300-\u036f]/g, '');
         const data = await centro.create({
@@ -76,14 +65,13 @@ controllers.add = async(req, res) => {
         if(data)
             res.status(200).json({sucesso: true, data: data, message: 'Centro adicionado com sucesso'});
         else
-            res.json({sucesso: false,message: 'Não foi possível adicionar o centro'});
+            res.json({sucesso: false,message: 'Impossível adicionar o centro'});
     }else{
         res.json({sucesso: false,message: 'A hora final tem que ser maior que a hora inicial'});
     }
 }
 
 //Obter Centro
-
 controllers.get = async(req,res) => {
     const {id} = req.params;
     if(id!=null){
@@ -101,22 +89,18 @@ controllers.get = async(req,res) => {
         if(data)
             res.status(200).json({sucesso: true, data: data});
         else
-            res.json({sucesso: false, message: 'Nao foi possivel encontrar o centro com o id = ' + id});
+            res.json({sucesso: false, message: 'Impossível obter o centro'});
     }else{
-        res.json({sucesso: false, message:'Forneca um id'})
+        res.json({sucesso: false, message:'Forneça um id'})
     }
 }
 
 //Editar Centro
-
 controllers.update = async(req,res) => {
     const {id} = req.params;
-
     const {Nome, Endereco, Hora_abertura, Hora_fecho, Telefone} = req.body
-
     const abertura = new Date('2022-01-01 ' + Hora_abertura);
     const fecho = new Date('2022-01-01 ' + Hora_fecho);
-
     if(id!=null){
         if(fecho.getTime() > abertura.getTime()){
             var Nome_Limpo = Nome.normalize("NFD").replace(/[\u0300-\u036f]/g, '');
@@ -137,17 +121,16 @@ controllers.update = async(req,res) => {
             if(data)
                 res.status(200).json({sucesso: true, data: data, message: 'Centro atualizado com sucesso'});
             else
-                res.json({sucesso: false,message: 'Não foi possível atualizar o centro'});
+                res.json({sucesso: false,message: 'Impossível atualizar o centro'});
         }else{
             res.json({sucesso: false,message: 'A hora final tem que ser maior que a hora inicial'});
         }
     }else{
-        res.json({sucesso: false, message:'Forneca um id'})
+        res.json({sucesso: false, message:'Forneça um id'})
     }
 }
 
 //Eliminar Centro
-
 controllers.delete = async(req,res) => {
     const {id} = req.params;
     //Procurar o centro
@@ -224,25 +207,23 @@ controllers.delete = async(req,res) => {
                 }
             }//else
                 //console.log('Nao existem utilizadores associados ao centro com id: ', id)
-
                 const data = await centro.destroy({
                     where: {id: id}
                 })
                 if(data)
                     res.status(200).json({sucesso: true,message: 'Centro eliminado com sucesso', data: data + ' ' + deleteHistLimpe + ' ' + deleteHistAdiame + ' ' + deleteReservas + ' ' + deletUtiliHistoricoLimpe + ' ' + utilizadoreseliminados + ' ' + deletedSalas + ' '+ deletReservas});
                 else
-                    res.json({sucesso: false, mensagem:'Nao foi possivel eliminar o centro'});
+                    res.json({sucesso: false, mensagem:'Impossível eliminar o centro'});
 
         }else{
-            res.json({sucesso: false,message: 'Nao foi possivel eliminar o centro com o id: ' + id});
+            res.json({sucesso: false,message: 'Impossível eliminar o centro'});
         }
     }else{
-        res.json({sucesso: false, message:'Forneca um id'})
+        res.json({sucesso: false, message:'Forneça um id'})
     }
 }
 
 //Inativar centro
-
 controllers.desativar = async(req,res) => {
     const {id} = req.params;
     //Procurar o centro
@@ -261,7 +242,6 @@ controllers.desativar = async(req,res) => {
                     EstadoId: 2,
                     Motivo_Bloqueio: 'Centro Inativado'
                 },{where: {CentroId: dataCentro.id}})
-
                 //Procurar por reservas
                 for(let i = 0; i < salas.length; i++ ){
                     var reservas = await reserva.findAll({
@@ -296,23 +276,19 @@ controllers.desativar = async(req,res) => {
             }//else{
                 //console.log('Nao existem utilizadores associados ao centro com id: ', id)
             //}
-
             const data = await centro.update({
                 EstadoId: '2'
             },{where: {id: id}})
-
             res.status(200).json({sucesso: true,message: 'Centro desativado com sucesso', data: data + ' ' + utilizadoresdesativados + ' ' + dataReservas + ' ' + dataSalas});
-
         }else{
-            res.json({sucesso: false,message: 'Nao foi possivel desativar o centro com o id: ' + id});
+            res.json({sucesso: false,message: 'Impossível desativar o centro com o id: ' + id});
         }
     }else{
-        res.json({sucesso: false, message:'Forneca um id'})
+        res.json({sucesso: false, message:'Forneça um id'})
     }
 }
 
 //Ativar centro
-
 controllers.ativar = async(req,res) => {
     const {id} = req.params;
     //Procurar o centro
@@ -331,7 +307,6 @@ controllers.ativar = async(req,res) => {
                     EstadoId: 1,
                     Motivo_Bloqueio: ''
                 },{where: {CentroId: dataCentro.id}})
-
                 //Procurar por reservas
                 for(let i = 0; i < salas.length; i++ ){
                     var reservas = await reserva.findAll({
@@ -366,18 +341,15 @@ controllers.ativar = async(req,res) => {
             }//else{
                 //console.log('Nao existem utilizadores associados ao centro com id: ', id)
             //}
-
             const data = await centro.update({
                 EstadoId: '1'
             },{where: {id: id}})
-
             res.status(200).json({sucesso: true,message: 'Centro ativado com sucesso', data: data + ' ' + utilizadoresdesativados + ' ' + dataReservas + ' ' + dataSalas});
-
         }else{
-            res.json({sucesso: false,message: 'Nao foi possivel ativar o centro com o id: ' + id});
+            res.json({sucesso: false,message: 'Impossível ativar o centro com o id: ' + id});
         }
     }else{
-        res.json({sucesso: false, message:'Forneca um id'})
+        res.json({sucesso: false, message:'Forneça um id'})
     }
 }
 
@@ -401,10 +373,10 @@ controllers.utilizadorestotal = async(req,res)=>{
                 res.json({sucesso: true, data:0})
             }
         }else{
-            res.json({sucesso: false, message:'Centro nao existe'})
+            res.json({sucesso: false, message:'Centro não existe'})
         }
     }else{
-        res.json({sucesso: false, message:'Forneca um id'})
+        res.json({sucesso: false, message:'Forneça um id'})
     }
 }
 
@@ -412,7 +384,6 @@ controllers.utilizadorestotal = async(req,res)=>{
 controllers.utilizadoresativos = async(req,res)=>{
     const {id} = req.params
     var numero = 0;
-
     if(id!=null){
         const centros = await centro.findOne({
             where:{id:id}
@@ -445,10 +416,10 @@ controllers.utilizadoresativos = async(req,res)=>{
                 res.json({sucesso: false, data:0})
             }
         }else{
-            res.json({sucesso: false, message:'Centro nao existe'})
+            res.json({sucesso: false, message:'Centro não existe'})
         }
     }else{
-        res.json({sucesso: false, message:'Forneca um id'})
+        res.json({sucesso: false, message:'Forneça um id'})
     }
 }
 
@@ -456,7 +427,6 @@ controllers.utilizadoresativos = async(req,res)=>{
 controllers.utilizadoresinativos = async(req,res)=>{
     const {id} = req.params
     var numero = 0;
-
     if(id!=null){
         const centros = await centro.findOne({
             where:{id:id}
@@ -489,17 +459,16 @@ controllers.utilizadoresinativos = async(req,res)=>{
                 res.json({sucesso: false, data:0})
             }
         }else{
-            res.json({sucesso: false, message:'Centro nao existe'})
+            res.json({sucesso: false, message:'Centro não existe'})
         }
     }else{
-        res.json({sucesso: false, message:'Forneca um id'})
+        res.json({sucesso: false, message:'Forneça um id'})
     }
 }
 
 //% de salas face a capacidade por centro
 controllers.salaporcapacidade = async(req,res)=>{
     const {id} = req.params
-
     if(id!=null){
         const centros = await centro.findOne({
             where:{id:id}
@@ -519,10 +488,10 @@ controllers.salaporcapacidade = async(req,res)=>{
             else
                 res.json({sucesso: false, message:'Não foi possível obter a % de salas face a capacidade'})
         }else{
-            res.json({sucesso: false, message:'Centro nao existe'})
+            res.json({sucesso: false, message:'Centro não existe'})
         }
     }else{
-        res.json({sucesso: false, message:'Forneca um id'})
+        res.json({sucesso: false, message:'Forneça um id'})
     }
 }
 
@@ -551,10 +520,10 @@ controllers.alocacaoDiaria = async(req,res) =>{
             else
                 res.json({sucesso: false, message:'Não foi possível obter as reservas desse utilizador'})
         }else{
-            res.json({sucesso: false, message:'Nao foi possivel obter o centro'})
+            res.json({sucesso: false, message:'Não foi possível obter o centro'})
         }
     }else{
-        res.json({sucesso:false, message:'Insira um id'})
+        res.json({sucesso:false, message:'Forneça um id'})
     }
 }
 
@@ -614,20 +583,19 @@ controllers.limpezaDiaria = async(req,res) =>{
                     res.json({sucesso: true, data: ArrayReservas })
                     
                 }else{
-                    res.json({sucesso: true, message:'Nao existem reservas', data: ArrayReservas})
+                    res.json({sucesso: true, message:'Não existem reservas', data: ArrayReservas})
                 }
             }else
                 res.json({sucesso: false, message:'Não foi possível obter as reservas desse utilizador'})
         }else{
-            res.json({sucesso: false, message: 'Nao existem centros com esse id'})
+            res.json({sucesso: false, message: 'Não existem centros com esse id'})
         }
     }else{
-        res.json({sucesso: false, message: 'Insira um id'})
+        res.json({sucesso: false, message: 'Forneça um id'})
     }
 }
 
 //Reservas feitas hoje depois da hora no centro "Real time data"
-
 controllers.reserasfeitas = async(req,res)=>{
     const {id} = req.params
     if(id!=null){
@@ -647,13 +615,13 @@ controllers.reserasfeitas = async(req,res)=>{
                 if(data.length!=0){
                     res.json({sucesso: true, data: data})
                 }else
-                    res.json({sucesso: true, data: data, message:'Nao existem reservas'})
+                    res.json({sucesso: true, data: data, message:'Não existem reservas'})
             }else
-                res.json({sucesso: false, message:'Nao foi possivel obter as reservas do centro'})
+                res.json({sucesso: false, message:'Não foi possível obter as reservas do centro'})
         }else
-            res.json({sucesso:false, message: 'O centro nao existe'})
+            res.json({sucesso:false, message: 'O centro não existe'})
     }else
-        res.json({sucesso:false, message: 'Forneca um id'})
+        res.json({sucesso:false, message: 'Forneça um id'})
 }
 
 module.exports = controllers

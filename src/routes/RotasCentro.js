@@ -35,4 +35,5 @@ Router.get('/alocacaodiaria/:id', CentroController.alocacaoDiaria);
 Router.get('/salasporlimpar/:id', CentroController.limpezaDiaria);
 //Obter reservas
 Router.get('/reservasfeitas/:id', CentroController.reserasfeitas);
+
 module.exports = Router;
