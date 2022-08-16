@@ -50,8 +50,7 @@ controllers.listReservas = async (req, res) =>{
 
 //Listar reservas com base no centro e no user mobile
 controllers.listReservasMobile = async (req, res) =>{
-    const {id} = req.params;
-    const {centroId} = req.body
+    const {id,centroId} = req.params;
     //console.log(id)
     //console.log(centroId)
     if(id!=null){
