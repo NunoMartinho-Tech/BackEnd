@@ -6,8 +6,10 @@ const ReservasController = require('../controllers/reservasController');
 Router.get('/list', ReservasController.list);
 //Listar reservas com base no centro e no user
 Router.get('/listReservas/:id',ReservasController.listReservas)
-//Listar reservas com base no centro e no user MOBILE
-Router.get('/listReservasUserCentro/:id/:centroId',ReservasController.listReservasMobile)
+//Listar reservas ativas com base no centro e no user MOBILE
+Router.get('/listReservasUserCentro/:id/:centroId',ReservasController.listReservasAtivasMobile)
+//Listar reservas desativas com base no centro e no user MOBILE
+Router.get('/listReservasDesativasUserCentro/:id/:centroId',ReservasController.listReservasDesativasMobile)
 //criar
 Router.post('/add', ReservasController.add);
 //Selecionar
