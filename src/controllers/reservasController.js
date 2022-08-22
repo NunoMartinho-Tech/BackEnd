@@ -1660,6 +1660,7 @@ controllers.terminarCedo = async(req,res) =>{
                                         if(Disponivel){
                                             const reservasdata = await reserva.update({
                                                 HoraFim:HoraAtualString,
+                                                EstadoId: 2
                                             },{where:{id:id}})
                                             .then(function(data){return data;})
                                             .catch(err=>console.log(err))

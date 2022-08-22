@@ -1,5 +1,6 @@
 //Criar o Server
 const express = require('express');
+const multer = require('multer');
 const app = express();
 const middleware = require('./src/middleware');
 var bodyParser = require('body-parser');
@@ -25,6 +26,20 @@ app.use((req, res, next) => {
     res.header('Allow', 'GET, POST, OPTIONS, PUT, DELETE');
     next();
 }); 
+
+// Storage Engin That Tells/Configures Multer for where (destination) and how (filename) to save/upload our files
+const fileStorageEngine = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "./src/images"); //important this is a direct path fron our current file to storage location
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + "--" + file.originalname);
+    },
+});
+
+const upload = multer({ storage: fileStorageEngine });
+
+module.exports = {upload};
 
 //Forçar atualização das tabelas
 /* bd.sync({
@@ -53,7 +68,7 @@ app.use('/reservas', rotasReservas);
 // Rotas login
 app.use('/auth', rotasAuth);
 
+
 app.listen(app.get('port'),()=>{
     console.log("Start server on port "+ app.get('port'))
 })
-

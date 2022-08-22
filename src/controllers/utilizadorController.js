@@ -109,6 +109,9 @@ controllers.get = async(req,res) =>{
 //Registar Utilizador 
 controllers.register = async (req, res) =>{
     const {PNome, UNome, Email, PalavraPasse, TipoGestor, Cargos, Centros} = req.body
+    /* console.log(req.body)
+    console.log(req.file)
+    console.log(req.file.path) */
     const utilizadorData = await utilizador.findOne({
         where:{Email: Email}
     })
@@ -126,15 +129,15 @@ controllers.register = async (req, res) =>{
                                     Unome: UNome,
                                     Email: Email,
                                     PalavraPasse: PalavraPasse,
-                                    FotoNome: "", 
-                                    FotoData: "", 
+                                    FotoNome: "",
+                                    FotoData: req.file.path, 
                                     PrimeiroLogin: '1',
                                     EstadoId: '1',
                                     TiposGestorId: TipoGestor,
                                     CargoId: '1',
                                     CentroId:Centros 
                                 })
-                                //console.log(data)
+                                console.log(data)
                                 const util_pertence = await pertence.create({
                                     CentroId: Centros,
                                     UtilizadoreId: data.id
@@ -157,11 +160,11 @@ controllers.register = async (req, res) =>{
                                         `
                                 };
                                 transporter.sendMail(mailOptions, function(error, info){
-                                /* if (error) {
+                                if (error) {
                                     console.log(error);
                                 } else {
                                     console.log('Email sent: ' + info.response);
-                                } */
+                                } 
                                 });
                                 res.status(200).json({sucesso: true, message: 'Utilizador criado com sucesso', data: data})
                             }
@@ -171,15 +174,15 @@ controllers.register = async (req, res) =>{
                                 Unome: UNome,
                                 Email: Email,
                                 PalavraPasse: PalavraPasse,
-                                FotoNome: "", 
-                                FotoData: "", 
+                                FotoNome: "",
+                                FotoData: req.file.path, 
                                 PrimeiroLogin: '1',
                                 EstadoId: '1',
                                 TiposGestorId: null,
                                 CargoId: Cargos,
                                 CentroId:Centros 
                             })
-                            
+                            console.log(data)
                             const util_pertence = await pertence.create({
                                 CentroId: Centros,
                                 UtilizadoreId: data.id
@@ -201,14 +204,14 @@ controllers.register = async (req, res) =>{
                                     PS:Não responda a este email
                                     `
                             };
-                            transporter.sendMail(mailOptions, function(error, info){
-                            /* if (error) {
-                                console.log(error);
-                            } else {
-                                console.log('Email sent: ' + info.response);
-                            }*/
+                            transporter.sendMail(mailOptions, function(error, info){ 
+                                if (error) {
+                                    console.log(error);
+                                } else {
+                                    console.log('Email sent: ' + info.response);
+                                }
                             }); 
-                            res.status(200).json({sucesso: true, message: 'Utilizador criado com sucesso', data: data})
+                            res.status(200).json({sucesso: true, message: 'Utilizador criado com sucesso', data: data}) 
                         }
                     }else{
                         res.json({sucesso:false, message:'A palavra passe não pode ter espacos, deve ter entre 8 a 100 caracteres, pelo menos uma letra maiscula e minuscula e pelo menos dois digitos'})

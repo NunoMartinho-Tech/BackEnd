@@ -1,4 +1,5 @@
 const express = require('express');
+const {upload} = require('../../app')
 const Router = express.Router();
 const UtilizadoresController = require('../controllers/utilizadorController');
 
@@ -15,7 +16,7 @@ Router.put('/updateMobile/:id', UtilizadoresController.updateMobile)
 //Eliminar
 Router.post('/delete/:id', UtilizadoresController.delete)
 //Registar
-Router.post('/register', UtilizadoresController.register);
+Router.post('/register', upload.single("image"),UtilizadoresController.register);
 //Desativar
 Router.put('/desativar/:id', UtilizadoresController.inativar);
 //Ativar
