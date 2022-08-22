@@ -1664,14 +1664,6 @@ controllers.terminarCedo = async(req,res) =>{
                                             },{where:{id:id}})
                                             .then(function(data){return data;})
                                             .catch(err=>console.log(err))
-                                            const pertenceData = await historicoAdiamentos.destroy({
-                                                where:{
-                                                    HoraAdiada: reservaData.HoraFim,
-                                                    ReservaId: id
-                                                }
-                                            })
-                                            .then(function(pertenceData){return pertenceData;})
-                                            .catch(err=>console.log(err))
                                             if(reservasdata)
                                                 res.json({sucesso: true, message: 'Reserva terminada com sucesso'})
                                             else
