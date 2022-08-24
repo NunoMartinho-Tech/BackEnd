@@ -97,6 +97,7 @@ controllers.get = async(req,res) =>{
                 console.log('Error:'+error)
                 return error;
             })
+            //res.download( __dirname +data.FotoData)
             res.status(200).json({ sucesso: true, data: data});
         }else {
             res.json({sucesso: false, message: 'Utilizador não existe'});
@@ -130,7 +131,7 @@ controllers.register = async (req, res) =>{
                                     Email: Email,
                                     PalavraPasse: PalavraPasse,
                                     FotoNome: "",
-                                    FotoData: req.file.path, 
+                                    FotoData: "", 
                                     PrimeiroLogin: '1',
                                     EstadoId: '1',
                                     TiposGestorId: TipoGestor,
@@ -175,7 +176,7 @@ controllers.register = async (req, res) =>{
                                 Email: Email,
                                 PalavraPasse: PalavraPasse,
                                 FotoNome: "",
-                                FotoData: req.file.path, 
+                                FotoData: "", 
                                 PrimeiroLogin: '1',
                                 EstadoId: '1',
                                 TiposGestorId: null,
