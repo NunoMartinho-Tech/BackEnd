@@ -67,14 +67,51 @@ controllers.listReservasAtivasMobile = async (req, res) =>{
 "Reservas"."SalaId" as "SalaId", "Reservas"."DataReserva","Reservas"."HoraInicio","Reservas"."HoraFim",
 "Salas"."Nome", "Utilizadores"."id" as "UtilizadoreId", "Utilizadores"."Pnome", "Utilizadores"."Unome"   
 from "Reservas" inner join "Salas" on "Reservas"."SalaId" = "Salas"."id" inner join "Utilizadores" on "Reservas"."UtilizadoreId" = "Utilizadores"."id"
-where "Reservas"."UtilizadoreId" = ${id} and "Salas"."CentroId" = ${centroId} and "Reservas"."EstadoId"=1`
+where "Reservas"."UtilizadoreId" = ${id} and "Salas"."CentroId" = ${centroId} and "Reservas"."EstadoId"=1 and "Reservas"."DataReserva" >= CURRENT_DATE order by "Reservas"."DataReserva", "Reservas"."HoraInicio"`
                     const data = await bd.query(query,{ type: QueryTypes.SELECT })
                     .then(function(data){return data;})
                     .catch(err=>console.log(err))
                     //console.log(data)
-                    if(data)
-                        res.status(200).json({sucesso: true, data: data})
-                    else
+                    if(data){
+                        //Vamos buscar a data atual e as horas
+                        var data_atual = new Date()
+                        var AnoAtual = (data_atual.getFullYear()).toString()
+                        var MesAtual = (data_atual.getMonth() + 1).toString()
+                        var DiaAtual = (data_atual.getDate()).toString()
+                        var DataAtualString = (AnoAtual + MesAtual + DiaAtual)
+                        //console.log("Data atual String:",DataAtualString)
+                        var horas_atuais = Number((data_atual.getHours()).toString())
+                        var minutos_atuais = Number((data_atual.getMinutes()).toString())
+                        //console.log(data_atual.getMinutes())
+                        //var hora_atual_numero = Number(horas_atuais + minutos_atuais)
+                        //console.log("Horas atuais String:",hora_atual_numero)
+                        for(let i =0; i < data.length; i++){
+                            var dateReserva = new Date(data[i].DataReserva) 
+                            var AnoReserva = (dateReserva.getFullYear()).toString()
+                            var MesReserva = (dateReserva.getMonth() + 1).toString()
+                            var DiaReserva = (dateReserva.getDate()).toString()
+                            var DataReservaString = (AnoReserva + MesReserva + DiaReserva)
+                            //console.log("Data atual da reserva:",DataReservaString)
+                            const horasFim = data[i].HoraFim;
+                            const horasFim_Array = horasFim.split(':')
+                            const horaF = Number(horasFim_Array[0])
+                            const minutosF = Number(horasFim_Array[1])
+                            //const HorasAtivasF = Number(horaF+minutosF)
+                            //console.log("Horas atuais da reserva:",HorasAtivasF)
+                            if(DataReservaString == DataAtualString){
+                                if(horaF <= horas_atuais){
+                                    if(minutosF < minutos_atuais){
+                                        data.splice(i,1);
+                                    }
+                                }else{
+                                    continue;
+                                }
+                            }else{
+                                res.status(200).json({sucesso: true, data: data})
+                                break;
+                            }                   
+                        }
+                    }else
                         res.json({sucesso: false, message:'Não foi possível obter as reservas desse utilizador'})
                 }else
                     res.json({sucesso: false, message: 'Centro não existe'})
@@ -105,14 +142,64 @@ controllers.listReservasDesativasMobile = async (req, res) =>{
 "Reservas"."SalaId" as "SalaId", "Reservas"."DataReserva","Reservas"."HoraInicio","Reservas"."HoraFim",
 "Salas"."Nome", "Utilizadores"."id" as "UtilizadoreId", "Utilizadores"."Pnome", "Utilizadores"."Unome"   
 from "Reservas" inner join "Salas" on "Reservas"."SalaId" = "Salas"."id" inner join "Utilizadores" on "Reservas"."UtilizadoreId" = "Utilizadores"."id"
-where "Reservas"."UtilizadoreId" = ${id} and "Salas"."CentroId" = ${centroId} and "Reservas"."EstadoId"=2`
+where "Reservas"."UtilizadoreId" = ${id} and "Salas"."CentroId" = ${centroId} and "Reservas"."DataReserva" <= CURRENT_DATE 
+order by "Reservas"."DataReserva", "Reservas"."HoraInicio"`
                     const data = await bd.query(query,{ type: QueryTypes.SELECT })
                     .then(function(data){return data;})
                     .catch(err=>console.log(err))
                     //console.log(data)
-                    if(data)
+                    if(data){
+                        //Vamos buscar a data atual e as horas
+                        var data_atual = new Date()
+                        var AnoAtual = (data_atual.getFullYear()).toString()
+                        var MesAtual = (data_atual.getMonth() + 1).toString()
+                        var DiaAtual = (data_atual.getDate()).toString()
+                        var DataAtualString = (AnoAtual + MesAtual + DiaAtual)
+                        //console.log("Data atual String:",DataAtualString)
+                        var horas_atuais = Number((data_atual.getHours()).toString())
+                        var minutos_atuais = Number((data_atual.getMinutes()).toString())
+                        //console.log("Horas atuais",horas_atuais)
+                        //console.log("Minutos atuais",minutos_atuais)
+                        //var hora_atual_numero = Number(horas_atuais + minutos_atuais)
+                        //console.log("Horas atuais String:",hora_atual_numero)
+                        for(let i =0; i < data.length; i++){
+                            var dateReserva = new Date(data[i].DataReserva) 
+                            var AnoReserva = (dateReserva.getFullYear()).toString()
+                            var MesReserva = (dateReserva.getMonth() + 1).toString()
+                            var DiaReserva = (dateReserva.getDate()).toString()
+                            var DataReservaString = (AnoReserva + MesReserva + DiaReserva)
+                            //console.log("Data atual da reserva:",DataReservaString)
+                            const horasFim = data[i].HoraFim;
+                            const horasFim_Array = horasFim.split(':')
+                            const horaF = Number(horasFim_Array[0])
+                            const minutosF = Number(horasFim_Array[1])
+                            //const HorasAtivasF = Number(horaF+minutosF)
+                            //console.log("Horas da reserva:",horaF)
+                            //console.log("minutos da reserva:",minutosF)
+                            if(DataReservaString == DataAtualString){
+                                if(horaF == horas_atuais){
+                                    if(minutosF > minutos_atuais){
+                                        data.splice(i,1);
+                                        //console.log("Removi")
+                                    }
+                                }else{
+                                    if(horaF > horas_atuais){
+                                        data.splice(i,1);
+                                        //console.log("Removi")
+                                    }
+                                    else
+                                        continue;
+                                }
+                            }else{
+                                if(DataReservaString > DataAtualString)
+                                    data.splice(i,1);
+                                else{
+                                    continue;
+                                }
+                            }                   
+                        }
                         res.status(200).json({sucesso: true, data: data})
-                    else
+                    }else
                         res.json({sucesso: false, message:'Não foi possível obter as reservas desse utilizador'})
                 }else
                     res.json({sucesso: false, message: 'Centro não existe'})
