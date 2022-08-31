@@ -71,7 +71,7 @@ where "Reservas"."UtilizadoreId" = ${id} and "Salas"."CentroId" = ${centroId} an
                     const data = await bd.query(query,{ type: QueryTypes.SELECT })
                     .then(function(data){return data;})
                     .catch(err=>console.log(err))
-                    console.log(data)
+                    //console.log(data)
                     if(data){
                         //Vamos buscar a data atual e as horas
                         var data_atual = new Date()
@@ -101,12 +101,12 @@ where "Reservas"."UtilizadoreId" = ${id} and "Salas"."CentroId" = ${centroId} an
                             if(DataReservaString == DataAtualString){
                                 if(horaF == horas_atuais){
                                     if(minutosF <= minutos_atuais)
-                                        data.splice(i,1);
+                                        delete data[i];
                                     else
                                         continue;
                                 }else{
                                     if(horaF < horas_atuais)
-                                        data.splice(i,1);
+                                        delete data[i];
                                     else
                                         continue;
                                 }
@@ -164,6 +164,7 @@ order by "Reservas"."DataReserva" desc`
                         //console.log("Horas atuais",horas_atuais)
                         //console.log("Minutos atuais",minutos_atuais)
                         for(let i = 0; i < data.length; i++){
+                            console.log("Reserva numero: ", i)
                             var dateReserva = new Date(data[i].DataReserva) 
                             var AnoReserva = (dateReserva.getFullYear()).toString()
                             var MesReserva = (dateReserva.getMonth() + 1).toString()
@@ -179,22 +180,20 @@ order by "Reservas"."DataReserva" desc`
                             if(DataReservaString == DataAtualString){
                                 if(horaF == horas_atuais){
                                     if(minutosF > minutos_atuais){
-                                        data.splice(i,1); 
+                                        delete data[i];
                                         //console.log("Removi"); 
-                                        //console.log(data)
                                     }else
                                         continue;
                                 }else{
                                     if(horaF > horas_atuais){
-                                        data.splice(i,1);
+                                        delete data[i];
                                         //console.log("Passei aqui e removi");
+                                    }else
                                         continue;
-                                    }
                                 }
-                            }else{
-                                continue;
-                            }                   
+                            }                  
                         }
+                        //console.log(data)
                         res.status(200).json({sucesso: true, data: data})
                     }else
                         res.json({sucesso: false, message:'Não foi possível obter as reservas desse utilizador'})

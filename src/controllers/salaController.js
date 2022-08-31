@@ -1,10 +1,10 @@
 var bd = require('../config/basedados');
 var sala = require('../models/Salas');
 var centros = require('../models/Centros');
-var utilizadores = require('../models/Utilizador')
-var pertence = require('../models/Pertence')
-var historicoLimpezas = require('../models/Historico_limpezas')
-var historicoAdiamentos = require('../models/Historico_adiamentos')
+var utilizadores = require('../models/Utilizador');
+var pertence = require('../models/Pertence');
+var historicoLimpezas = require('../models/Historico_limpezas');
+var historicoAdiamentos = require('../models/Historico_adiamentos');
 var reserva = require('../models/Reservas');
 const QRCode = require('qrcode');
 const { QueryTypes } = require('sequelize');
