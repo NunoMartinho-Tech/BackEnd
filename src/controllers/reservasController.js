@@ -32,8 +32,9 @@ controllers.listReservasSala = async (req, res) =>{
             where:{id:salaid}
         })
         if(salaData){
-            const query = `select "Reservas"."id", "Reservas"."DataReserva", "Reservas"."NumeroParticipantes","Reservas"."HoraInicio",
-    "Reservas"."HoraFim", "Reservas"."EstadoId","Utilizadores"."id","Utilizadores"."Pnome","Utilizadores"."Unome"
+            const query = `
+    select "Reservas"."id" as "ReservaId", "Reservas"."DataReserva", "Reservas"."NumeroParticipantes","Reservas"."HoraInicio",
+    "Reservas"."HoraFim", "Reservas"."EstadoId" as "Reserva Estado","Utilizadores"."id" as "UtilizadoreId","Utilizadores"."Pnome","Utilizadores"."Unome", "Salas"."EstadoId" as "Sala Estado", "Salas"."Motivo_Bloqueio"
     from "Reservas" inner join "Salas" on "Reservas"."SalaId" = "Salas"."id" 
     inner join "Utilizadores" on "Reservas"."UtilizadoreId" = "Utilizadores"."id"
     where "Salas"."id" = ${salaid} and "Reservas"."EstadoId"=1 and "Reservas"."DataReserva" >= CURRENT_DATE order by "Reservas"."DataReserva"`
