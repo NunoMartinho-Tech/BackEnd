@@ -24,6 +24,29 @@ controllers.list = async (req, res) =>{
         res.json({sucesso: false})
 }
 
+//Listar Reservas com base no id da Sala
+controllers.listReservasSala = async (req, res) =>{
+    const {salaid} = req.params;
+    if(salaid!=null){
+        const salaData = await sala.findOne({
+            where:{id:salaid}
+        })
+        if(salaData){
+            const query = `select "Reservas"."id", "Reservas"."DataReserva", "Reservas"."NumeroParticipantes","Reservas"."HoraInicio",
+    "Reservas"."HoraFim", "Reservas"."EstadoId","Utilizadores"."id","Utilizadores"."Pnome","Utilizadores"."Unome"
+    from "Reservas" inner join "Salas" on "Reservas"."SalaId" = "Salas"."id" 
+    inner join "Utilizadores" on "Reservas"."UtilizadoreId" = "Utilizadores"."id"
+    where "Salas"."id" = ${salaid} and "Reservas"."EstadoId"=1 and "Reservas"."DataReserva" >= CURRENT_DATE order by "Reservas"."DataReserva"`
+            const data = await bd.query(query,{ type: QueryTypes.SELECT })
+            .then(function(data){return data;})
+            .catch(err=>console.log(err))
+            res.status(200).json({sucesso: true, data: data})
+        }else
+            res.json({sucesso: false, message: 'Sala não existe'})
+    }else
+        res.json({sucesso: false, message: 'Insira um id'})
+}
+
 //Listar reservas com base no centro e no user WebSite
 controllers.listReservas = async (req, res) =>{
     const {idUser} = req.params

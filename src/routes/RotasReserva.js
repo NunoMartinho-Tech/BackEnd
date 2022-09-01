@@ -4,6 +4,8 @@ const ReservasController = require('../controllers/reservasController');
 
  //listar
 Router.get('/list', ReservasController.list);
+//Listar Reservas com base no id da Sala
+Router.get('/listReservasSala/:salaid', ReservasController.listReservasSala);
 //Listar reservas com base no centro e no user
 Router.get('/listReservas/:id',ReservasController.listReservas)
 //Listar reservas ativas com base no centro e no user MOBILE
