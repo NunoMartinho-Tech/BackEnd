@@ -218,7 +218,7 @@ controllers.register = async (req, res) =>{
                         res.json({sucesso:false, message:'A palavra passe não pode ter espacos, deve ter entre 8 a 100 caracteres, pelo menos uma letra maiscula e minuscula e pelo menos dois digitos'})
                     }
                 }else{
-                    res.json({sucesso:false, mensagem: 'Insira um email válido'})
+                    res.json({sucesso:false, message: 'Insira um email válido'})
                 }
             }else
                 res.json({sucesso: false, message:'Insira um nome'})
