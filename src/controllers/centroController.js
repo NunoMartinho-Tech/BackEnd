@@ -213,7 +213,7 @@ controllers.delete = async(req,res) => {
                 if(data)
                     res.status(200).json({sucesso: true,message: 'Centro eliminado com sucesso', data: data + ' ' + deleteHistLimpe + ' ' + deleteHistAdiame + ' ' + deleteReservas + ' ' + deletUtiliHistoricoLimpe + ' ' + utilizadoreseliminados + ' ' + deletedSalas + ' '+ deletReservas});
                 else
-                    res.json({sucesso: false, mensagem:'Impossível eliminar o centro'});
+                    res.json({sucesso: false, message:'Impossível eliminar o centro'});
 
         }else{
             res.json({sucesso: false,message: 'Impossível eliminar o centro'});

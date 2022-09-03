@@ -289,7 +289,7 @@ controllers.update = async (req, res) =>{
                             res.status(200).json({sucesso: true,data: data, message:'Utilizador atualizado com sucesso'})
                         }
                 }else{
-                    res.json({sucesso:false, mensagem: 'Insira um email válido'})
+                    res.json({sucesso:false, message: 'Insira um email válido'})
                 }
             }else
                 res.json({sucesso: false, message:'Insira um nome'})
@@ -328,7 +328,7 @@ controllers.updateMobile = async (req, res) =>{
                         })
                         res.status(200).json({sucesso: true, message:'Utilizador atualizado com sucesso'})
                 }else{
-                    res.json({sucesso:false, mensagem: 'Insira um email válido'})
+                    res.json({sucesso:false, message: 'Insira um email válido'})
                 }
             }else
                 res.json({sucesso: false, message:'Insira um nome'})
