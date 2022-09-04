@@ -548,8 +548,8 @@ controllers.limpezaDiaria = async(req,res) =>{
                 var Hora_atual = Number((data_atual.getHours()).toString())
                 var minutos_atual = Number((data_atual.getMinutes()).toString())
 
-                /* console.log("Horas atuais:",Hora_atual)
-                console.log("Minutos atuais:",minutos_atual) */
+                console.log("Horas atuais:",Hora_atual)
+                console.log("Minutos atuais:",minutos_atual)
 
                 if(data.length!=0){
                     for(let i =0; i< data.length;i++){
@@ -559,8 +559,8 @@ controllers.limpezaDiaria = async(req,res) =>{
 
                         const horaF = Number(horasFim_Array[0])
                         const minutosF = Number(horasFim_Array[1])
-                        /* console.log('Hora fim da reserva',horaF)
-                        console.log('Minutos fim da reserva',minutosF) */
+                        console.log('Hora fim da reserva',horaF)
+                        console.log('Minutos fim da reserva',minutosF)
 
                         //Vamos buscar o tempo de limpeza da sala
                         var tempolimpeza = data[i].Tempo_Limpeza
@@ -570,8 +570,8 @@ controllers.limpezaDiaria = async(req,res) =>{
 
                         var horaFinalMaisLimpeza = horaF + horaLimpeza
                         var minutosFinalMaisLimpeza = minutosF + minutosLimpeza
-                        /* console.log("Horas fim mais limpeza", horaFinalMaisLimpeza)
-                        console.log("Minutos fim mais limpeza", minutosFinalMaisLimpeza) */
+                        console.log("Horas fim mais limpeza", horaFinalMaisLimpeza)
+                        console.log("Minutos fim mais limpeza", minutosFinalMaisLimpeza)
 
                         //Verificamos se a hora fim e menor que a hora atual e se a hora fim com limpeza e maior que a hora atual
                         if(horaF <= Hora_atual && horaFinalMaisLimpeza >= Hora_atual){
