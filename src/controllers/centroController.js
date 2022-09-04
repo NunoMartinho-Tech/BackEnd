@@ -590,15 +590,15 @@ controllers.limpezaDiaria = async(req,res) =>{
                                 continue;
                         }
                     }
-                    res.json({sucesso: true, data: ArraySalas})
+                    res.json({sucesso: true, data: JSON.stringify(ArraySalas)})
                     
                 }else{
-                    res.json({sucesso: true, message:'Não existem reservas', data: ArraySalas})
+                    res.json({sucesso: true, message:'Não existem reservas', data: JSON.stringify(ArraySalas)})
                 }
             }else
-                res.json({sucesso: false, message:'Não foi possível obter as reservas desse utilizador', data: ArraySalas})
+                res.json({sucesso: false, message:'Não foi possível obter as reservas desse utilizador', data: JSON.stringify(ArraySalas)})
         }else{
-            res.json({sucesso: false, message: 'Não existem centros com esse id', data: ArraySalas})
+            res.json({sucesso: false, message: 'Não existem centros com esse id', data: JSON.stringify(ArraySalas)})
         }
     }else{
         res.json({sucesso: false, message: 'Forneça um id', data: ArraySalas})
