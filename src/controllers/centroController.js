@@ -17,10 +17,11 @@ controllers.list = async (req, res) =>{
         include: [estado]
     })
     var data_atual = new Date()
+    console.log(data_atual)
     .then(function(data){return data;})
     .catch(error =>{return error;})
-    if(data_atual)
-        res.status(200).json({sucesso: true, data: data_atual});
+    if(data)
+        res.status(200).json({sucesso: true, data: data});
     else
         res.json({sucesso: false, message: 'Não existem centros'});
 }
