@@ -1701,14 +1701,14 @@ controllers.terminarCedo = async(req,res) =>{
                                 var minutos_atual = Number((data_atual.getMinutes()).toString())
                                 var HoraAtualString = Hora_atual + ':' + minutos_atual
 
-                                console.log("Horas atuais:",Hora_atual)
+                                /* console.log("Horas atuais:",Hora_atual)
                                 console.log("Minutos atuais:",minutos_atual)
                                 console.log('Hora atual: ' + HoraAtualString) 
 
                                 console.log('Ano atual: ' + AnoAtual)
                                 console.log('Mes atual: ' + MesAtual)
                                 console.log('Dia atual: ' + DiaAtual)
-                                console.log('Data atual: ' + DataAtualString)
+                                console.log('Data atual: ' + DataAtualString) */
 
                                 var dateReserva = new Date(reservaData.DataReserva) 
                                 var AnoReserva = (dateReserva.getFullYear()).toString()
@@ -1721,13 +1721,13 @@ controllers.terminarCedo = async(req,res) =>{
                                 const horaF = Number(horasFim_Array[0])
                                 const minutosF = Number(horasFim_Array[1])
 
-                                console.log('Hora fim da reserva',horaF)
+                                /* console.log('Hora fim da reserva',horaF)
                                 console.log('Minutos fim da reserva',minutosF)
 
                                 console.log('Ano Reserva: ' + AnoReserva)
                                 console.log('Mes Reserva: ' + MesReserva)
                                 console.log('Dia Reserva: ' + DiaReserva)
-                                console.log('Data Reserva: ' + DataReservaString)
+                                console.log('Data Reserva: ' + DataReservaString) */
                                 //Verificar se ja passou
                                 if(DataAtualString < DataReservaString || DataAtualString > DataReservaString){
                                     //console.log('Esta reserva nao e de hoje')

@@ -543,52 +543,51 @@ controllers.limpezaDiaria = async(req,res) =>{
             .then(function(data){return data;})
             .catch(err=>console.log(err))
             if(data){
-                var data_atual = new Date() 
-                var AnoAtual = (data_atual.getFullYear()).toString()
-                var MesAtual = (data_atual.getMonth() + 1).toString()
-                var DiaAtual = (data_atual.getDate()).toString()
-                var DataAtualString = (AnoAtual + MesAtual + DiaAtual)
+                var data_atual = new Date()
+
                 var Hora_atual = Number((data_atual.getHours()).toString())
                 var minutos_atual = Number((data_atual.getMinutes()).toString())
-                var HoraAtualString = (data_atual.getHours().toString()) + (data_atual.getMinutes().toString())
-                console.log("Horas atuais:",Hora_atual)
-                console.log("Minutos atuais:",minutos_atual)
-                console.log('Hora atual: ' + HoraAtualString) 
-                console.log('Ano atual: ' + AnoAtual)
-                console.log('Mes atual: ' + MesAtual)
-                console.log('Dia atual: ' + DiaAtual)
-                console.log('Data atual: ' + DataAtualString)
+
+                /* console.log("Horas atuais:",Hora_atual)
+                console.log("Minutos atuais:",minutos_atual) */
+
                 if(data.length!=0){
                     for(let i =0; i< data.length;i++){
-                         //Vamos buscar a hora fim
-                        //var horafinal = data[i].HoraFim
-                        /* Atencao nao podes fazer assim fazer como esta no listar reservas do mobile */
+
                         const horasFim = data[i].HoraFim;
                         const horasFim_Array = horasFim.split(':')
-                        const horasFimNumero = Number(horasFim_Array[0] + horasFim_Array[1])
+
                         const horaF = Number(horasFim_Array[0])
                         const minutosF = Number(horasFim_Array[1])
-                        console.log('Hora fim da reserva',horaF)
-                        console.log('Minutos fim da reserva',minutosF)
-                        console.log('Horas fim da reserva',horasFimNumero)
-                        //Vamos buscar o tempo de limpeza da sala
-                        //var tempolimpeza = data[i].Tempo_Limpeza
-                        var tempoLimpezaArray = (data[i].Tempo_Limpeza).split(':')
-                        var horaLimpeza = tempoLimpezaArray[0]
-                        var minutosLimpeza = tempoLimpezaArray[1]
-                        var tempoLimpezaNumero = Number(horaLimpeza+minutosLimpeza)
-                        console.log(tempoLimpezaNumero)
+                        /* console.log('Hora fim da reserva',horaF)
+                        console.log('Minutos fim da reserva',minutosF) */
 
-                        //Calcular a hora final
-                        var horafinalLimpeza = horasFimNumero + tempoLimpezaNumero
-                        console.log("Tempo final com limpeza", horafinalLimpeza)
-                        //console.log(horafinalLimpeza)
+                        //Vamos buscar o tempo de limpeza da sala
+                        var tempolimpeza = data[i].Tempo_Limpeza
+                        var tempoLimpezaArray = tempolimpeza.split(':')
+                        var horaLimpeza = Number(tempoLimpezaArray[0])
+                        var minutosLimpeza = Number(tempoLimpezaArray[1])
+
+                        var horaFinalMaisLimpeza = horaF + horaLimpeza
+                        var minutosFinalMaisLimpeza = minutosF + minutosLimpeza
+                        /* console.log("Horas fim mais limpeza", horaFinalMaisLimpeza)
+                        console.log("Minutos fim mais limpeza", minutosFinalMaisLimpeza) */
+
                         //Verificamos se a hora fim e menor que a hora atual e se a hora fim com limpeza e maior que a hora atual
-                        if(horasFimNumero <= HoraAtualString && horafinalLimpeza > HoraAtualString){
+                        if(horaF <= Hora_atual && horaFinalMaisLimpeza >= Hora_atual){
                             //console.log('entrei no if')
-                            ArraySalas.push(data[i])
+                            if(minutosF < minutos_atual && minutosFinalMaisLimpeza > minutos_atual)
+                                ArraySalas.push(data[i])
+                            else
+                                continue;
                         }else{
-                            continue;
+                            if(horaF == Hora_atual && horaFinalMaisLimpeza == Hora_atual){
+                                if(minutosF < minutos_atual && minutosFinalMaisLimpeza > minutos_atual){
+                                    ArraySalas.push(data[i])
+                                }else
+                                    continue;
+                            }else
+                                continue;
                         }
                     }
                     res.json({sucesso: true, data: ArraySalas})
