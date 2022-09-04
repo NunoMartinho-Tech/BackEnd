@@ -16,10 +16,11 @@ controllers.list = async (req, res) =>{
     const data = await centro.findAll({
         include: [estado]
     })
+    var data_atual = new Date()
     .then(function(data){return data;})
     .catch(error =>{return error;})
-    if(data)
-        res.status(200).json({sucesso: true, data: data});
+    if(data_atual)
+        res.status(200).json({sucesso: true, data: data_atual});
     else
         res.json({sucesso: false, message: 'Não existem centros'});
 }
@@ -557,6 +558,9 @@ controllers.limpezaDiaria = async(req,res) =>{
                     for(let i =0; i< data.length;i++){
                          //Vamos buscar a hora fim
                         //var horafinal = data[i].HoraFim
+
+                        /* Atencao nao podes fazer assim fazer como esta no listar reservas do mobile */
+
                         var horaFimArray = (data[i].HoraFim).split(':')
                         var horaFim = horaFimArray[0]
                         var minutosFim = horaFimArray[1]

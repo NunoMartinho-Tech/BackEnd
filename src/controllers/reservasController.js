@@ -5,7 +5,7 @@ var centro = require('../models/Centros');
 var utilizador = require('../models/Utilizador');
 var historicoLimpeza = require('../models/Historico_limpezas');
 var historicoAdiamentos = require('../models/Historico_adiamentos');
-const { QueryTypes } = require('sequelize');
+const { QueryTypes, ConnectionAcquireTimeoutError } = require('sequelize');
 const date = require('date-and-time');
 const controllers = {}
 bd.sync()
@@ -1700,36 +1700,38 @@ controllers.terminarCedo = async(req,res) =>{
                                 var minutos_atual = (data_atual.getMinutes()).toString()
                                 var HoraAtualString = Hora_atual + ':' + minutos_atual
                                 var HoraAtualNumero= Number(Hora_atual + minutos_atual)
-                                /* console.log('Ano atual: ' + AnoAtual)
+
+                                console.log('Ano atual: ' + AnoAtual)
                                 console.log('Mes atual: ' + MesAtual)
                                 console.log('Dia atual: ' + DiaAtual)
                                 console.log('Data Atual final: ' + DataAtualString)
+
                                 console.log('Hora atual: ' + Hora_atual)
-                                console.log('Mes atual: ' + minutos_atual)
-                                console.log('Hora atual atual: ' + HoraAtualString)
-                                console.log('Hora atual atual formato numero: ' + HoraAtualNumero) */
+                                console.log('Minutos atuais: ' + minutos_atual)
+                                console.log('Hora atual string: ' + HoraAtualString)
+                                console.log('Hora atual formato numero: ' + HoraAtualNumero) 
+
                                 var dateReserva = new Date(reservaData.DataReserva) 
                                 //console.log('Data da reserva: '+dateReserva)
                                 var AnoReserva = (dateReserva.getFullYear()).toString()
                                 var MesReserva = (dateReserva.getMonth() + 1).toString()
                                 var DiaReserva = (dateReserva.getDate()).toString()
                                 var DataReservaString = (AnoReserva + MesReserva + DiaReserva)
-                                /* console.log('Ano atual: ' + AnoReserva)
-                                console.log('Mes atual: ' + MesReserva)
-                                console.log('Dia atual: ' + DiaReserva)
-                                console.log('Data Atual final: ' + DataReservaString) */
+
+                                console.log('Ano Reserva: ' + AnoReserva)
+                                console.log('Mes Reserva: ' + MesReserva)
+                                console.log('Dia Reserva: ' + DiaReserva)
+                                console.log('Data Reserva final: ' + DataReservaString) 
+
                                 //Verificar se ja passou
                                 if(DataAtualString < DataReservaString || DataAtualString > DataReservaString){
                                     //console.log('Esta reserva nao e de hoje')
                                     res.json({sucesso: false, message:'Impossível acabar uma reserva que não está a decorrer'})
                                 }else{
-                                    var horaInicioCentro = CentroData.Hora_abertura
-                                    var horaInicioCentroArray = horaInicioCentro.split(':')
-                                    var horaInicioCentroNumber = Number(horaInicioCentroArray[0] + horaInicioCentroArray[1])
-                                    //console.log('Hora de abertura: ' + horaInicioCentroNumber
-                                    var horaFimCentro = CentroData.Hora_fecho
-                                    var horaFimCentroArray = horaFimCentro.split(':')
-                                    var horaFimCentroNumber = Number(horaFimCentroArray[0] + horaFimCentroArray[1])
+
+                                    /* Alterar aqui se a hora fim atual for maior que a hora fim da reserva entao nao pode terminar algo que ja terminou
+                                    se nao pode terminar e altera a hora. */
+
                                     //Hora Final da Reserva
                                     const horasFimReserva = reservaData.HoraFim;
                                     //console.log('Hora da reserva defenida (formato Data): '+ horasFimReserva)
