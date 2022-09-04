@@ -16,10 +16,10 @@ controllers.list = async (req, res) =>{
     const data = await centro.findAll({
         include: [estado]
     })
-    var data_atual = new Date()
-    console.log(data_atual)
     .then(function(data){return data;})
     .catch(error =>{return error;})
+    var tempo = new Date()
+    console.log(tempo)
     if(data)
         res.status(200).json({sucesso: true, data: data});
     else
