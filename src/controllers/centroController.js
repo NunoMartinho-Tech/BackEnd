@@ -530,6 +530,7 @@ controllers.alocacaoDiaria = async(req,res) =>{
 //Necessidade atual de limpeza
 controllers.limpezaDiaria = async(req,res) =>{
     const {id} = req.params
+    console.log(id)
     const ArraySalas = []
     if(id!=null){
         const centros = await centro.findOne({
@@ -576,13 +577,13 @@ controllers.limpezaDiaria = async(req,res) =>{
                         //Verificamos se a hora fim e menor que a hora atual e se a hora fim com limpeza e maior que a hora atual
                         if(horaF <= Hora_atual && horaFinalMaisLimpeza >= Hora_atual){
                             //console.log('entrei no if')
-                            if(minutosF < minutos_atual && minutosFinalMaisLimpeza > minutos_atual)
+                            if(minutosF <= minutos_atual && minutosFinalMaisLimpeza > minutos_atual)
                                 ArraySalas.push(data[i])
                             else
                                 continue;
                         }else{
                             if(horaF == Hora_atual && horaFinalMaisLimpeza == Hora_atual){
-                                if(minutosF < minutos_atual && minutosFinalMaisLimpeza > minutos_atual){
+                                if(minutosF <= minutos_atual && minutosFinalMaisLimpeza > minutos_atual){
                                     ArraySalas.push(data[i])
                                 }else
                                     continue;
@@ -590,18 +591,20 @@ controllers.limpezaDiaria = async(req,res) =>{
                                 continue;
                         }
                     }
-                    res.json({sucesso: true, data: JSON.stringify(ArraySalas)})
-                    
+                    if(ArraySalas.length!=0){
+                        res.json({sucesso: true, data: ArraySalas})
+                    }else
+                        res.json({sucesso: false, message:'Não existem salas'})
                 }else{
-                    res.json({sucesso: true, message:'Não existem reservas', data: JSON.stringify(ArraySalas)})
+                    res.json({sucesso: true, message:'Não existem salas'})
                 }
             }else
-                res.json({sucesso: false, message:'Não foi possível obter as reservas desse utilizador', data: JSON.stringify(ArraySalas)})
+                res.json({sucesso: false, message:'Não foi possível obter as reservas desse utilizador'})
         }else{
-            res.json({sucesso: false, message: 'Não existem centros com esse id', data: JSON.stringify(ArraySalas)})
+            res.json({sucesso: false, message: 'Não existem centros com esse id'})
         }
     }else{
-        res.json({sucesso: false, message: 'Forneça um id', data: ArraySalas})
+        res.json({sucesso: false, message: 'Forneça um id'})
     }
 }
 
