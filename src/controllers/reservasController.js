@@ -1673,6 +1673,7 @@ controllers.adiar = async(req,res) =>{
 //Terminar mais cedo
 controllers.terminarCedo = async(req,res) =>{
     const {id} = req.params;
+    var Disponivel = false
     if(id!=null){
         var reservaData = await reserva.findOne({
             where: {id:id}
@@ -1691,85 +1692,60 @@ controllers.terminarCedo = async(req,res) =>{
                             if(reservaData.EstadoId == 1){
                                 //Verificar se a reserva esta em adamento
                                 var data_atual = new Date() 
-                                //console.log('Data atual: '+data_atual)
                                 var AnoAtual = (data_atual.getFullYear()).toString()
                                 var MesAtual = (data_atual.getMonth() + 1).toString()
                                 var DiaAtual = (data_atual.getDate()).toString()
                                 var DataAtualString = (AnoAtual + MesAtual + DiaAtual)
-                                var Hora_atual = (data_atual.getHours()).toString()
-                                var minutos_atual = (data_atual.getMinutes()).toString()
+
+                                var Hora_atual = Number((data_atual.getHours()).toString())
+                                var minutos_atual = Number((data_atual.getMinutes()).toString())
                                 var HoraAtualString = Hora_atual + ':' + minutos_atual
-                                var HoraAtualNumero= Number(Hora_atual + minutos_atual)
+
+                                console.log("Horas atuais:",Hora_atual)
+                                console.log("Minutos atuais:",minutos_atual)
+                                console.log('Hora atual: ' + HoraAtualString) 
 
                                 console.log('Ano atual: ' + AnoAtual)
                                 console.log('Mes atual: ' + MesAtual)
                                 console.log('Dia atual: ' + DiaAtual)
-                                console.log('Data Atual final: ' + DataAtualString)
-
-                                console.log('Hora atual: ' + Hora_atual)
-                                console.log('Minutos atuais: ' + minutos_atual)
-                                console.log('Hora atual string: ' + HoraAtualString)
-                                console.log('Hora atual formato numero: ' + HoraAtualNumero) 
+                                console.log('Data atual: ' + DataAtualString)
 
                                 var dateReserva = new Date(reservaData.DataReserva) 
-                                //console.log('Data da reserva: '+dateReserva)
                                 var AnoReserva = (dateReserva.getFullYear()).toString()
                                 var MesReserva = (dateReserva.getMonth() + 1).toString()
                                 var DiaReserva = (dateReserva.getDate()).toString()
                                 var DataReservaString = (AnoReserva + MesReserva + DiaReserva)
+                                
+                                const horasFim = reservaData.HoraFim;
+                                const horasFim_Array = horasFim.split(':')
+                                const horaF = Number(horasFim_Array[0])
+                                const minutosF = Number(horasFim_Array[1])
+
+                                console.log('Hora fim da reserva',horaF)
+                                console.log('Minutos fim da reserva',minutosF)
 
                                 console.log('Ano Reserva: ' + AnoReserva)
                                 console.log('Mes Reserva: ' + MesReserva)
                                 console.log('Dia Reserva: ' + DiaReserva)
-                                console.log('Data Reserva final: ' + DataReservaString) 
-
+                                console.log('Data Reserva: ' + DataReservaString)
                                 //Verificar se ja passou
                                 if(DataAtualString < DataReservaString || DataAtualString > DataReservaString){
                                     //console.log('Esta reserva nao e de hoje')
                                     res.json({sucesso: false, message:'Impossível acabar uma reserva que não está a decorrer'})
                                 }else{
-
-                                    /* Alterar aqui se a hora fim atual for maior que a hora fim da reserva entao nao pode terminar algo que ja terminou
-                                    se nao pode terminar e altera a hora. */
-
-                                    //Hora Final da Reserva
-                                    const horasFimReserva = reservaData.HoraFim;
-                                    //console.log('Hora da reserva defenida (formato Data): '+ horasFimReserva)
-                                    const HoraFim_Array = horasFimReserva.split(':')
-                                    const horaFim = HoraFim_Array[0]
-                                    //console.log('Hora:' + horaFim)
-                                    const minutosFim = HoraFim_Array[1]
-                                    //console.log('Minutos:' + minutosFim)
-                                    const Horas_em_Numero = Number(horaFim+minutosFim)
-                                    //console.log('Horas da reserva defenida (formato Numero): '+Horas_em_Numero)
-                                    //Hora Inicio
-                                    const horasInicioReserva = reservaData.HoraInicio;
-                                    //console.log('Hora da reserva desativa (formato Data): '+ horasInicioReserva)
-                                    const HoraInicio_Array = horasInicioReserva.split(':')
-                                    const horaInicio = HoraInicio_Array[0]
-                                    //console.log('Hora:' + horaInicio)
-                                    const minutosInicio = HoraInicio_Array[1]
-                                    //console.log('Minutos:' + minutosInicio)
-                                    const HorasInicio_desativas = Number(horaInicio+minutosInicio)
-                                    //console.log('Horas da reserva desativa (formato Numero): '+HorasInicio_desativas)
-                                    if(HoraAtualNumero < horaInicioCentroNumber || HoraAtualNumero > horaFimCentroNumber){
-                                            res.json({sucesso:false, message:'Impossível adiar a reserva. Horario do centro: '+CentroData.Hora_abertura+' e '+CentroData.Hora_fecho})
+                                    if(horaF < Hora_atual ){
+                                            return;
                                     }else{
-                                        //Se acabar depois da reserva acabar
-                                        if(HoraAtualNumero > Horas_em_Numero){
-                                            res.json({sucesso: false, message:'Impossível acabar uma reserva que já acabou'})
-                                        }else{
-                                            //Se acabar antes da reserva acabar
-                                            if(HoraAtualNumero <= Horas_em_Numero && (HoraAtualNumero >= HorasInicio_desativas)){
-                                                //console.log('Passei aqui ')
+                                        if(Hora_atual == horaF){
+                                            if(minutos_atual < minutosF){
                                                 Disponivel = true
                                             }
-                                        }
-                                        //A reserva esta a decorrer e a hora atual e menor que a hora fim da reserva e maior que a hora inicio
+                                        }else
+                                            Disponivel = true
+                                    }
                                         if(Disponivel){
                                             const reservasdata = await reserva.update({
-                                                HoraFim:HoraAtualString,
-                                                EstadoId: 2
+                                                HoraFim:HoraAtualString
                                             },{where:{id:id}})
                                             .then(function(data){return data;})
                                             .catch(err=>console.log(err))
@@ -1780,7 +1756,6 @@ controllers.terminarCedo = async(req,res) =>{
                                         }else{
                                             res.json({sucesso: false, message: 'Impossível terminar a reserva'})
                                         }
-                                    }
                                 }
                             }else{
                                 res.json({sucesso:false, message:'A reserva encontra-se desativada'})

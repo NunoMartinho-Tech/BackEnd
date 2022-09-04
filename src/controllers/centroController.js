@@ -18,8 +18,6 @@ controllers.list = async (req, res) =>{
     })
     .then(function(data){return data;})
     .catch(error =>{return error;})
-    var tempo = new Date()
-    console.log(tempo)
     if(data)
         res.status(200).json({sucesso: true, data: data});
     else
@@ -532,7 +530,7 @@ controllers.alocacaoDiaria = async(req,res) =>{
 //Necessidade atual de limpeza
 controllers.limpezaDiaria = async(req,res) =>{
     const {id} = req.params
-    const ArrayReservas = []
+    const ArraySalas = []
     if(id!=null){
         const centros = await centro.findOne({
             where:{id:id}
@@ -545,50 +543,58 @@ controllers.limpezaDiaria = async(req,res) =>{
             .then(function(data){return data;})
             .catch(err=>console.log(err))
             if(data){
-                //console.log(data)
-                //Ir buscar a hora atual
-                var data_atual = new Date();
-                var horas_atuais = (data_atual.getHours()).toString()
-                //console.log(horas_atuais)
-                var minutos_atuais = (data_atual.getMinutes()).toString()
-                //console.log( minutos_atuais)
-                var hora_atual_numero = Number(horas_atuais + minutos_atuais)
-                //console.log(hora_atual_numero)
-
+                var data_atual = new Date() 
+                var AnoAtual = (data_atual.getFullYear()).toString()
+                var MesAtual = (data_atual.getMonth() + 1).toString()
+                var DiaAtual = (data_atual.getDate()).toString()
+                var DataAtualString = (AnoAtual + MesAtual + DiaAtual)
+                var Hora_atual = Number((data_atual.getHours()).toString())
+                var minutos_atual = Number((data_atual.getMinutes()).toString())
+                var HoraAtualString = (data_atual.getHours().toString()) + (data_atual.getMinutes().toString())
+                console.log("Horas atuais:",Hora_atual)
+                console.log("Minutos atuais:",minutos_atual)
+                console.log('Hora atual: ' + HoraAtualString) 
+                console.log('Ano atual: ' + AnoAtual)
+                console.log('Mes atual: ' + MesAtual)
+                console.log('Dia atual: ' + DiaAtual)
+                console.log('Data atual: ' + DataAtualString)
                 if(data.length!=0){
                     for(let i =0; i< data.length;i++){
                          //Vamos buscar a hora fim
                         //var horafinal = data[i].HoraFim
-
                         /* Atencao nao podes fazer assim fazer como esta no listar reservas do mobile */
-
-                        var horaFimArray = (data[i].HoraFim).split(':')
-                        var horaFim = horaFimArray[0]
-                        var minutosFim = horaFimArray[1]
-                        var horaFimNumero = Number(horaFim+minutosFim)
-                        //console.log(horaFimNumero)
+                        const horasFim = data[i].HoraFim;
+                        const horasFim_Array = horasFim.split(':')
+                        const horasFimNumero = Number(horasFim_Array[0] + horasFim_Array[1])
+                        const horaF = Number(horasFim_Array[0])
+                        const minutosF = Number(horasFim_Array[1])
+                        console.log('Hora fim da reserva',horaF)
+                        console.log('Minutos fim da reserva',minutosF)
+                        console.log('Horas fim da reserva',horasFimNumero)
                         //Vamos buscar o tempo de limpeza da sala
                         //var tempolimpeza = data[i].Tempo_Limpeza
                         var tempoLimpezaArray = (data[i].Tempo_Limpeza).split(':')
                         var horaLimpeza = tempoLimpezaArray[0]
                         var minutosLimpeza = tempoLimpezaArray[1]
                         var tempoLimpezaNumero = Number(horaLimpeza+minutosLimpeza)
-                        //console.log(tempoLimpezaNumero)
+                        console.log(tempoLimpezaNumero)
+
                         //Calcular a hora final
-                        var horafinalLimpeza = horaFimNumero + tempoLimpezaNumero
+                        var horafinalLimpeza = horasFimNumero + tempoLimpezaNumero
+                        console.log("Tempo final com limpeza", horafinalLimpeza)
                         //console.log(horafinalLimpeza)
                         //Verificamos se a hora fim e menor que a hora atual e se a hora fim com limpeza e maior que a hora atual
-                        if(horaFimNumero <= hora_atual_numero && horafinalLimpeza > hora_atual_numero){
+                        if(horasFimNumero <= HoraAtualString && horafinalLimpeza > HoraAtualString){
                             //console.log('entrei no if')
-                            ArrayReservas.push(data[i])
+                            ArraySalas.push(data[i])
                         }else{
                             continue;
                         }
                     }
-                    res.json({sucesso: true, data: ArrayReservas })
+                    res.json({sucesso: true, data: ArraySalas})
                     
                 }else{
-                    res.json({sucesso: true, message:'Não existem reservas', data: ArrayReservas})
+                    res.json({sucesso: true, message:'Não existem reservas', data: ArraySalas})
                 }
             }else
                 res.json({sucesso: false, message:'Não foi possível obter as reservas desse utilizador'})
