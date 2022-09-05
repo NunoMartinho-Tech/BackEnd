@@ -596,7 +596,7 @@ controllers.limpezaDiaria = async(req,res) =>{
                     }else
                         res.json({sucesso: false, message:'Não existem salas'})
                 }else{
-                    res.json({sucesso: true, message:'Não existem salas'})
+                    res.json({sucesso: false, message:'Não existem salas'})
                 }
             }else
                 res.json({sucesso: false, message:'Não foi possível obter as reservas desse utilizador'})
