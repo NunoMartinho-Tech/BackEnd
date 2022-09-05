@@ -37,7 +37,8 @@ controllers.listReservasSala = async (req, res) =>{
     "Reservas"."HoraFim", "Reservas"."EstadoId" as "Reserva Estado","Utilizadores"."id" as "UtilizadoreId","Utilizadores"."Pnome","Utilizadores"."Unome", "Salas"."EstadoId" as "Sala Estado", "Salas"."Motivo_Bloqueio"
     from "Reservas" inner join "Salas" on "Reservas"."SalaId" = "Salas"."id" 
     inner join "Utilizadores" on "Reservas"."UtilizadoreId" = "Utilizadores"."id"
-    where "Salas"."id" = ${salaid} and "Reservas"."EstadoId"=1 and "Reservas"."DataReserva" >= CURRENT_DATE order by "Reservas"."DataReserva"`
+    where "Salas"."id" = ${salaid} and "Reservas"."EstadoId"=1 and "Reservas"."DataReserva" >= CURRENT_DATE order by "Reservas"."DataReserva
+    order by "Reservas"."DataReserva", "Reservas"."HoraInicio"`
             const data = await bd.query(query,{ type: QueryTypes.SELECT })
             .then(function(data){return data;})
             .catch(err=>console.log(err))
@@ -249,26 +250,107 @@ controllers.add = async (req, res) =>{
                     var data_reserva = new Date(DataReserva)
                     var data_atual = new Date();
                     if(date.isSameDay(data_atual,data_reserva)){
+                        //console.log("Reserva para hoje")
+                        //Horas Atuais
                         var horas_atuais = (data_atual.getHours()).toString()
-                        //console.log('Horas atuas: ' + horas_atuais)
+                        //console.log('Hora atual: ' + horas_atuais)
+
                         var minutos_atuais = (data_atual.getMinutes()).toString()
                         //console.log('Minutos atuais: ' + minutos_atuais)
+
                         var hora_atual_numero = Number(horas_atuais + minutos_atuais)
-                        //console.log('Data atual em numero: '+hora_atual_numero)
+                        //console.log('Horas atuais em numero: '+hora_atual_numero)
+
+                        //Tempo de Limpeza
                         var TempLimpSala = data.Tempo_Limpeza
                         var tempoLimpezaArray = TempLimpSala.split(':')
-                        var horaLimpeza = tempoLimpezaArray[0]
-                        var minutoLimpeza = tempoLimpezaArray[1]
-                        var TempoLimp = Number(horaLimpeza+minutoLimpeza);
-                        //console.log('Tempo limpeza da Sala: '+TempLimpSala)
+
+                        var horaLimpeza = Number(tempoLimpezaArray[0])
+                        //console.log("Horas Limpeza", horaLimpeza)
+
+                        var minutoLimpeza = Number(tempoLimpezaArray[1])
+                        //console.log("Minutos Limpeza", minutoLimpeza)
+
+                        //Tempo da reserva
                         var hora_fim_array =  HoraFim.split(':')
+
+                        var horas_fim = Number(hora_fim_array[0])
+                        //console.log("Hora fim", horas_fim)
+
+                        var minutos_fim = Number(hora_fim_array[1])
+                        //console.log("Minutos fim", minutos_fim)
+
                         var hora_fim_numero = Number(hora_fim_array[0] + hora_fim_array[1])
-                        //console.log('Hora fim: '+ hora_fim_numero)
-                        var hora_fim_limpeza_numero = hora_fim_numero + TempoLimp
-                        //console.log('Hora fim como numero mais limpeza: '+hora_fim_limpeza_numero)
+                        //console.log('Hora + minutos fim: '+ hora_fim_numero)
+
+                        var horas_fim_limpeza_numero = horas_fim + horaLimpeza
+                        //console.log('Horas fim mais limpeza: '+horas_fim_limpeza_numero)
+
+                        var minutos_fim_limpeza_numero = minutos_fim + minutoLimpeza
+                        //console.log('Minutos fim mais limpeza: '+ minutos_fim_limpeza_numero)
+
                         var hora_inicio_array =  HoraInicio.split(':')
+
+                        var hora_inicio = Number(hora_inicio_array[0])
+                        //console.log("Horas Inicio: ", hora_inicio)
+
+                        var minutos_inicio = Number(hora_inicio_array[1])
+                        //console.log("Minutos Inicio: ", minutos_inicio)
+
                         var hora_incio_numero = Number(hora_inicio_array[0] + hora_inicio_array[1])
-                        //console.log('Hora Inicio: ' + hora_incio_numero);
+                        //console.log('Horas + minutos Inicio: ' + hora_incio_numero);
+
+                        if(minutos_fim_limpeza_numero >= 60){  //Se for maior ou igual a 60 entao passa de 1 hora
+
+                            let resto = minutos_fim_limpeza_numero % 60
+                            //console.log("Resto:", resto)
+
+                            let diferenca = minutos_fim_limpeza_numero - 60 //Vamos buscar a diferenca
+                            //console.log("Diferenca:", diferenca)
+
+                            var novosminutos_fim = diferenca
+                            //console.log("Novos minutos mais limpeza", novosminutos_fim)
+
+                            var novashoras_fim = horas_fim_limpeza_numero + resto
+                            //console.log("Novos Horas mais limpeza", novashoras_fim)
+                        }else{
+                            novosminutos_fim = minutos_fim_limpeza_numero
+                            //console.log("Novos minutos mais limpeza", novosminutos_fim)
+
+                            novashoras_fim = horas_fim_limpeza_numero
+                            //console.log("Novos Horas mais limpeza", novashoras_fim)
+                        }
+
+                        //console.log("Hora Reserva a adicionar")
+
+                        var hora_inicio_string = hora_inicio.toString()
+                        //console.log("Hora Inicio",hora_inicio_string)
+
+                        var minutos_inicio_string = minutos_inicio.toString()
+                        //console.log("Minutos Inicio",minutos_inicio_string)
+
+                        if(minutos_inicio_string.length === 1){
+                            var minutos_inicio_string = "0" + minutos_inicio_string
+                            //console.log("Minutos Iniciais em String:",minutos_inicio_string)
+                        }
+
+                        var horas_inicio_numero = Number(hora_inicio_string+minutos_inicio_string)
+                        //console.log("Horas Inicio em numero",horas_inicio_numero)
+
+                        var hora_fim_string = novashoras_fim.toString()
+                        //console.log("Hora Fim",hora_fim_string)
+
+                        var minutos_fim_string = novosminutos_fim.toString()
+                        //console.log("Minutos Fim",minutos_fim_string)
+
+                        if(minutos_fim_string.length === 1){
+                            var minutos_fim_string = "0" + minutos_fim_string
+                            //console.log("Minutos Iniciais em String:",minutos_fim_string)
+                        }
+
+                        var horas_fim_numero = Number(hora_fim_string+minutos_fim_string)
+                        //console.log("Horas Fim em numero",horas_fim_numero)
+
                         if(hora_incio_numero < hora_fim_numero){
                             if(hora_incio_numero > hora_atual_numero){
                                 var participantesPermitidos = (data.Alocacao * (data.Capacidade/100));
@@ -283,84 +365,133 @@ controllers.add = async (req, res) =>{
                                             var horaInicioCentro = dataCentros.Hora_abertura
                                             var horaInicioCentroArray = horaInicioCentro.split(':')
                                             var horaInicioCentroNumber = Number(horaInicioCentroArray[0] + horaInicioCentroArray[1])
-                                            //console.log('Hora de abertura: ' + horaInicioCentroNumber
+                                            //console.log('Hora de abertura: ' + horaInicioCentroNumber)
                                             var horaFimCentro = dataCentros.Hora_fecho
                                             var horaFimCentroArray = horaFimCentro.split(':')
                                             var horaFimCentroNumber = Number(horaFimCentroArray[0] + horaFimCentroArray[1])
-                                            //console.log('Hora de fechar: ' + horaFimCentroNumber
-                                            if((hora_incio_numero < horaInicioCentroNumber) || (hora_fim_limpeza_numero > horaFimCentroNumber)){
+                                            //console.log('Hora de fechar: ' + horaFimCentroNumber)
+
+                                            if((horas_inicio_numero < horaInicioCentroNumber) || (horas_fim_numero > horaFimCentroNumber)){
                                                 res.json({sucesso: false, message: 'O horário do centro é entre as '+dataCentros.Hora_abertura+' e as ' + dataCentros.Hora_fecho+ ' !'});
                                             }else{
                                                 const query = `select * from public."Reservas" where "Reservas"."EstadoId" = 1 and "Reservas"."DataReserva" = '${DataReserva}' and "Reservas"."SalaId" = ${Sala} order by "Reservas"."HoraInicio"`
                                                 const reservas = await bd.query(query,{ type: QueryTypes.SELECT })
                                                 //console.log(reservas.length)
                                                 if(reservas.length != 0){
-                                                    //Obter informacao da reserva que queremos editar
-                                                    //console.log(reservas)
-                                                    //Hora Inicio
-                                                    const horasInicioReserva = HoraInicio;
-                                                    //console.log('Hora da reserva desativa (formato Data): '+ horasInicioReserva)
-                                                    const HoraInicio_Array = horasInicioReserva.split(':')
-                                                    const horaInicio = HoraInicio_Array[0]
-                                                    //console.log('Hora:' + horaInicio)
-                                                    const minutosInicio = HoraInicio_Array[1]
-                                                    //console.log('Minutos:' + minutosInicio)
-                                                    const HorasInicio_desativas = Number(horaInicio+minutosInicio)
-                                                    //console.log('Horas da reserva desativa (formato Numero): '+HorasInicio_desativas)
-                                                    //Hora Fim
-                                                    const horasFimReserva = HoraFim;
-                                                    //console.log('Hora da reserva desativa (formato Data): '+ horasFimReserva)
-                                                    const HoraFim_Array = horasFimReserva.split(':')
-                                                    const horaFim = HoraFim_Array[0]
-                                                    //console.log('Hora:' + horaFim)
-                                                    const minutosFim = HoraFim_Array[1]
-                                                    //console.log('Minutos:' + minutosFim)
-                                                    const Horas_em_Numero = Number(horaFim+minutosFim)
-                                                    //console.log('Horas da reserva desativa (formato Numero): '+Horas_em_Numero)
-                                                    const HorasFim_MaisLimpeza_Desativas = Horas_em_Numero + TempoLimp
-                                                    //console.log('Horas da reserva desativa mais limpeza (formato Numero):' + HorasFim_MaisLimpeza_Desativas)
                                                     for(let i = 0; i < reservas.length; i++){
                                                         //Reserva para comparar
                                                         //Hora inicio
+                                                        //console.log("Reserva para comparar nº",i)
+
                                                         const horasInicio = reservas[i].HoraInicio;
-                                                        //console.log('Hora da reserva ativa (formato Data): '+ horasInicio)
                                                         const horasInicio_Array = horasInicio.split(':')
-                                                        const horaI = horasInicio_Array[0]
-                                                        //console.log('Hora:' + horaI)
-                                                        const minutosI = horasInicio_Array[1]
-                                                        //console.log('Minutos:' + minutosI)
-                                                        const HorasAtivasI = Number(horaI+minutosI)
-                                                        //console.log('Horas da reserva ativa (formato Numero): '+HorasAtivasI)
+
+                                                        const horaI = Number(horasInicio_Array[0])
+                                                        //console.log('Hora Inicio:' + horaI)
+
+                                                        const minutosI = Number(horasInicio_Array[1])
+                                                        //console.log('Minutos Inicio:' + minutosI)
+
                                                         //Hora Fim
                                                         const horasFim = reservas[i].HoraFim;
-                                                        //console.log('Hora da reserva ativa (formato Data): '+ horasFim)
                                                         const horasFim_Array = horasFim.split(':')
-                                                        const horaF = horasFim_Array[0]
-                                                        //console.log('Hora:' + horaF)
-                                                        const minutosF = horasFim_Array[1]
-                                                        //console.log('Minutos:' + minutosF)
-                                                        const HorasAtivasF = Number(horaF+minutosF)
-                                                        //console.log('Horas da reserva ativa (formato Numero): '+HorasAtivasF)
+
+                                                        const horaF = Number(horasFim_Array[0])
+                                                        //console.log('Hora Fim:' + horaF)
+
+                                                        const minutosF = Number(horasFim_Array[1])
+                                                        //console.log('Minutos Fim:' + minutosF)
+
+                                                        const HoramaisLimpeza = horaF + horaLimpeza 
+                                                        //console.log("Horas final mais limpeza", HoramaisLimpeza)
+
+                                                        const MinutosmaisLimpeza = minutosF + minutoLimpeza 
+                                                        //console.log("Minutos final mais limpeza", MinutosmaisLimpeza)
+
+                                                        if(MinutosmaisLimpeza >= 60){  //Se for maior ou igual a 60 entao passa de 1 hora
+
+                                                            let resto = MinutosmaisLimpeza % 60
+                                                            //console.log("Resto:", resto)
+
+                                                            let diferenca = MinutosmaisLimpeza - 60 //Vamos buscar a diferenca
+                                                            //console.log("Diferenca:", diferenca)
+
+                                                            var novosminutos_fim_Reserva = diferenca
+                                                            //console.log("Novos minutos mais limpeza", novosminutos_fim_Reserva)
+
+                                                            var novashoras_fim_Reserva = HoramaisLimpeza + resto
+                                                            //console.log("Novos Horas mais limpeza", novashoras_fim_Reserva)
+                                                        }else{
+                                                            novosminutos_fim_Reserva = MinutosmaisLimpeza 
+                                                            //console.log("Novos minutos mais limpeza", novosminutos_fim_Reserva)
+
+                                                            novashoras_fim_Reserva = HoramaisLimpeza
+                                                            //console.log("Novos Horas mais limpeza", novashoras_fim_Reserva)
+                                                        }
+
+                                                        //console.log("Hora Reserva a Comparar")
+
+                                                        var hora_reserva_inicio_string = horaI.toString()
+                                                        //console.log("Hora Inicio",hora_reserva_inicio_string)
+
+                                                        var minutos_reserva_inicio_string = minutosI.toString()
+                                                        //console.log("Minutos Inicio",minutos_reserva_inicio_string)
+
+                                                        if(minutos_reserva_inicio_string.length === 1){
+                                                            var minutos_reserva_inicio_string = "0" + minutos_reserva_inicio_string
+                                                            //console.log("Minutos Iniciais em String:",minutos_reserva_inicio_string)
+                                                        }
+
+                                                        var horas_reserva_inicio_numero = Number(hora_reserva_inicio_string+minutos_reserva_inicio_string)
+                                                        //console.log("Horas Inicio em numero",horas_reserva_inicio_numero)
+
+                                                        var hora_reserva_fim_string = novashoras_fim_Reserva.toString()
+                                                        //console.log("Hora Fim",hora_reserva_fim_string)
+
+                                                        var minutos_reserva_fim_string = novosminutos_fim_Reserva.toString()
+                                                        //console.log("Minutos Fim",minutos_reserva_fim_string)
+
+                                                        if(minutos_reserva_fim_string.length === 1){
+                                                            var minutos_reserva_fim_string = "0" + minutos_reserva_fim_string
+                                                            //console.log("Minutos Iniciais em String:",minutos_reserva_fim_string)
+                                                        }
+
+                                                        var horas_reserva_fim_numero = Number(hora_reserva_fim_string+minutos_reserva_fim_string)
+                                                        //console.log("Horas Fim em numero",horas_reserva_fim_numero)
+
+                                                        /*
+                                                        ***********************Variaveis***********************
+                                                        *******************Reserva a adicionar*****************
+                                                        Hora Inicio : horas_inicio_numero
+
+                                                        Hora Fim mais limpeza: horas_fim_numero
+
+                                                        ********************Reserva a comparar****************
+                                                        Hora Inicio :horas_reserva_inicio_numero
+
+                                                        Hora Fim mais limpeza: horas_reserva_fim_numero
+                                                        */
+
                                                         //Se comecar antes e acabar durante a reserva
-                                                        if((HorasAtivasI <= HorasInicio_desativas) && (HorasAtivasF >= HorasInicio_desativas) && (HorasAtivasF <HorasFim_MaisLimpeza_Desativas)){
+                                                        if((horas_reserva_inicio_numero <= horas_inicio_numero) && (horas_reserva_fim_numero >= horas_inicio_numero) && (horas_reserva_fim_numero <= horas_fim_numero)){
                                                             //console.log('Passei aqui 1')
                                                             Disponivel = false
                                                             break
                                                         }else{
                                                             //Se comecar durante a reserva e acabar depois
-                                                            if((HorasAtivasI >= HorasInicio_desativas) && (HorasAtivasI <= HorasFim_MaisLimpeza_Desativas) &(HorasAtivasF >= HorasFim_MaisLimpeza_Desativas)){
+                                                            if((horas_reserva_inicio_numero >= horas_inicio_numero) && (horas_reserva_inicio_numero <= horas_fim_numero) && (horas_reserva_fim_numero >= horas_fim_numero)){
                                                                 //console.log('Passei aqui 2')
                                                                 Disponivel = false
                                                                 break
                                                             }else{
                                                                 //Se a reserva comecar antes e acabar depois
-                                                                if((HorasAtivasI <= HorasInicio_desativas) && (HorasAtivasF >= HorasFim_MaisLimpeza_Desativas)){
+                                                                if((horas_reserva_inicio_numero <= horas_inicio_numero) && (horas_reserva_fim_numero >= horas_fim_numero)){
                                                                     //console.log('Passei aqui 3')
                                                                     Disponivel = false
                                                                     break
                                                                 }else{
                                                                     //Se a reserva comecar depois e acabar antes
-                                                                    if((HorasAtivasI >= HorasInicio_desativas) && (HorasAtivasI <= HorasFim_MaisLimpeza_Desativas) &(HorasAtivasF >= HorasInicio_desativas) &&(HorasAtivasF <= HorasFim_MaisLimpeza_Desativas)){
+                                                                    if((horas_reserva_inicio_numero >= horas_inicio_numero) && (horas_reserva_inicio_numero <= horas_fim_numero) && (horas_reserva_fim_numero >= horas_inicio_numero) &&(horas_reserva_fim_numero <= horas_fim_numero)){
                                                                         //console.log('Passei aqui 4')
                                                                         Disponivel = false
                                                                         break
@@ -372,14 +503,8 @@ controllers.add = async (req, res) =>{
                                                     //Nao sobrepoem a reserva logo pode ser ativada
                                                     if(Disponivel){
                                                         //Nao existem reservas com essa data entao pode-se dar update 
-                                                        if(NomeReserva == ""){
-                                                            Nome_Limpo == ""
-                                                        }
-                                                        else{
-                                                            var Nome_Limpo = NomeReserva.normalize("NFD").replace(/[^a-zA-Zs]/, "");
-                                                        }
                                                         const data = await reserva.create({
-                                                            NomeReserva: Nome_Limpo,
+                                                            NomeReserva: NomeReserva,
                                                             DataReserva: DataReserva,
                                                             NumeroParticipantes: participantesLimp,
                                                             HoraInicio: HoraInicio,
@@ -402,14 +527,8 @@ controllers.add = async (req, res) =>{
                                                     }
                                                 }else{
                                                     //Nao existem reservas com essa data entao pode-se dar update 
-                                                    if(NomeReserva == ""){
-                                                        Nome_Limpo == ""
-                                                    }
-                                                    else{
-                                                        var Nome_Limpo = NomeReserva.normalize("NFD").replace(/[^a-zA-Zs]/, "");
-                                                    }
                                                     const data = await reserva.create({
-                                                        NomeReserva: Nome_Limpo,
+                                                        NomeReserva: NomeReserva,
                                                         DataReserva: DataReserva,
                                                         NumeroParticipantes: participantesLimp,
                                                         HoraInicio: HoraInicio,
@@ -446,25 +565,102 @@ controllers.add = async (req, res) =>{
                         if(data_atual.getTime() > data_reserva.getTime())
                             res.json({sucesso: false, message: 'Insira uma data igual ou superior a ' + data_atual});
                         else{
-                            //Reserva no futuro
-                            var TempLimpSala = data.Tempo_Limpeza
-                            var tempoLimpezaArray = TempLimpSala.split(':')
-                            var horaLimpeza = tempoLimpezaArray[0]
-                            var minutoLimpeza = tempoLimpezaArray[1]
-                            var TempoLimp = Number(horaLimpeza+minutoLimpeza);
-                            //console.log('Tempo limpeza: '+TempLimpSala)
+                        //Reserva no futuro
+                        //Tempo de Limpeza
+                        var TempLimpSala = data.Tempo_Limpeza
+                        var tempoLimpezaArray = TempLimpSala.split(':')
 
-                            var hora_fim_array =  HoraFim.split(':')
-                            var hora_fim_numero = Number(hora_fim_array[0] + hora_fim_array[1])
-                            //console.log('Hora fim: '+ hora_fim_numero)
-                            var hora_fim_limpeza_numero = hora_fim_numero + TempoLimp
-                            //console.log('Hora fim como numero mais limpeza: '+hora_fim_limpeza_numero)
+                        var horaLimpeza = Number(tempoLimpezaArray[0])
+                        //console.log("Horas Limpeza", horaLimpeza)
 
-                            var hora_inicio_array =  HoraInicio.split(':')
-                            var hora_incio_numero = Number(hora_inicio_array[0] + hora_inicio_array[1])
-                            //console.log('Hora Inicio: ' + hora_incio_numero);
+                        var minutoLimpeza = Number(tempoLimpezaArray[1])
+                        //console.log("Minutos Limpeza", minutoLimpeza)
+
+                        //Tempo da reserva
+                        var hora_fim_array =  HoraFim.split(':')
+
+                        var horas_fim = Number(hora_fim_array[0])
+                        //console.log("Hora fim", horas_fim)
+
+                        var minutos_fim = Number(hora_fim_array[1])
+                        //console.log("Minutos fim", minutos_fim)
+
+                        var hora_fim_numero = Number(hora_fim_array[0] + hora_fim_array[1])
+                        //console.log('Hora + minutos fim: '+ hora_fim_numero)
+
+                        var horas_fim_limpeza_numero = horas_fim + horaLimpeza
+                        //console.log('Horas fim mais limpeza: '+horas_fim_limpeza_numero)
+
+                        var minutos_fim_limpeza_numero = minutos_fim + minutoLimpeza
+                        //console.log('Minutos fim mais limpeza: '+ minutos_fim_limpeza_numero)
+
+                        var hora_inicio_array =  HoraInicio.split(':')
+
+                        var hora_inicio = Number(hora_inicio_array[0])
+                        //console.log("Horas Inicio: ", hora_inicio)
+
+                        var minutos_inicio = Number(hora_inicio_array[1])
+                        //console.log("Minutos Inicio: ", minutos_inicio)
+
+                        var hora_incio_numero = Number(hora_inicio_array[0] + hora_inicio_array[1])
+                        //console.log('Horas + minutos Inicio: ' + hora_incio_numero);
+
+                        if(minutos_fim_limpeza_numero >= 60){  //Se for maior ou igual a 60 entao passa de 1 hora
+
+                            let resto = minutos_fim_limpeza_numero % 60
+                            //console.log("Resto:", resto)
+
+                            let diferenca = minutos_fim_limpeza_numero - 60 //Vamos buscar a diferenca
+                            //console.log("Diferenca:", diferenca)
+
+                            var novosminutos_fim = diferenca
+                            //console.log("Novos minutos mais limpeza", novosminutos_fim)
+
+                            var novashoras_fim = horas_fim_limpeza_numero + resto + 1
+                            //console.log("Novos Horas mais limpeza", novashoras_fim)
+                        }else{
+                            novosminutos_fim = minutos_fim_limpeza_numero
+                            //console.log("Novos minutos mais limpeza", novosminutos_fim)
+
+                            novashoras_fim = horas_fim_limpeza_numero
+                            //console.log("Novos Horas mais limpeza", novashoras_fim)
+                        }
+
+                        //console.log("Hora Reserva a adicionar")
+
+                        //Inicio
+
+                        var hora_inicio_string = hora_inicio.toString()
+                        //console.log("Hora Inicio",hora_inicio_string)
+
+                        var minutos_inicio_string = minutos_inicio.toString()
+                        //console.log("Minutos Inicio",minutos_inicio_string)
+
+                        if(minutos_inicio_string.length === 1){
+                            var minutos_inicio_string = "0" + minutos_inicio_string
+                            //console.log("Minutos Iniciais em String:",minutos_inicio_string)
+                        }
+
+                        var horas_inicio_numero = Number(hora_inicio_string+minutos_inicio_string)
+                        //console.log("Horas Inicio em numero",horas_inicio_numero)
+
+                        //Fim
+
+                        var hora_fim_string = novashoras_fim.toString()
+                        //console.log("Hora Fim",hora_fim_string)
+
+                        var minutos_fim_string = novosminutos_fim.toString()
+                        //console.log("Minutos Fim",minutos_fim_string)
+
+                        if(minutos_fim_string.length === 1){
+                            var minutos_fim_string = "0" + minutos_fim_string
+                            //console.log("Minutos Iniciais em String:",minutos_fim_string)
+                        }
+
+                        var horas_fim_numero = Number(hora_fim_string+minutos_fim_string)
+                        //console.log("Horas Fim em numero",horas_fim_numero)
+
                             if(hora_incio_numero < hora_fim_numero){
-                                //Validar o numero de participantes
                                 var participantesPermitidos = (data.Alocacao * (data.Capacidade/100));
                                 if(participantesLimp > participantesPermitidos){
                                     res.json({sucesso: false, message: 'Número de participantes superior ao limite da sala'});
@@ -474,87 +670,138 @@ controllers.add = async (req, res) =>{
                                     })
                                     if(dataCentros){
                                         if(dataCentros.EstadoId == 1){
+
                                             var horaInicioCentro = dataCentros.Hora_abertura
                                             var horaInicioCentroArray = horaInicioCentro.split(':')
                                             var horaInicioCentroNumber = Number(horaInicioCentroArray[0] + horaInicioCentroArray[1])
-                                            //console.log('Hora de abertura: ' + horaInicioCentroNumber
+                                            //console.log('Hora de abertura: ' + horaInicioCentroNumber)
+
                                             var horaFimCentro = dataCentros.Hora_fecho
                                             var horaFimCentroArray = horaFimCentro.split(':')
                                             var horaFimCentroNumber = Number(horaFimCentroArray[0] + horaFimCentroArray[1])
-                                            //console.log('Hora de fechar: ' + horaFimCentroNumber
-                                            if((hora_incio_numero < horaInicioCentroNumber) || (hora_fim_limpeza_numero > horaFimCentroNumber)){
-                                                res.json({sucesso: false, message: 'O horário do centro é entre as '+dataCentros.Hora_abertura+' e as ' + dataCentros.Hora_fecho+ ''});
+                                            //console.log('Hora de fechar: ' + horaFimCentroNumber)
+
+                                            if((horas_inicio_numero < horaInicioCentroNumber) || (horas_fim_numero > horaFimCentroNumber)){
+                                                res.json({sucesso: false, message: 'O horário do centro é entre as '+dataCentros.Hora_abertura+' e as ' + dataCentros.Hora_fecho+ ' !'});
                                             }else{
                                                 const query = `select * from public."Reservas" where "Reservas"."EstadoId" = 1 and "Reservas"."DataReserva" = '${DataReserva}' and "Reservas"."SalaId" = ${Sala} order by "Reservas"."HoraInicio"`
                                                 const reservas = await bd.query(query,{ type: QueryTypes.SELECT })
                                                 //console.log(reservas.length)
                                                 if(reservas.length != 0){
-                                                    //Obter informacao da reserva que queremos editar
-                                                    //console.log(reservas)
-                                                    //Hora Inicio
-                                                    const horasInicioReserva = HoraInicio;
-                                                    //console.log('Hora da reserva desativa (formato Data): '+ horasInicioReserva)
-                                                    const HoraInicio_Array = horasInicioReserva.split(':')
-                                                    const horaInicio = HoraInicio_Array[0]
-                                                    //console.log('Hora:' + horaInicio)
-                                                    const minutosInicio = HoraInicio_Array[1]
-                                                    //console.log('Minutos:' + minutosInicio)
-                                                    const HorasInicio_desativas = Number(horaInicio+minutosInicio)
-                                                    //console.log('Horas da reserva desativa (formato Numero): '+HorasInicio_desativas)
-                                                    //Hora Fim
-                                                    const horasFimReserva = HoraFim;
-                                                    //console.log('Hora da reserva desativa (formato Data): '+ horasFimReserva)
-                                                    const HoraFim_Array = horasFimReserva.split(':')
-                                                    const horaFim = HoraFim_Array[0]
-                                                    //console.log('Hora:' + horaFim)
-                                                    const minutosFim = HoraFim_Array[1]
-                                                    //console.log('Minutos:' + minutosFim)
-                                                    const Horas_em_Numero = Number(horaFim+minutosFim)
-                                                    //console.log('Horas da reserva desativa (formato Numero): '+Horas_em_Numero)
-                                                    const HorasFim_MaisLimpeza_Desativas = Horas_em_Numero + TempoLimp
-                                                    //console.log('Horas da reserva desativa mais limpeza (formato Numero):' + HorasFim_MaisLimpeza_Desativas)
                                                     for(let i = 0; i < reservas.length; i++){
                                                         //Reserva para comparar
                                                         //Hora inicio
+                                                        //console.log("Reserva para comparar nº",i)
+
                                                         const horasInicio = reservas[i].HoraInicio;
-                                                        //console.log('Hora da reserva ativa (formato Data): '+ horasInicio)
                                                         const horasInicio_Array = horasInicio.split(':')
-                                                        const horaI = horasInicio_Array[0]
-                                                        //console.log('Hora:' + horaI)
-                                                        const minutosI = horasInicio_Array[1]
-                                                        //console.log('Minutos:' + minutosI)
-                                                        const HorasAtivasI = Number(horaI+minutosI)
-                                                        //console.log('Horas da reserva ativa (formato Numero): '+HorasAtivasI)
+
+                                                        const horaI = Number(horasInicio_Array[0])
+                                                        //console.log('Hora Inicio:' + horaI)
+
+                                                        const minutosI = Number(horasInicio_Array[1])
+                                                        //console.log('Minutos Inicio:' + minutosI)
+
                                                         //Hora Fim
                                                         const horasFim = reservas[i].HoraFim;
-                                                        //console.log('Hora da reserva ativa (formato Data): '+ horasFim)
                                                         const horasFim_Array = horasFim.split(':')
-                                                        const horaF = horasFim_Array[0]
-                                                        //console.log('Hora:' + horaF)
-                                                        const minutosF = horasFim_Array[1]
-                                                        //console.log('Minutos:' + minutosF)
-                                                        const HorasAtivasF = Number(horaF+minutosF)
-                                                        //console.log('Horas da reserva ativa (formato Numero): '+HorasAtivasF)
+
+                                                        const horaF = Number(horasFim_Array[0])
+                                                        //console.log('Hora Fim:' + horaF)
+
+                                                        const minutosF = Number(horasFim_Array[1])
+                                                        //console.log('Minutos Fim:' + minutosF)
+
+                                                        const HoramaisLimpeza = horaF + horaLimpeza 
+                                                        //console.log("Horas final mais limpeza", HoramaisLimpeza)
+
+                                                        const MinutosmaisLimpeza = minutosF + minutoLimpeza 
+                                                        //console.log("Minutos final mais limpeza", MinutosmaisLimpeza)
+
+                                                        if(MinutosmaisLimpeza >= 60){  //Se for maior ou igual a 60 entao passa de 1 hora
+
+                                                            let resto = MinutosmaisLimpeza % 60
+                                                            //console.log("Resto:", resto)
+
+                                                            let diferenca = MinutosmaisLimpeza - 60 //Vamos buscar a diferenca
+                                                            //console.log("Diferenca:", diferenca)
+
+                                                            var novosminutos_fim_Reserva = diferenca
+                                                            //console.log("Novos minutos mais limpeza", novosminutos_fim_Reserva)
+
+                                                            var novashoras_fim_Reserva = HoramaisLimpeza + resto + 1
+                                                            //console.log("Novos Horas mais limpeza", novashoras_fim_Reserva)
+                                                        }else{
+                                                            novosminutos_fim_Reserva = MinutosmaisLimpeza 
+                                                            //console.log("Novos minutos mais limpeza", novosminutos_fim_Reserva)
+
+                                                            novashoras_fim_Reserva = HoramaisLimpeza
+                                                            //console.log("Novos Horas mais limpeza", novashoras_fim_Reserva)
+                                                        }
+
+                                                        //console.log("Hora Reserva a Comparar")
+
+                                                        var hora_reserva_inicio_string = horaI.toString()
+                                                        //console.log("Hora Inicio",hora_reserva_inicio_string)
+
+                                                        var minutos_reserva_inicio_string = minutosI.toString()
+                                                        //console.log("Minutos Inicio",minutos_reserva_inicio_string)
+
+                                                        if(minutos_reserva_inicio_string.length === 1){
+                                                            var minutos_reserva_inicio_string = "0" + minutos_reserva_inicio_string
+                                                            //console.log("Minutos Iniciais em String:",minutos_reserva_inicio_string)
+                                                        }
+
+                                                        var horas_reserva_inicio_numero = Number(hora_reserva_inicio_string+minutos_reserva_inicio_string)
+                                                        //console.log("Horas Inicio em numero",horas_reserva_inicio_numero)
+
+                                                        var hora_reserva_fim_string = novashoras_fim_Reserva.toString()
+                                                        //console.log("Hora Fim",hora_reserva_fim_string)
+
+                                                        var minutos_reserva_fim_string = novosminutos_fim_Reserva.toString()
+                                                        //console.log("Minutos Fim",minutos_reserva_fim_string)
+
+                                                        if(minutos_reserva_fim_string.length === 1){
+                                                            var minutos_reserva_fim_string = "0" + minutos_reserva_fim_string
+                                                            //console.log("Minutos Iniciais em String:",minutos_reserva_fim_string)
+                                                        }
+
+                                                        var horas_reserva_fim_numero = Number(hora_reserva_fim_string+minutos_reserva_fim_string)
+                                                        //console.log("Horas Fim em numero",horas_reserva_fim_numero)
+
+                                                        /*
+                                                        ***********************Variaveis***********************
+                                                        *******************Reserva a adicionar*****************
+                                                        Hora Inicio : horas_inicio_numero
+
+                                                        Hora Fim mais limpeza: horas_fim_numero
+
+                                                        ********************Reserva a comparar****************
+                                                        Hora Inicio :horas_reserva_inicio_numero
+
+                                                        Hora Fim mais limpeza: horas_reserva_fim_numero
+                                                        */
+
                                                         //Se comecar antes e acabar durante a reserva
-                                                        if((HorasAtivasI <= HorasInicio_desativas) && (HorasAtivasF >= HorasInicio_desativas) && (HorasAtivasF <HorasFim_MaisLimpeza_Desativas)){
+                                                        if((horas_reserva_inicio_numero <= horas_inicio_numero) && (horas_reserva_fim_numero >= horas_inicio_numero) && (horas_reserva_fim_numero <= horas_fim_numero)){
                                                             //console.log('Passei aqui 1')
                                                             Disponivel = false
                                                             break
                                                         }else{
                                                             //Se comecar durante a reserva e acabar depois
-                                                            if((HorasAtivasI >= HorasInicio_desativas) && (HorasAtivasI <= HorasFim_MaisLimpeza_Desativas) &(HorasAtivasF >= HorasFim_MaisLimpeza_Desativas)){
+                                                            if((horas_reserva_inicio_numero >= horas_inicio_numero) && (horas_reserva_inicio_numero <= horas_fim_numero) && (horas_reserva_fim_numero >= horas_fim_numero)){
                                                                 //console.log('Passei aqui 2')
                                                                 Disponivel = false
                                                                 break
                                                             }else{
                                                                 //Se a reserva comecar antes e acabar depois
-                                                                if((HorasAtivasI <= HorasInicio_desativas) && (HorasAtivasF >= HorasFim_MaisLimpeza_Desativas)){
+                                                                if((horas_reserva_inicio_numero <= horas_inicio_numero) && (horas_reserva_fim_numero >= horas_fim_numero)){
                                                                     //console.log('Passei aqui 3')
                                                                     Disponivel = false
                                                                     break
                                                                 }else{
                                                                     //Se a reserva comecar depois e acabar antes
-                                                                    if((HorasAtivasI >= HorasInicio_desativas) && (HorasAtivasI <= HorasFim_MaisLimpeza_Desativas) &(HorasAtivasF >= HorasInicio_desativas) &&(HorasAtivasF <= HorasFim_MaisLimpeza_Desativas)){
+                                                                    if((horas_reserva_inicio_numero >= horas_inicio_numero) && (horas_reserva_inicio_numero <= horas_fim_numero) && (horas_reserva_fim_numero >= horas_inicio_numero) &&(horas_reserva_fim_numero <= horas_fim_numero)){
                                                                         //console.log('Passei aqui 4')
                                                                         Disponivel = false
                                                                         break
@@ -563,17 +810,10 @@ controllers.add = async (req, res) =>{
                                                             }
                                                         }
                                                     }
-                                                    //Nao sobrepoem a reserva logo pode ser ativada
+                                                    //Nao sobrepoem a reserva logo pode ser adicionada
                                                     if(Disponivel){
-                                                        //Nao existem reservas com essa data entao pode-se dar update 
-                                                        if(NomeReserva == ""){
-                                                            Nome_Limpo == ""
-                                                        }
-                                                        else{
-                                                            var Nome_Limpo = NomeReserva.normalize("NFD").replace(/[^a-zA-Zs]/, "");
-                                                        }
                                                             const data = await reserva.create({
-                                                                NomeReserva: Nome_Limpo,
+                                                                NomeReserva: NomeReserva,
                                                                 DataReserva: DataReserva,
                                                                 NumeroParticipantes: participantesLimp,
                                                                 HoraInicio: HoraInicio,
@@ -595,14 +835,9 @@ controllers.add = async (req, res) =>{
                                                         res.json({sucesso: false, message: 'A reserva sobrepõem outra reserva'})
                                                     }
                                                 }else{
-                                                    if(NomeReserva == ""){
-                                                        Nome_Limpo == ""
-                                                    }
-                                                    else{
-                                                        var Nome_Limpo = NomeReserva.normalize("NFD").replace(/[^a-zA-Zs]/, "");
-                                                    }
+                                                    //Nao existem reservas com essa data entao pode-se adicionar
                                                     const data = await reserva.create({
-                                                        NomeReserva: Nome_Limpo,
+                                                        NomeReserva: NomeReserva,
                                                         DataReserva: DataReserva,
                                                         NumeroParticipantes: participantesLimp,
                                                         HoraInicio: HoraInicio,
@@ -702,9 +937,8 @@ controllers.update = async (req, res) =>{
                                     res.json({sucesso: false, message: 'Número de participantes superior ao limite da sala.'});
                                 }else{
                                     if(DataReserva == reservaData.DataReserva && HoraInicio == reservaData.HoraInicio && HoraFim == reservaData.HoraFim){
-                                        var Nome_Limpo = NomeReserva.normalize("NFD").replace(/[^a-zA-Zs]/, "");
                                         const data = await reserva.update({
-                                            NomeReserva: Nome_Limpo,
+                                            NomeReserva: NomeReserva,
                                             DataReserva: DataReserva,
                                             NumeroParticipantes: participantesLimp,
                                             HoraInicio: HoraInicio,
@@ -724,32 +958,112 @@ controllers.update = async (req, res) =>{
                                         var data_reserva = new Date(DataReserva)
                                         var data_atual = new Date();
                                         if(date.isSameDay(data_atual,data_reserva)){
+                                            //console.log("Reserva para hoje")
+                                            //Horas Atuais
                                             var horas_atuais = (data_atual.getHours()).toString()
-                                            //console.log('Horas atuas: ' + horas_atuais)
+                                            //console.log('Hora atual: ' + horas_atuais)
+
                                             var minutos_atuais = (data_atual.getMinutes()).toString()
                                             //console.log('Minutos atuais: ' + minutos_atuais)
+
                                             var hora_atual_numero = Number(horas_atuais + minutos_atuais)
-                                            //console.log('Data atual em numero: '+hora_atual_numero)
+                                            //console.log('Horas atuais em numero: '+hora_atual_numero)
+
+                                            //Tempo de Limpeza
                                             var TempLimpSala = data.Tempo_Limpeza
                                             var tempoLimpezaArray = TempLimpSala.split(':')
-                                            var horaLimpeza = tempoLimpezaArray[0]
-                                            var minutoLimpeza = tempoLimpezaArray[1]
-                                            var TempoLimp = Number(horaLimpeza+minutoLimpeza);
-                                            //console.log('Tempo limpeza da Sala: '+TempLimpSala)
+
+                                            var horaLimpeza = Number(tempoLimpezaArray[0])
+                                            //console.log("Horas Limpeza", horaLimpeza)
+
+                                            var minutoLimpeza = Number(tempoLimpezaArray[1])
+                                            //console.log("Minutos Limpeza", minutoLimpeza)
+
+                                            //Tempo da reserva
                                             var hora_fim_array =  HoraFim.split(':')
+
+                                            var horas_fim = Number(hora_fim_array[0])
+                                            //console.log("Hora fim", horas_fim)
+
+                                            var minutos_fim = Number(hora_fim_array[1])
+                                            //console.log("Minutos fim", minutos_fim)
+
                                             var hora_fim_numero = Number(hora_fim_array[0] + hora_fim_array[1])
-                                            //console.log('Hora fim: '+ hora_fim_numero)
-                                            var hora_fim_limpeza_numero = hora_fim_numero + TempoLimp
-                                            //console.log('Hora fim como numero mais limpeza: '+hora_fim_limpeza_numero)
+                                            //console.log('Hora + minutos fim: '+ hora_fim_numero)
+
+                                            var horas_fim_limpeza_numero = horas_fim + horaLimpeza
+                                            //console.log('Horas fim mais limpeza: '+horas_fim_limpeza_numero)
+
+                                            var minutos_fim_limpeza_numero = minutos_fim + minutoLimpeza
+                                            //console.log('Minutos fim mais limpeza: '+ minutos_fim_limpeza_numero)
+
                                             var hora_inicio_array =  HoraInicio.split(':')
+
+                                            var hora_inicio = Number(hora_inicio_array[0])
+                                            //console.log("Horas Inicio: ", hora_inicio)
+
+                                            var minutos_inicio = Number(hora_inicio_array[1])
+                                            //console.log("Minutos Inicio: ", minutos_inicio)
+
                                             var hora_incio_numero = Number(hora_inicio_array[0] + hora_inicio_array[1])
-                                            //console.log('Hora Inicio: ' + hora_incio_numero);
+                                            //console.log('Horas + minutos Inicio: ' + hora_incio_numero);
+
+                                            if(minutos_fim_limpeza_numero >= 60){  //Se for maior ou igual a 60 entao passa de 1 hora
+
+                                                let resto = minutos_fim_limpeza_numero % 60
+                                                //console.log("Resto:", resto)
+
+                                                let diferenca = minutos_fim_limpeza_numero - 60 //Vamos buscar a diferenca
+                                                //console.log("Diferenca:", diferenca)
+
+                                                var novosminutos_fim = diferenca
+                                                //console.log("Novos minutos mais limpeza", novosminutos_fim)
+
+                                                var novashoras_fim = horas_fim_limpeza_numero + resto
+                                                //console.log("Novos Horas mais limpeza", novashoras_fim)
+                                            }else{
+                                                novosminutos_fim = minutos_fim_limpeza_numero
+                                                //console.log("Novos minutos mais limpeza", novosminutos_fim)
+
+                                                novashoras_fim = horas_fim_limpeza_numero
+                                                //console.log("Novos Horas mais limpeza", novashoras_fim)
+                                            }
+
+                                            //console.log("Hora Reserva a adicionar")
+
+                                            var hora_inicio_string = hora_inicio.toString()
+                                            //console.log("Hora Inicio",hora_inicio_string)
+
+                                            var minutos_inicio_string = minutos_inicio.toString()
+                                            //console.log("Minutos Inicio",minutos_inicio_string)
+
+                                            if(minutos_inicio_string.length === 1){
+                                                var minutos_inicio_string = "0" + minutos_inicio_string
+                                                //console.log("Minutos Iniciais em String:",minutos_inicio_string)
+                                            }
+
+                                            var horas_inicio_numero = Number(hora_inicio_string+minutos_inicio_string)
+                                            //console.log("Horas Inicio em numero",horas_inicio_numero)
+
+                                            var hora_fim_string = novashoras_fim.toString()
+                                            //console.log("Hora Fim",hora_fim_string)
+
+                                            var minutos_fim_string = novosminutos_fim.toString()
+                                            //console.log("Minutos Fim",minutos_fim_string)
+
+                                            if(minutos_fim_string.length === 1){
+                                                var minutos_fim_string = "0" + minutos_fim_string
+                                                //console.log("Minutos Iniciais em String:",minutos_fim_string)
+                                            }
+
+                                            var horas_fim_numero = Number(hora_fim_string+minutos_fim_string)
+                                            //console.log("Horas Fim em numero",horas_fim_numero)
+
                                             if(hora_incio_numero < hora_fim_numero){
-                                                //Validar se a hora inicio da reserva
                                                 if(hora_incio_numero > hora_atual_numero){
                                                     var participantesPermitidos = (data.Alocacao * (data.Capacidade/100));
                                                     if(participantesLimp > participantesPermitidos){
-                                                        res.json({sucesso: false, message: 'Número de participantes superior ao limite da sala.'});
+                                                        res.json({sucesso: false, message: 'Número de participantes superior ao limite da sala'});
                                                     }else{
                                                         var dataCentros = await centro.findOne({
                                                             where: {id: data.CentroId}
@@ -764,79 +1078,128 @@ controllers.update = async (req, res) =>{
                                                                 var horaFimCentroArray = horaFimCentro.split(':')
                                                                 var horaFimCentroNumber = Number(horaFimCentroArray[0] + horaFimCentroArray[1])
                                                                 //console.log('Hora de fechar: ' + horaFimCentroNumber)
-                                                                if((hora_incio_numero < horaInicioCentroNumber) || (hora_fim_limpeza_numero > horaFimCentroNumber)){
-                                                                    res.json({sucesso: false, message: 'O horário do centro é entre as '+dataCentros.Hora_abertura+' e as ' + dataCentros.Hora_fecho+ ''});
+
+                                                                if((horas_inicio_numero < horaInicioCentroNumber) || (horas_fim_numero > horaFimCentroNumber)){
+                                                                    res.json({sucesso: false, message: 'O horário do centro é entre as '+dataCentros.Hora_abertura+' e as ' + dataCentros.Hora_fecho+ ' !'});
                                                                 }else{
-                                                                    const query = `select * from public."Reservas" where "Reservas"."EstadoId" = 1 and "Reservas"."DataReserva" = '${DataReserva}' and "Reservas"."SalaId" = ${Sala} and "Reservas"."id" != ${id} order by "Reservas"."HoraInicio"`
+                                                                    const query = `select * from public."Reservas" where "Reservas"."EstadoId" = 1 and "Reservas"."DataReserva" = '${DataReserva}' and "Reservas"."SalaId" = ${Sala} order by "Reservas"."HoraInicio"`
                                                                     const reservas = await bd.query(query,{ type: QueryTypes.SELECT })
                                                                     //console.log(reservas.length)
                                                                     if(reservas.length != 0){
-                                                                        //Obter informacao da reserva que queremos editar
-                                                                        //console.log(reservas)
-                                                                        //Hora Inicio
-                                                                        const horasInicioReserva = reservaData.HoraInicio;
-                                                                        //console.log('Hora da reserva desativa (formato Data): '+ horasInicioReserva)
-                                                                        const HoraInicio_Array = horasInicioReserva.split(':')
-                                                                        const horaInicio = HoraInicio_Array[0]
-                                                                        //console.log('Hora:' + horaInicio)
-                                                                        const minutosInicio = HoraInicio_Array[1]
-                                                                        //console.log('Minutos:' + minutosInicio)
-                                                                        const HorasInicio_desativas = Number(horaInicio+minutosInicio)
-                                                                        //console.log('Horas da reserva desativa (formato Numero): '+HorasInicio_desativas)
-                                                                        //Hora Fim
-                                                                        const horasFimReserva = reservaData.HoraFim;
-                                                                        //console.log('Hora da reserva desativa (formato Data): '+ horasFimReserva)
-                                                                        const HoraFim_Array = horasFimReserva.split(':')
-                                                                        const horaFim = HoraFim_Array[0]
-                                                                        //console.log('Hora:' + horaFim)
-                                                                        const minutosFim = HoraFim_Array[1]
-                                                                        //console.log('Minutos:' + minutosFim)
-                                                                        const Horas_em_Numero = Number(horaFim+minutosFim)
-                                                                        //console.log('Horas da reserva desativa (formato Numero): '+Horas_em_Numero)
-                                                                        const HorasFim_MaisLimpeza_Desativas = Horas_em_Numero + TempoLimp
-                                                                        //console.log('Horas da reserva desativa mais limpeza (formato Numero):' + HorasFim_MaisLimpeza_Desativas)
                                                                         for(let i = 0; i < reservas.length; i++){
                                                                             //Reserva para comparar
                                                                             //Hora inicio
+                                                                            //console.log("Reserva para comparar nº",i)
+
                                                                             const horasInicio = reservas[i].HoraInicio;
-                                                                            //console.log('Hora da reserva ativa (formato Data): '+ horasInicio)
                                                                             const horasInicio_Array = horasInicio.split(':')
-                                                                            const horaI = horasInicio_Array[0]
-                                                                            //console.log('Hora:' + horaI)
-                                                                            const minutosI = horasInicio_Array[1]
-                                                                            //console.log('Minutos:' + minutosI)
-                                                                            const HorasAtivasI = Number(horaI+minutosI)
-                                                                            //console.log('Horas da reserva ativa (formato Numero): '+HorasAtivasI)
+
+                                                                            const horaI = Number(horasInicio_Array[0])
+                                                                            //console.log('Hora Inicio:' + horaI)
+
+                                                                            const minutosI = Number(horasInicio_Array[1])
+                                                                            //console.log('Minutos Inicio:' + minutosI)
+
                                                                             //Hora Fim
                                                                             const horasFim = reservas[i].HoraFim;
-                                                                            //console.log('Hora da reserva ativa (formato Data): '+ horasFim)
                                                                             const horasFim_Array = horasFim.split(':')
-                                                                            const horaF = horasFim_Array[0]
-                                                                            //console.log('Hora:' + horaF)
-                                                                            const minutosF = horasFim_Array[1]
-                                                                            //console.log('Minutos:' + minutosF)
-                                                                            const HorasAtivasF = Number(horaF+minutosF)
-                                                                            //console.log('Horas da reserva ativa (formato Numero): '+HorasAtivasF)
+
+                                                                            const horaF = Number(horasFim_Array[0])
+                                                                            //console.log('Hora Fim:' + horaF)
+
+                                                                            const minutosF = Number(horasFim_Array[1])
+                                                                            //console.log('Minutos Fim:' + minutosF)
+
+                                                                            const HoramaisLimpeza = horaF + horaLimpeza 
+                                                                            //console.log("Horas final mais limpeza", HoramaisLimpeza)
+
+                                                                            const MinutosmaisLimpeza = minutosF + minutoLimpeza 
+                                                                            //console.log("Minutos final mais limpeza", MinutosmaisLimpeza)
+
+                                                                            if(MinutosmaisLimpeza >= 60){  //Se for maior ou igual a 60 entao passa de 1 hora
+
+                                                                                let resto = MinutosmaisLimpeza % 60
+                                                                                //console.log("Resto:", resto)
+
+                                                                                let diferenca = MinutosmaisLimpeza - 60 //Vamos buscar a diferenca
+                                                                                //console.log("Diferenca:", diferenca)
+
+                                                                                var novosminutos_fim_Reserva = diferenca
+                                                                                //console.log("Novos minutos mais limpeza", novosminutos_fim_Reserva)
+
+                                                                                var novashoras_fim_Reserva = HoramaisLimpeza + resto
+                                                                                //console.log("Novos Horas mais limpeza", novashoras_fim_Reserva)
+                                                                            }else{
+                                                                                novosminutos_fim_Reserva = MinutosmaisLimpeza 
+                                                                                //console.log("Novos minutos mais limpeza", novosminutos_fim_Reserva)
+
+                                                                                novashoras_fim_Reserva = HoramaisLimpeza
+                                                                                //console.log("Novos Horas mais limpeza", novashoras_fim_Reserva)
+                                                                            }
+
+                                                                            //console.log("Hora Reserva a Comparar")
+
+                                                                            var hora_reserva_inicio_string = horaI.toString()
+                                                                            //console.log("Hora Inicio",hora_reserva_inicio_string)
+
+                                                                            var minutos_reserva_inicio_string = minutosI.toString()
+                                                                            //console.log("Minutos Inicio",minutos_reserva_inicio_string)
+
+                                                                            if(minutos_reserva_inicio_string.length === 1){
+                                                                                var minutos_reserva_inicio_string = "0" + minutos_reserva_inicio_string
+                                                                                //console.log("Minutos Iniciais em String:",minutos_reserva_inicio_string)
+                                                                            }
+
+                                                                            var horas_reserva_inicio_numero = Number(hora_reserva_inicio_string+minutos_reserva_inicio_string)
+                                                                            //console.log("Horas Inicio em numero",horas_reserva_inicio_numero)
+
+                                                                            var hora_reserva_fim_string = novashoras_fim_Reserva.toString()
+                                                                            //console.log("Hora Fim",hora_reserva_fim_string)
+
+                                                                            var minutos_reserva_fim_string = novosminutos_fim_Reserva.toString()
+                                                                            //console.log("Minutos Fim",minutos_reserva_fim_string)
+
+                                                                            if(minutos_reserva_fim_string.length === 1){
+                                                                                var minutos_reserva_fim_string = "0" + minutos_reserva_fim_string
+                                                                                //console.log("Minutos Iniciais em String:",minutos_reserva_fim_string)
+                                                                            }
+
+                                                                            var horas_reserva_fim_numero = Number(hora_reserva_fim_string+minutos_reserva_fim_string)
+                                                                            //console.log("Horas Fim em numero",horas_reserva_fim_numero)
+
+                                                                            /*
+                                                                            ***********************Variaveis***********************
+                                                                            *******************Reserva a adicionar*****************
+                                                                            Hora Inicio : horas_inicio_numero
+
+                                                                            Hora Fim mais limpeza: horas_fim_numero
+
+                                                                            ********************Reserva a comparar****************
+                                                                            Hora Inicio :horas_reserva_inicio_numero
+
+                                                                            Hora Fim mais limpeza: horas_reserva_fim_numero
+                                                                            */
+
                                                                             //Se comecar antes e acabar durante a reserva
-                                                                            if((HorasAtivasI <= HorasInicio_desativas) && (HorasAtivasF >= HorasInicio_desativas) && (HorasAtivasF <= HorasFim_MaisLimpeza_Desativas)){
+                                                                            if((horas_reserva_inicio_numero <= horas_inicio_numero) && (horas_reserva_fim_numero >= horas_inicio_numero) && (horas_reserva_fim_numero <= horas_fim_numero)){
                                                                                 //console.log('Passei aqui 1')
                                                                                 Disponivel = false
                                                                                 break
                                                                             }else{
                                                                                 //Se comecar durante a reserva e acabar depois
-                                                                                if((HorasAtivasI >= HorasInicio_desativas) && (HorasAtivasI <= HorasFim_MaisLimpeza_Desativas) && (HorasAtivasF >= HorasFim_MaisLimpeza_Desativas)){
+                                                                                if((horas_reserva_inicio_numero >= horas_inicio_numero) && (horas_reserva_inicio_numero <= horas_fim_numero) && (horas_reserva_fim_numero >= horas_fim_numero)){
                                                                                     //console.log('Passei aqui 2')
                                                                                     Disponivel = false
                                                                                     break
                                                                                 }else{
                                                                                     //Se a reserva comecar antes e acabar depois
-                                                                                    if((HorasAtivasI <= HorasInicio_desativas) && (HorasAtivasF >= HorasFim_MaisLimpeza_Desativas)){
+                                                                                    if((horas_reserva_inicio_numero <= horas_inicio_numero) && (horas_reserva_fim_numero >= horas_fim_numero)){
                                                                                         //console.log('Passei aqui 3')
                                                                                         Disponivel = false
                                                                                         break
                                                                                     }else{
                                                                                         //Se a reserva comecar depois e acabar antes
-                                                                                        if((HorasAtivasI >= HorasInicio_desativas) && (HorasAtivasI <= HorasFim_MaisLimpeza_Desativas) && (HorasAtivasF >= HorasInicio_desativas) &&(HorasAtivasF <= HorasFim_MaisLimpeza_Desativas)){
+                                                                                        if((horas_reserva_inicio_numero >= horas_inicio_numero) && (horas_reserva_inicio_numero <= horas_fim_numero) && (horas_reserva_fim_numero >= horas_inicio_numero) &&(horas_reserva_fim_numero <= horas_fim_numero)){
                                                                                             //console.log('Passei aqui 4')
                                                                                             Disponivel = false
                                                                                             break
@@ -848,45 +1211,49 @@ controllers.update = async (req, res) =>{
                                                                         //Nao sobrepoem a reserva logo pode ser ativada
                                                                         if(Disponivel){
                                                                             //Nao existem reservas com essa data entao pode-se dar update 
-                                                                            var Nome_Limpo = NomeReserva.normalize("NFD").replace(/[^a-zA-Zs]/, "");
-                                                                            const data = await reserva.update({
-                                                                                NomeReserva: Nome_Limpo,
+                                                                            const data = await reserva.create({
+                                                                                NomeReserva: NomeReserva,
                                                                                 DataReserva: DataReserva,
                                                                                 NumeroParticipantes: participantesLimp,
                                                                                 HoraInicio: HoraInicio,
-                                                                                HoraFim: HoraFim
-                                                                            }, {where: {id: id}})
+                                                                                HoraFim: HoraFim,
+                                                                                EstadoId: 1,
+                                                                                SalaId: Sala,
+                                                                                UtilizadoreId: Utilizador
+                                                                            })
                                                                             .then(function(data){return data;})
                                                                             .catch(error => {
                                                                                 console.log('Error:'+error)
                                                                                 return error;
                                                                             }) 
                                                                             if(data)
-                                                                                res.status(200).json({sucesso: true,data: data, message: 'Reserva atualizada com sucesso'});
+                                                                                res.status(200).json({sucesso: true,data: data, message: 'Reserva adicionada com sucesso'});
                                                                             else
-                                                                                res.json({sucesso:false, message: 'Impossível atualizar a reserva'})
+                                                                                res.json({sucesso:false, message: 'Não foi possível adicionar a reserva'})
                                                                         }else{
                                                                             res.json({sucesso: false, message: 'A reserva sobrepõem outra reserva'})
                                                                         }
                                                                     }else{
                                                                         //Nao existem reservas com essa data entao pode-se dar update 
-                                                                        var Nome_Limpo = NomeReserva.normalize("NFD").replace(/[^a-zA-Zs]/, "");
-                                                                        const data = await reserva.update({
-                                                                            NomeReserva: Nome_Limpo,
+                                                                        const data = await reserva.create({
+                                                                            NomeReserva: NomeReserva,
                                                                             DataReserva: DataReserva,
                                                                             NumeroParticipantes: participantesLimp,
                                                                             HoraInicio: HoraInicio,
-                                                                            HoraFim: HoraFim
-                                                                        }, {where: {id: id}})
+                                                                            HoraFim: HoraFim,
+                                                                            EstadoId: 1,
+                                                                            SalaId: Sala,
+                                                                            UtilizadoreId: Utilizador
+                                                                        })
                                                                         .then(function(data){return data;})
                                                                         .catch(error => {
                                                                             console.log('Error:'+error)
                                                                             return error;
                                                                         }) 
                                                                         if(data)
-                                                                            res.status(200).json({sucesso: true,data: data, message: 'Reserva atualizada com sucesso'});
+                                                                            res.status(200).json({sucesso: true,data: data, message: 'Reserva adicionada com sucesso'});
                                                                         else
-                                                                            res.json({sucesso:false, message: 'Impossível atualizar a reserva'})
+                                                                            res.json({sucesso:false, message: 'Não foi possível adicionar a reserva'})
                                                                     }
                                                                 }
                                                             }else{
@@ -897,122 +1264,252 @@ controllers.update = async (req, res) =>{
                                                         }
                                                     }
                                                 }else{
-                                                    res.json({sucesso:false, message:'A hora de inicio necessita ser superior a hora atual'})
+                                                    res.json({sucesso:false, message:'A hora de inicio necessita ser superior à hora atual'})
                                                 }
                                             }else{
-                                                res.json({sucesso:false, message:'A hora fim necessita ser superior a hora inicio'})
+                                                res.json({sucesso:false, message:'A hora fim necessita ser superior à hora inicio'})
                                             }
                                         }else{
                                             if(data_atual.getTime() > data_reserva.getTime())
                                                 res.json({sucesso: false, message: 'Insira uma data igual ou superior a ' + data_atual});
                                             else{
-                                                //Reserva no futuro
-                                                var TempLimpSala = data.Tempo_Limpeza
-                                                var tempoLimpezaArray = TempLimpSala.split(':')
-                                                var horaLimpeza = tempoLimpezaArray[0]
-                                                var minutoLimpeza = tempoLimpezaArray[1]
-                                                var TempoLimp = Number(horaLimpeza+minutoLimpeza);
-                                                //console.log('Tempo limpeza: '+TempLimpSala)
-                                                var hora_fim_array =  HoraFim.split(':')
-                                                var hora_fim_numero = Number(hora_fim_array[0] + hora_fim_array[1])
-                                                //console.log('Hora fim: '+ hora_fim_numero)
-                                                var hora_fim_limpeza_numero = hora_fim_numero + TempoLimp
-                                                //console.log('Hora fim como numero mais limpeza: '+hora_fim_limpeza_numero)
-                                                var hora_inicio_array =  HoraInicio.split(':')
-                                                var hora_incio_numero = Number(hora_inicio_array[0] + hora_inicio_array[1])
-                                                //console.log('Hora Inicio: ' + hora_incio_numero);
+                                            //Reserva no futuro
+                                            //Tempo de Limpeza
+                                            var TempLimpSala = data.Tempo_Limpeza
+                                            var tempoLimpezaArray = TempLimpSala.split(':')
+
+                                            var horaLimpeza = Number(tempoLimpezaArray[0])
+                                            //console.log("Horas Limpeza", horaLimpeza)
+
+                                            var minutoLimpeza = Number(tempoLimpezaArray[1])
+                                            //console.log("Minutos Limpeza", minutoLimpeza)
+
+                                            //Tempo da reserva
+                                            var hora_fim_array =  HoraFim.split(':')
+
+                                            var horas_fim = Number(hora_fim_array[0])
+                                            //console.log("Hora fim", horas_fim)
+
+                                            var minutos_fim = Number(hora_fim_array[1])
+                                            //console.log("Minutos fim", minutos_fim)
+
+                                            var hora_fim_numero = Number(hora_fim_array[0] + hora_fim_array[1])
+                                            //console.log('Hora + minutos fim: '+ hora_fim_numero)
+
+                                            var horas_fim_limpeza_numero = horas_fim + horaLimpeza
+                                            //console.log('Horas fim mais limpeza: '+horas_fim_limpeza_numero)
+
+                                            var minutos_fim_limpeza_numero = minutos_fim + minutoLimpeza
+                                            //console.log('Minutos fim mais limpeza: '+ minutos_fim_limpeza_numero)
+
+                                            var hora_inicio_array =  HoraInicio.split(':')
+
+                                            var hora_inicio = Number(hora_inicio_array[0])
+                                            //console.log("Horas Inicio: ", hora_inicio)
+
+                                            var minutos_inicio = Number(hora_inicio_array[1])
+                                            //console.log("Minutos Inicio: ", minutos_inicio)
+
+                                            var hora_incio_numero = Number(hora_inicio_array[0] + hora_inicio_array[1])
+                                            //console.log('Horas + minutos Inicio: ' + hora_incio_numero);
+
+                                            if(minutos_fim_limpeza_numero >= 60){  //Se for maior ou igual a 60 entao passa de 1 hora
+
+                                                let resto = minutos_fim_limpeza_numero % 60
+                                                //console.log("Resto:", resto)
+
+                                                let diferenca = minutos_fim_limpeza_numero - 60 //Vamos buscar a diferenca
+                                                //console.log("Diferenca:", diferenca)
+
+                                                var novosminutos_fim = diferenca
+                                                //console.log("Novos minutos mais limpeza", novosminutos_fim)
+
+                                                var novashoras_fim = horas_fim_limpeza_numero + resto + 1
+                                                //console.log("Novos Horas mais limpeza", novashoras_fim)
+                                            }else{
+                                                novosminutos_fim = minutos_fim_limpeza_numero
+                                                //console.log("Novos minutos mais limpeza", novosminutos_fim)
+
+                                                novashoras_fim = horas_fim_limpeza_numero
+                                                //console.log("Novos Horas mais limpeza", novashoras_fim)
+                                            }
+
+                                            //console.log("Hora Reserva a adicionar")
+
+                                            //Inicio
+
+                                            var hora_inicio_string = hora_inicio.toString()
+                                            //console.log("Hora Inicio",hora_inicio_string)
+
+                                            var minutos_inicio_string = minutos_inicio.toString()
+                                            //console.log("Minutos Inicio",minutos_inicio_string)
+
+                                            if(minutos_inicio_string.length === 1){
+                                                var minutos_inicio_string = "0" + minutos_inicio_string
+                                                //console.log("Minutos Iniciais em String:",minutos_inicio_string)
+                                            }
+
+                                            var horas_inicio_numero = Number(hora_inicio_string+minutos_inicio_string)
+                                            //console.log("Horas Inicio em numero",horas_inicio_numero)
+
+                                            //Fim
+
+                                            var hora_fim_string = novashoras_fim.toString()
+                                            //console.log("Hora Fim",hora_fim_string)
+
+                                            var minutos_fim_string = novosminutos_fim.toString()
+                                            //console.log("Minutos Fim",minutos_fim_string)
+
+                                            if(minutos_fim_string.length === 1){
+                                                var minutos_fim_string = "0" + minutos_fim_string
+                                                //console.log("Minutos Iniciais em String:",minutos_fim_string)
+                                            }
+
+                                            var horas_fim_numero = Number(hora_fim_string+minutos_fim_string)
+                                            //console.log("Horas Fim em numero",horas_fim_numero)
+
                                                 if(hora_incio_numero < hora_fim_numero){
-                                                    //Validar o numero de participantes
                                                     var participantesPermitidos = (data.Alocacao * (data.Capacidade/100));
                                                     if(participantesLimp > participantesPermitidos){
-                                                        res.json({sucesso: false, message: 'Número de participantes superior ao limite da sala.'});
+                                                        res.json({sucesso: false, message: 'Número de participantes superior ao limite da sala'});
                                                     }else{
                                                         var dataCentros = await centro.findOne({
                                                             where: {id: data.CentroId}
                                                         })
                                                         if(dataCentros){
                                                             if(dataCentros.EstadoId == 1){
+
                                                                 var horaInicioCentro = dataCentros.Hora_abertura
                                                                 var horaInicioCentroArray = horaInicioCentro.split(':')
                                                                 var horaInicioCentroNumber = Number(horaInicioCentroArray[0] + horaInicioCentroArray[1])
                                                                 //console.log('Hora de abertura: ' + horaInicioCentroNumber)
+
                                                                 var horaFimCentro = dataCentros.Hora_fecho
                                                                 var horaFimCentroArray = horaFimCentro.split(':')
                                                                 var horaFimCentroNumber = Number(horaFimCentroArray[0] + horaFimCentroArray[1])
                                                                 //console.log('Hora de fechar: ' + horaFimCentroNumber)
-                                                                if((hora_incio_numero < horaInicioCentroNumber) || (hora_fim_limpeza_numero > horaFimCentroNumber)){
-                                                                    res.json({sucesso: false, message: 'O horário do centro é entre as '+dataCentros.Hora_abertura+' e as ' + dataCentros.Hora_fecho+ ''});
+
+                                                                if((horas_inicio_numero < horaInicioCentroNumber) || (horas_fim_numero > horaFimCentroNumber)){
+                                                                    res.json({sucesso: false, message: 'O horário do centro é entre as '+dataCentros.Hora_abertura+' e as ' + dataCentros.Hora_fecho+ ' !'});
                                                                 }else{
-                                                                    const query = `select * from public."Reservas" where "Reservas"."EstadoId" = 1 and "Reservas"."DataReserva" = '${DataReserva}' and "Reservas"."SalaId" = ${Sala} and "Reservas"."id" != ${id} order by "Reservas"."HoraInicio"`
+                                                                    const query = `select * from public."Reservas" where "Reservas"."EstadoId" = 1 and "Reservas"."DataReserva" = '${DataReserva}' and "Reservas"."SalaId" = ${Sala} order by "Reservas"."HoraInicio"`
                                                                     const reservas = await bd.query(query,{ type: QueryTypes.SELECT })
                                                                     //console.log(reservas.length)
                                                                     if(reservas.length != 0){
-                                                                        //Obter informacao da reserva que queremos ativar
-                                                                        //console.log(reservas)
-                                                                        //Hora Inicio
-                                                                        const horasInicioReserva = reservaData.HoraInicio;
-                                                                        //console.log('Hora da reserva desativa (formato Data): '+ horasInicioReserva)
-                                                                        const HoraInicio_Array = horasInicioReserva.split(':')
-                                                                        const horaInicio = HoraInicio_Array[0]
-                                                                        //console.log('Hora:' + horaInicio)
-                                                                        const minutosInicio = HoraInicio_Array[1]
-                                                                        //console.log('Minutos:' + minutosInicio)
-                                                                        const HorasInicio_desativas = Number(horaInicio+minutosInicio)
-                                                                        //console.log('Horas da reserva desativa (formato Numero): '+HorasInicio_desativas)
-                                                                        //Hora Fim
-                                                                        const horasFimReserva = reservaData.HoraFim;
-                                                                        //console.log('Hora da reserva desativa (formato Data): '+ horasFimReserva)
-                                                                        const HoraFim_Array = horasFimReserva.split(':')
-                                                                        const horaFim = HoraFim_Array[0]
-                                                                        //console.log('Hora:' + horaFim)
-                                                                        const minutosFim = HoraFim_Array[1]
-                                                                        //console.log('Minutos:' + minutosFim)
-                                                                        const Horas_em_Numero = Number(horaFim+minutosFim)
-                                                                        //console.log('Horas da reserva desativa (formato Numero): '+Horas_em_Numero)
-                                                                        const HorasFim_MaisLimpeza_Desativas = Horas_em_Numero + TempoLimp
-                                                                        //console.log('Horas da reserva desativa mais limpeza (formato Numero):' + HorasFim_MaisLimpeza_Desativas)
                                                                         for(let i = 0; i < reservas.length; i++){
                                                                             //Reserva para comparar
                                                                             //Hora inicio
+                                                                            //console.log("Reserva para comparar nº",i)
+
                                                                             const horasInicio = reservas[i].HoraInicio;
-                                                                            //console.log('Hora da reserva ativa (formato Data): '+ horasInicio)
                                                                             const horasInicio_Array = horasInicio.split(':')
-                                                                            const horaI = horasInicio_Array[0]
-                                                                            //console.log('Hora:' + horaI)
-                                                                            const minutosI = horasInicio_Array[1]
-                                                                            //console.log('Minutos:' + minutosI)
-                                                                            const HorasAtivasI = Number(horaI+minutosI)
-                                                                            //console.log('Horas da reserva ativa (formato Numero): '+HorasAtivasI)
+
+                                                                            const horaI = Number(horasInicio_Array[0])
+                                                                            //console.log('Hora Inicio:' + horaI)
+
+                                                                            const minutosI = Number(horasInicio_Array[1])
+                                                                            //console.log('Minutos Inicio:' + minutosI)
+
                                                                             //Hora Fim
                                                                             const horasFim = reservas[i].HoraFim;
-                                                                            //console.log('Hora da reserva ativa (formato Data): '+ horasFim)
                                                                             const horasFim_Array = horasFim.split(':')
-                                                                            const horaF = horasFim_Array[0]
-                                                                            //console.log('Hora:' + horaF)
-                                                                            const minutosF = horasFim_Array[1]
-                                                                            //console.log('Minutos:' + minutosF)
-                                                                            const HorasAtivasF = Number(horaF+minutosF)
-                                                                            //console.log('Horas da reserva ativa (formato Numero): '+HorasAtivasF)
+
+                                                                            const horaF = Number(horasFim_Array[0])
+                                                                            //console.log('Hora Fim:' + horaF)
+
+                                                                            const minutosF = Number(horasFim_Array[1])
+                                                                            //console.log('Minutos Fim:' + minutosF)
+
+                                                                            const HoramaisLimpeza = horaF + horaLimpeza 
+                                                                            //console.log("Horas final mais limpeza", HoramaisLimpeza)
+
+                                                                            const MinutosmaisLimpeza = minutosF + minutoLimpeza 
+                                                                            //console.log("Minutos final mais limpeza", MinutosmaisLimpeza)
+
+                                                                            if(MinutosmaisLimpeza >= 60){  //Se for maior ou igual a 60 entao passa de 1 hora
+
+                                                                                let resto = MinutosmaisLimpeza % 60
+                                                                                //console.log("Resto:", resto)
+
+                                                                                let diferenca = MinutosmaisLimpeza - 60 //Vamos buscar a diferenca
+                                                                                //console.log("Diferenca:", diferenca)
+
+                                                                                var novosminutos_fim_Reserva = diferenca
+                                                                                //console.log("Novos minutos mais limpeza", novosminutos_fim_Reserva)
+
+                                                                                var novashoras_fim_Reserva = HoramaisLimpeza + resto + 1
+                                                                                //console.log("Novos Horas mais limpeza", novashoras_fim_Reserva)
+                                                                            }else{
+                                                                                novosminutos_fim_Reserva = MinutosmaisLimpeza 
+                                                                                //console.log("Novos minutos mais limpeza", novosminutos_fim_Reserva)
+
+                                                                                novashoras_fim_Reserva = HoramaisLimpeza
+                                                                                //console.log("Novos Horas mais limpeza", novashoras_fim_Reserva)
+                                                                            }
+
+                                                                            //console.log("Hora Reserva a Comparar")
+
+                                                                            var hora_reserva_inicio_string = horaI.toString()
+                                                                            //console.log("Hora Inicio",hora_reserva_inicio_string)
+
+                                                                            var minutos_reserva_inicio_string = minutosI.toString()
+                                                                            //console.log("Minutos Inicio",minutos_reserva_inicio_string)
+
+                                                                            if(minutos_reserva_inicio_string.length === 1){
+                                                                                var minutos_reserva_inicio_string = "0" + minutos_reserva_inicio_string
+                                                                                //console.log("Minutos Iniciais em String:",minutos_reserva_inicio_string)
+                                                                            }
+
+                                                                            var horas_reserva_inicio_numero = Number(hora_reserva_inicio_string+minutos_reserva_inicio_string)
+                                                                            //console.log("Horas Inicio em numero",horas_reserva_inicio_numero)
+
+                                                                            var hora_reserva_fim_string = novashoras_fim_Reserva.toString()
+                                                                            //console.log("Hora Fim",hora_reserva_fim_string)
+
+                                                                            var minutos_reserva_fim_string = novosminutos_fim_Reserva.toString()
+                                                                            //console.log("Minutos Fim",minutos_reserva_fim_string)
+
+                                                                            if(minutos_reserva_fim_string.length === 1){
+                                                                                var minutos_reserva_fim_string = "0" + minutos_reserva_fim_string
+                                                                                //console.log("Minutos Iniciais em String:",minutos_reserva_fim_string)
+                                                                            }
+
+                                                                            var horas_reserva_fim_numero = Number(hora_reserva_fim_string+minutos_reserva_fim_string)
+                                                                            //console.log("Horas Fim em numero",horas_reserva_fim_numero)
+
+                                                                            /*
+                                                                            ***********************Variaveis***********************
+                                                                            *******************Reserva a adicionar*****************
+                                                                            Hora Inicio : horas_inicio_numero
+
+                                                                            Hora Fim mais limpeza: horas_fim_numero
+
+                                                                            ********************Reserva a comparar****************
+                                                                            Hora Inicio :horas_reserva_inicio_numero
+
+                                                                            Hora Fim mais limpeza: horas_reserva_fim_numero
+                                                                            */
+
                                                                             //Se comecar antes e acabar durante a reserva
-                                                                            if((HorasAtivasI <= HorasInicio_desativas) && (HorasAtivasF >= HorasInicio_desativas) && (HorasAtivasF <= HorasFim_MaisLimpeza_Desativas)){
+                                                                            if((horas_reserva_inicio_numero <= horas_inicio_numero) && (horas_reserva_fim_numero >= horas_inicio_numero) && (horas_reserva_fim_numero <= horas_fim_numero)){
                                                                                 //console.log('Passei aqui 1')
                                                                                 Disponivel = false
                                                                                 break
                                                                             }else{
                                                                                 //Se comecar durante a reserva e acabar depois
-                                                                                if((HorasAtivasI >= HorasInicio_desativas) && (HorasAtivasI <= HorasFim_MaisLimpeza_Desativas) && (HorasAtivasF >= HorasFim_MaisLimpeza_Desativas)){
+                                                                                if((horas_reserva_inicio_numero >= horas_inicio_numero) && (horas_reserva_inicio_numero <= horas_fim_numero) && (horas_reserva_fim_numero >= horas_fim_numero)){
                                                                                     //console.log('Passei aqui 2')
                                                                                     Disponivel = false
                                                                                     break
                                                                                 }else{
                                                                                     //Se a reserva comecar antes e acabar depois
-                                                                                    if((HorasAtivasI <= HorasInicio_desativas) && (HorasAtivasF >= HorasFim_MaisLimpeza_Desativas)){
+                                                                                    if((horas_reserva_inicio_numero <= horas_inicio_numero) && (horas_reserva_fim_numero >= horas_fim_numero)){
                                                                                         //console.log('Passei aqui 3')
                                                                                         Disponivel = false
                                                                                         break
                                                                                     }else{
                                                                                         //Se a reserva comecar depois e acabar antes
-                                                                                        if((HorasAtivasI >= HorasInicio_desativas) && (HorasAtivasI <= HorasFim_MaisLimpeza_Desativas) && (HorasAtivasF >= HorasInicio_desativas) &&(HorasAtivasF <= HorasFim_MaisLimpeza_Desativas)){
+                                                                                        if((horas_reserva_inicio_numero >= horas_inicio_numero) && (horas_reserva_inicio_numero <= horas_fim_numero) && (horas_reserva_fim_numero >= horas_inicio_numero) &&(horas_reserva_fim_numero <= horas_fim_numero)){
                                                                                             //console.log('Passei aqui 4')
                                                                                             Disponivel = false
                                                                                             break
@@ -1021,48 +1518,51 @@ controllers.update = async (req, res) =>{
                                                                                 }
                                                                             }
                                                                         }
-                                                                        //Nao sobrepoem a reserva logo pode ser ativada
+                                                                        //Nao sobrepoem a reserva logo pode ser adicionada
                                                                         if(Disponivel){
-                                                                            //Nao existem reservas com essa data entao pode-se dar update 
-                                                                            var Nome_Limpo = NomeReserva.normalize("NFD").replace(/[^a-zA-Zs]/, "");
-                                                                            const data = await reserva.update({
-                                                                                NomeReserva: Nome_Limpo,
-                                                                                DataReserva: DataReserva,
-                                                                                NumeroParticipantes: participantesLimp,
-                                                                                HoraInicio: HoraInicio,
-                                                                                HoraFim: HoraFim
-                                                                            }, {where: {id: id}})
-                                                                            .then(function(data){return data;})
-                                                                            .catch(error => {
-                                                                                console.log('Error:'+error)
-                                                                                return error;
-                                                                            }) 
-                                                                            if(data)
-                                                                                res.status(200).json({sucesso: true,data: data, message: 'Reserva atualizada com sucesso'});
-                                                                            else
-                                                                                res.json({sucesso:false, message: 'Impossível atualizar a reserva'})
+                                                                                const data = await reserva.create({
+                                                                                    NomeReserva: NomeReserva,
+                                                                                    DataReserva: DataReserva,
+                                                                                    NumeroParticipantes: participantesLimp,
+                                                                                    HoraInicio: HoraInicio,
+                                                                                    HoraFim: HoraFim,
+                                                                                    EstadoId: 1,
+                                                                                    SalaId: Sala,
+                                                                                    UtilizadoreId: Utilizador
+                                                                                })
+                                                                                .then(function(data){return data;})
+                                                                                .catch(error => {
+                                                                                    console.log('Error:'+error)
+                                                                                    return error;
+                                                                                }) 
+                                                                                if(data)
+                                                                                    res.status(200).json({sucesso: true,data: data, message: 'Reserva adicionada com sucesso'});
+                                                                                else
+                                                                                    res.json({sucesso:false, message: 'Não foi possível adicionada a reserva'})
                                                                         }else{
                                                                             res.json({sucesso: false, message: 'A reserva sobrepõem outra reserva'})
                                                                         }
                                                                     }else{
-                                                                        //Nao existem reservas com essa data entao pode-se dar update 
-                                                                        var Nome_Limpo = NomeReserva.normalize("NFD").replace(/[^a-zA-Zs]/, "");
-                                                                        const data = await reserva.update({
-                                                                            NomeReserva: Nome_Limpo,
+                                                                        //Nao existem reservas com essa data entao pode-se adicionar
+                                                                        const data = await reserva.create({
+                                                                            NomeReserva: NomeReserva,
                                                                             DataReserva: DataReserva,
                                                                             NumeroParticipantes: participantesLimp,
                                                                             HoraInicio: HoraInicio,
-                                                                            HoraFim: HoraFim
-                                                                        }, {where: {id: id}})
+                                                                            HoraFim: HoraFim,
+                                                                            EstadoId: 1,
+                                                                            SalaId: Sala,
+                                                                            UtilizadoreId: Utilizador
+                                                                        })
                                                                         .then(function(data){return data;})
                                                                         .catch(error => {
                                                                             console.log('Error:'+error)
                                                                             return error;
                                                                         }) 
                                                                         if(data)
-                                                                            res.status(200).json({sucesso: true,data: data, message: 'Reserva atualizada com sucesso'});
+                                                                            res.status(200).json({sucesso: true,data: data, message: 'Reserva adicionada com sucesso'});
                                                                         else
-                                                                            res.json({sucesso:false, message: 'Impossível atualizar a reserva'})
+                                                                            res.json({sucesso:false, message: 'Não foi possível adicionar a reserva'})
                                                                     }
                                                                 }
                                                             }else{
@@ -1073,7 +1573,7 @@ controllers.update = async (req, res) =>{
                                                         }
                                                     }
                                                 }else{
-                                                    res.json({sucesso:false, message:'A hora final necessita ser superior a hora inicio'})
+                                                    res.json({sucesso:false, message:'A hora final necessita ser superior à hora inicio'})
                                                 }
                                             }
                                         }
@@ -1146,6 +1646,15 @@ controllers.ativar = async (req, res) =>{
             if(Saladata.EstadoId == 1){
                 const HoraLimpezaSala = Saladata.Tempo_Limpeza
                 //console.log('Horas de Limpeza da Sala: '+HoraLimpezaSala)
+                //Tempo de Limpeza
+                var TempLimpSala = Saladata.Tempo_Limpeza
+                var tempoLimpezaArray = TempLimpSala.split(':')
+
+                var horaLimpeza = Number(tempoLimpezaArray[0])
+                //console.log("Horas Limpeza", horaLimpeza)
+
+                var minutoLimpeza = Number(tempoLimpezaArray[1])
+                //console.log("Minutos Limpeza", minutoLimpeza)
                 if(reservaData.EstadoId == 2){
                     //Verificar se a reserva esta em adamento
                     var data_atual = new Date() 
@@ -1178,71 +1687,189 @@ controllers.ativar = async (req, res) =>{
                         //console.log(reservas.length)
                         if(reservas.length != 0){
                             //Obter informacao da reserva que queremos ativar
-                            //console.log(reservas)
-                            //Hora Inicio
-                            const horasInicioReserva = reservaData.HoraInicio;
-                            //console.log('Hora da reserva desativa (formato Data): '+ horasInicioReserva)
-                            const HoraInicio_Array = horasInicioReserva.split(':')
-                            const horaInicio = HoraInicio_Array[0]
-                            //console.log('Hora:' + horaInicio)
-                            const minutosInicio = HoraInicio_Array[1]
-                            //console.log('Minutos:' + minutosInicio)
-                            const HorasInicio_desativas = Number(horaInicio+minutosInicio)
-                            //console.log('Horas da reserva desativa (formato Numero): '+HorasInicio_desativas)
-                            //Hora Fim
-                            const horasFimReserva = reservaData.HoraFim;
-                            //console.log('Hora da reserva desativa (formato Data): '+ horasFimReserva)
-                            const HoraFim_Array = horasFimReserva.split(':')
-                            const horaFim = HoraFim_Array[0]
-                            //console.log('Hora:' + horaFim)
-                            const minutosFim = HoraFim_Array[1]
-                            //console.log('Minutos:' + minutosFim)
-                            const Horas_em_Numero = Number(horaFim+minutosFim)
-                            //console.log('Horas da reserva desativa (formato Numero): '+Horas_em_Numero)
-                            const HorasFim_MaisLimpeza_Desativas = Horas_em_Numero + HoraLimpezaSala
-                            //console.log('Horas da reserva desativa mais limpeza (formato Numero):' + HorasFim_MaisLimpeza_Desativas)
+                            
+                                //Tempo da reserva
+                                var hora_fim_array =  reservas.HoraFim.split(':')
+
+                                var horas_fim = Number(hora_fim_array[0])
+                                //console.log("Hora fim", horas_fim)
+
+                                var minutos_fim = Number(hora_fim_array[1])
+                                //console.log("Minutos fim", minutos_fim)
+
+                                var hora_fim_numero = Number(hora_fim_array[0] + hora_fim_array[1])
+                                //console.log('Hora + minutos fim: '+ hora_fim_numero)
+
+                                var horas_fim_limpeza_numero = horas_fim + horaLimpeza
+                                //console.log('Horas fim mais limpeza: '+horas_fim_limpeza_numero)
+
+                                var minutos_fim_limpeza_numero = minutos_fim + minutoLimpeza
+                                //console.log('Minutos fim mais limpeza: '+ minutos_fim_limpeza_numero)
+
+                                var hora_inicio_array =  reservas.HoraInicio.split(':')
+
+                                var hora_inicio = Number(hora_inicio_array[0])
+                                //console.log("Horas Inicio: ", hora_inicio)
+
+                                var minutos_inicio = Number(hora_inicio_array[1])
+                                //console.log("Minutos Inicio: ", minutos_inicio)
+
+                                var hora_incio_numero = Number(hora_inicio_array[0] + hora_inicio_array[1])
+                                //console.log('Horas + minutos Inicio: ' + hora_incio_numero);
+
+                                if(minutos_fim_limpeza_numero >= 60){  //Se for maior ou igual a 60 entao passa de 1 hora
+
+                                let resto = minutos_fim_limpeza_numero % 60
+                                //console.log("Resto:", resto)
+
+                                let diferenca = minutos_fim_limpeza_numero - 60 //Vamos buscar a diferenca
+                                //console.log("Diferenca:", diferenca)
+
+                                var novosminutos_fim = diferenca
+                                //console.log("Novos minutos mais limpeza", novosminutos_fim)
+
+                                var novashoras_fim = horas_fim_limpeza_numero + resto + 1
+                                //console.log("Novos Horas mais limpeza", novashoras_fim)
+                            }else{
+                                novosminutos_fim = minutos_fim_limpeza_numero
+                                //console.log("Novos minutos mais limpeza", novosminutos_fim)
+
+                                novashoras_fim = horas_fim_limpeza_numero
+                                //console.log("Novos Horas mais limpeza", novashoras_fim)
+                            }
+
+                            //console.log("Hora Reserva a adicionar")
+
+                            //Inicio
+
+                            var hora_inicio_string = hora_inicio.toString()
+                            //console.log("Hora Inicio",hora_inicio_string)
+
+                            var minutos_inicio_string = minutos_inicio.toString()
+                            //console.log("Minutos Inicio",minutos_inicio_string)
+
+                            if(minutos_inicio_string.length === 1){
+                                var minutos_inicio_string = "0" + minutos_inicio_string
+                                //console.log("Minutos Iniciais em String:",minutos_inicio_string)
+                            }
+
+                            var horas_inicio_numero = Number(hora_inicio_string+minutos_inicio_string)
+                            //console.log("Horas Inicio em numero",horas_inicio_numero)
+
+                           //Fim
+
+                            var hora_fim_string = novashoras_fim.toString()
+                            //console.log("Hora Fim",hora_fim_string)
+
+                            var minutos_fim_string = novosminutos_fim.toString()
+                            //console.log("Minutos Fim",minutos_fim_string)
+
+                            if(minutos_fim_string.length === 1){
+                                var minutos_fim_string = "0" + minutos_fim_string
+                                //console.log("Minutos Iniciais em String:",minutos_fim_string)
+                            }
+
+                            var horas_fim_numero = Number(hora_fim_string+minutos_fim_string)
+                            //console.log("Horas Fim em numero",horas_fim_numero)
                             for(let i = 0; i < reservas.length; i++){
-                                //Reserva para comparar
                                 //Hora inicio
+                                //console.log("Reserva para comparar nº",i)
+
                                 const horasInicio = reservas[i].HoraInicio;
-                                //console.log('Hora da reserva ativa (formato Data): '+ horasInicio)
                                 const horasInicio_Array = horasInicio.split(':')
-                                const horaI = horasInicio_Array[0]
-                                //console.log('Hora:' + horaI)
-                                const minutosI = horasInicio_Array[1]
-                                //console.log('Minutos:' + minutosI)
-                                const HorasAtivasI = Number(horaI+minutosI)
-                                //console.log('Horas da reserva ativa (formato Numero): '+HorasAtivasI)
+
+                                const horaI = Number(horasInicio_Array[0])
+                                //console.log('Hora Inicio:' + horaI)
+
+                                const minutosI = Number(horasInicio_Array[1])
+                                //console.log('Minutos Inicio:' + minutosI)
+
                                 //Hora Fim
                                 const horasFim = reservas[i].HoraFim;
-                                //console.log('Hora da reserva ativa (formato Data): '+ horasFim)
                                 const horasFim_Array = horasFim.split(':')
-                                const horaF = horasFim_Array[0]
-                                //console.log('Hora:' + horaF)
-                                const minutosF = horasFim_Array[1]
-                                //console.log('Minutos:' + minutosF)
-                                const HorasAtivasF = Number(horaF+minutosF)
-                                //console.log('Horas da reserva ativa (formato Numero): '+HorasAtivasF)
+
+                                const horaF = Number(horasFim_Array[0])
+                                //console.log('Hora Fim:' + horaF)
+
+                                const minutosF = Number(horasFim_Array[1])
+                                //console.log('Minutos Fim:' + minutosF)
+
+                                const HoramaisLimpeza = horaF + horaLimpeza 
+                                //console.log("Horas final mais limpeza", HoramaisLimpeza)
+
+                                const MinutosmaisLimpeza = minutosF + minutoLimpeza 
+                                //console.log("Minutos final mais limpeza", MinutosmaisLimpeza)
+
+                                if(MinutosmaisLimpeza >= 60){  //Se for maior ou igual a 60 entao passa de 1 hora
+
+                                    let resto = MinutosmaisLimpeza % 60
+                                    //console.log("Resto:", resto)
+
+                                    let diferenca = MinutosmaisLimpeza - 60 //Vamos buscar a diferenca
+                                    //console.log("Diferenca:", diferenca)
+
+                                    var novosminutos_fim_Reserva = diferenca
+                                    //console.log("Novos minutos mais limpeza", novosminutos_fim_Reserva)
+
+                                    var novashoras_fim_Reserva = HoramaisLimpeza + resto + 1
+                                    //console.log("Novos Horas mais limpeza", novashoras_fim_Reserva)
+                                }else{
+                                    novosminutos_fim_Reserva = MinutosmaisLimpeza 
+                                    //console.log("Novos minutos mais limpeza", novosminutos_fim_Reserva)
+
+                                    novashoras_fim_Reserva = HoramaisLimpeza
+                                    //console.log("Novos Horas mais limpeza", novashoras_fim_Reserva)
+                                }
+
+                                    //console.log("Hora Reserva a Comparar")
+
+                                var hora_reserva_inicio_string = horaI.toString()
+                                //console.log("Hora Inicio",hora_reserva_inicio_string)
+
+                                var minutos_reserva_inicio_string = minutosI.toString()
+                                //console.log("Minutos Inicio",minutos_reserva_inicio_string)
+
+                                if(minutos_reserva_inicio_string.length === 1){
+                                    var minutos_reserva_inicio_string = "0" + minutos_reserva_inicio_string
+                                    //console.log("Minutos Iniciais em String:",minutos_reserva_inicio_string)
+                                }
+
+                                var horas_reserva_inicio_numero = Number(hora_reserva_inicio_string+minutos_reserva_inicio_string)
+                                //console.log("Horas Inicio em numero",horas_reserva_inicio_numero)
+
+                                var hora_reserva_fim_string = novashoras_fim_Reserva.toString()
+                                //console.log("Hora Fim",hora_reserva_fim_string)
+
+                                var minutos_reserva_fim_string = novosminutos_fim_Reserva.toString()
+                                //console.log("Minutos Fim",minutos_reserva_fim_string)
+
+                                if(minutos_reserva_fim_string.length === 1){
+                                    var minutos_reserva_fim_string = "0" + minutos_reserva_fim_string
+                                    //console.log("Minutos Iniciais em String:",minutos_reserva_fim_string)
+                                }
+
+                                var horas_reserva_fim_numero = Number(hora_reserva_fim_string+minutos_reserva_fim_string)
+                                //console.log("Horas Fim em numero",horas_reserva_fim_numero)
                                 //Se comecar antes e acabar durante a reserva
-                                if((HorasAtivasI <= HorasInicio_desativas) && (HorasAtivasF >= HorasInicio_desativas) && (HorasAtivasF <= HorasFim_MaisLimpeza_Desativas)){
+                                if((horas_reserva_inicio_numero <= horas_inicio_numero) && (horas_reserva_fim_numero >= horas_inicio_numero) && (horas_reserva_fim_numero <= horas_fim_numero)){
                                     //console.log('Passei aqui 1')
                                     Disponivel = false
                                     break
                                 }else{
                                     //Se comecar durante a reserva e acabar depois
-                                    if((HorasAtivasI >= HorasInicio_desativas) && (HorasAtivasI <= HorasFim_MaisLimpeza_Desativas) && (HorasAtivasF >= HorasFim_MaisLimpeza_Desativas)){
+                                    if((horas_reserva_inicio_numero >= horas_inicio_numero) && (horas_reserva_inicio_numero <= horas_fim_numero) && (horas_reserva_fim_numero >= horas_fim_numero)){
                                         //console.log('Passei aqui 2')
                                         Disponivel = false
                                         break
                                     }else{
                                         //Se a reserva comecar antes e acabar depois
-                                        if((HorasAtivasI <= HorasInicio_desativas) && (HorasAtivasF >= HorasFim_MaisLimpeza_Desativas)){
+                                        if((horas_reserva_inicio_numero <= horas_inicio_numero) && (horas_reserva_fim_numero >= horas_fim_numero)){
                                             //console.log('Passei aqui 3')
                                             Disponivel = false
                                             break
                                         }else{
                                             //Se a reserva comecar depois e acabar antes
-                                            if((HorasAtivasI >= HorasInicio_desativas) && (HorasAtivasI <= HorasFim_MaisLimpeza_Desativas) && (HorasAtivasF >= HorasInicio_desativas) &&(HorasAtivasF <= HorasFim_MaisLimpeza_Desativas)){
+                                            if((horas_reserva_inicio_numero >= horas_inicio_numero) && (horas_reserva_inicio_numero <= horas_fim_numero) && (horas_reserva_fim_numero >= horas_inicio_numero) &&(horas_reserva_fim_numero <= horas_fim_numero)){
                                                 //console.log('Passei aqui 4')
                                                 Disponivel = false
                                                 break
