@@ -37,7 +37,7 @@ controllers.listReservasSala = async (req, res) =>{
     "Reservas"."HoraFim", "Reservas"."EstadoId" as "Reserva Estado","Utilizadores"."id" as "UtilizadoreId","Utilizadores"."Pnome","Utilizadores"."Unome", "Salas"."EstadoId" as "Sala Estado", "Salas"."Motivo_Bloqueio"
     from "Reservas" inner join "Salas" on "Reservas"."SalaId" = "Salas"."id" 
     inner join "Utilizadores" on "Reservas"."UtilizadoreId" = "Utilizadores"."id"
-    where "Salas"."id" = ${salaid} and "Reservas"."EstadoId"=1 and "Reservas"."DataReserva" >= CURRENT_DATE order by "Reservas"."DataReserva
+    where "Salas"."id" = ${salaid} and "Reservas"."EstadoId"=1 and "Reservas"."DataReserva" >= CURRENT_DATE 
     order by "Reservas"."DataReserva", "Reservas"."HoraInicio"`
             const data = await bd.query(query,{ type: QueryTypes.SELECT })
             .then(function(data){return data;})
@@ -2117,26 +2117,40 @@ controllers.adiar = async(req,res) =>{
     const {id} = req.params;
     const {ValorHora} = req.body;
     var Disponivel = false
+
     if(id!=null){
         if(ValorHora == ""){
             res.json({sucesso: false, message:"Insira uma hora válida"});
         }else{
+
             var reservaData = await reserva.findOne({
                 where:{id:id}
             })
             if(reservaData){
+
                 const Saladata = await sala.findOne({
                     where:{id: reservaData.SalaId}
                 })
+
+                //Tempo de Limpeza
+                var TempLimpSala = Saladata.Tempo_Limpeza
+                var tempoLimpezaArray = TempLimpSala.split(':')
+
+                var horaLimpeza = Number(tempoLimpezaArray[0])
+                console.log("Horas Limpeza", horaLimpeza)
+
+                var minutoLimpeza = Number(tempoLimpezaArray[1])
+                console.log("Minutos Limpeza", minutoLimpeza)
+
                 if(Saladata.EstadoId == 1){
+
                     const CentroData = await centro.findOne({
                         where:{id:Saladata.CentroId}
                     })
                     if(CentroData){
                         if(CentroData.EstadoId ==1){
-                            const HoraLimpezaSala = Saladata.Tempo_Limpeza
-                            //console.log('Horas de Limpeza da Sala: '+HoraLimpezaSala)
                             if(reservaData.EstadoId == 1){
+
                                 //Verificar se a reserva esta em adamento
                                 var data_atual = new Date() 
                                 //console.log('Data atual: '+data_atual)
@@ -2171,74 +2185,124 @@ controllers.adiar = async(req,res) =>{
                                     var horaFimCentro = CentroData.Hora_fecho
                                     var horaFimCentroArray = horaFimCentro.split(':')
                                     var horaFimCentroNumber = Number(horaFimCentroArray[0] + horaFimCentroArray[1])
-                                    //Hora Final da Reserva
-                                    const horasFimReserva = reservaData.HoraFim;
-                                    //console.log('Hora da reserva defenida (formato Data): '+ horasFimReserva)
-                                    const HoraFim_Array = horasFimReserva.split(':')
-                                    const horaFim = HoraFim_Array[0]
-                                    //console.log('Hora:' + horaFim)
-                                    const minutosFim = HoraFim_Array[1]
-                                    //console.log('Minutos:' + minutosFim)
-                                    const Horas_em_Numero = Number(horaFim+minutosFim)
-                                    //console.log('Horas da reserva defenida (formato Numero): '+Horas_em_Numero)
-                                    //Hora final pretendida
-                                    //console.log('Hora pretendida e: ' + ValorHora)
-                                    const HoraFimPedida_Array = ValorHora.split(':')
-                                    //console.log('Hora fim pedida depois do split: '+HoraFimPedida_Array)
-                                    const horaFimPedida = HoraFimPedida_Array[0]
-                                    //console.log('Hora pretendida:' + horaFimPedida)
-                                    const minutosFimPedida = HoraFimPedida_Array[1]
-                                    //console.log('Minutos pretendidos:' + minutosFimPedida)
-                                    const HorasPedidas_em_Numero = Number(horaFimPedida+minutosFimPedida)
-                                    //console.log('Horas pretendida (formato Numero): '+HorasPedidas_em_Numero)
+
+                                    //Tempo da reserva
+
+                                    //Fim
+                                    var hora_fim_array =  (reservaData.HoraFim).split(':')
+
+                                    var horas_fim = Number(hora_fim_array[0])
+                                    console.log("Hora fim", horas_fim)
+
+                                    var minutos_fim = Number(hora_fim_array[1])
+                                    console.log("Minutos fim", minutos_fim)
+
+                                    var hora_fim_numero = Number(hora_fim_array[0] + hora_fim_array[1])
+                                    console.log('Hora + minutos fim: '+ hora_fim_numero)
+
+                                    //Hora pedida
+
+                                    var HoraFimPedida_Array = ValorHora.split(':')
+
+                                    var horaFimPedida = Number(HoraFimPedida_Array[0])
+                                    console.log('Hora pretendida:' + horaFimPedida)
+
+                                    var minutosFimPedida = Number(HoraFimPedida_Array[1])
+                                    console.log('Minutos pretendidos:' + minutosFimPedida)
+
+                                    var horasfinaispedidas = Number(HoraFimPedida_Array[0] + HoraFimPedida_Array[1])
+                                    console.log("Horas pedidas sem limpeza", horasfinaispedidas)
+
+                                    var horafimpedida_limpeza = horaFimPedida + horaLimpeza
+                                    console.log('Horas finais pretendidos mais limpeza:' + horafimpedida_limpeza)
+
+                                    var minutosfimpedida_limpeza = minutosFimPedida + minutoLimpeza
+                                    console.log('Minutos finais pretendidos mais limpeza:' + minutosfimpedida_limpeza)
+
+                                    if(minutosfimpedida_limpeza >= 60){  //Se for maior ou igual a 60 entao passa de 1 hora
+
+                                        let resto = minutosfimpedida_limpeza % 60
+                                        console.log("Resto:", resto)
+
+                                        let diferenca = minutosfimpedida_limpeza - 60 //Vamos buscar a diferenca
+                                        console.log("Diferenca:", diferenca)
+
+                                        var novosminutos_fim = diferenca
+                                        console.log("Novos minutos mais limpeza", novosminutos_fim)
+
+                                        var novashoras_fim = horafimpedida_limpeza + resto + 1
+                                        console.log("Novos Horas mais limpeza", novashoras_fim)
+                                    }else{
+                                            novosminutos_fim = minutosfimpedida_limpeza
+                                            console.log("Novos minutos mais limpeza", novosminutos_fim)
+
+                                            novashoras_fim = horafimpedida_limpeza
+                                            console.log("Novos Horas mais limpeza", novashoras_fim)
+                                    }
+
+                                    var horafimstring = novashoras_fim.toString()
+                                    console.log("Novos Horas mais limpeza em string", novashoras_fim)
+
+                                    var minutosfimstring = novosminutos_fim.toString()
+                                    console.log("Novos minutos mais limpeza em string", novosminutos_fim)
+
+                                    if(minutosfimstring.length === 1){
+                                        var minutosfimstring = "0" + minutosfimstring
+                                        console.log("Minutos finais pedidos em String:",minutosfimstring)
+                                    }
+
+                                    var horaspedidasNumero = Number(horafimstring + minutosfimstring)
+                                    console.log("Novas horas finais pretendidas em numero", horaspedidasNumero)
+
                                     const query = `select * from public."Reservas" where "Reservas"."EstadoId" = 1 and "Reservas"."DataReserva" = '${reservaData.DataReserva}' and "Reservas"."SalaId" = ${Saladata.id} and "Reservas"."id" != ${id} and "Reservas"."HoraInicio" > '${reservaData.HoraFim}' order by "Reservas"."HoraInicio"`
                                     const reservas = await bd.query(query,{ type: QueryTypes.SELECT })
                                     //console.log(reservas.length)
                                     if(reservas.length != 0){
-                                        //Obter informacao da reserva que queremos ativar
-                                        //console.log(reservas)
-                                        //console.log('Hora de fechar: ' + horaFimCentroNumber)
-                                        if(HorasPedidas_em_Numero < horaInicioCentroNumber || HorasPedidas_em_Numero > horaFimCentroNumber){
-                                            res.json({sucesso:false, message:'A hora inserida tem que estar entre '+CentroData.Hora_abertura+' e '+CentroData.Hora_fecho})
+
+                                        if((horaspedidasNumero < horaInicioCentroNumber) || (horaspedidasNumero > horaFimCentroNumber)){
+                                            res.json({sucesso: false, message: 'O horário do centro é entre as '+CentroData.Hora_abertura+' e as ' + CentroData.Hora_fecho+ ' !'});
                                         }else{
-                                            if(HorasPedidas_em_Numero < Horas_em_Numero){
+                                            if(horasfinaispedidas < hora_fim_numero){
                                                 res.json({sucesso: false, message:'Insira uma hora superior a ' + reservaData.HoraFim})
                                             }else{
-                                                if(HorasPedidas_em_Numero == Horas_em_Numero){
+                                                if(horasfinaispedidas === hora_fim_numero){
                                                     res.json({sucesso:false, message:'Hora Final não pode ser igual a hora final anterior'})
                                                 }else{
-                                                    const HorasFim_MaisLimpeza_Desativas = HoraLimpezaSala + HorasPedidas_em_Numero
-                                                    //console.log('Horas da reserva mais limpeza antes(formato Numero):' + Horas_em_Numero + HoraLimpezaSala)
-                                                    // console.log('Horas da reserva mais limpeza depois(formato Numero):' + HorasFim_MaisLimpeza_Desativas)
+
                                                     for(let i = 0; i < reservas.length; i++){
-                                                        //Reserva para comparar
                                                         //Hora inicio
+                                                        console.log("Reserva para comparar nº",i)
+
                                                         const horasInicio = reservas[i].HoraInicio;
-                                                        //console.log('Hora da reserva ativa (formato Data): '+ horasInicio)
                                                         const horasInicio_Array = horasInicio.split(':')
-                                                        const horaI = horasInicio_Array[0]
-                                                        //console.log('Hora:' + horaI)
-                                                        const minutosI = horasInicio_Array[1]
-                                                        //console.log('Minutos:' + minutosI)
-                                                        const HorasAtivasI = Number(horaI+minutosI)
-                                                        //console.log('Horas da reserva ativa (formato Numero): '+HorasAtivasI)
-                                                        //Hora Fim
-                                                        const horasFim = reservas[i].HoraFim;
-                                                        //console.log('Hora da reserva ativa (formato Data): '+ horasFim)
-                                                        const horasFim_Array = horasFim.split(':')
-                                                        const horaF = horasFim_Array[0]
-                                                        //console.log('Hora:' + horaF)
-                                                        const minutosF = horasFim_Array[1]
-                                                        //console.log('Minutos:' + minutosF)
-                                                        const HorasAtivasF = Number(horaF+minutosF)
-                                                        //console.log('Horas da reserva ativa (formato Numero): '+HorasAtivasF)
-                                                        //Se acabar antes da reserva comecar
-                                                        if(HorasFim_MaisLimpeza_Desativas <= HorasAtivasI){
-                                                            //console.log('Passei aqui ')
-                                                            Disponivel = true
+
+                                                        const horaI = Number(horasInicio_Array[0])
+                                                        console.log('Hora Inicio:' + horaI)
+
+                                                        const minutosI = Number(horasInicio_Array[1])
+                                                        console.log('Minutos Inicio:' + minutosI)
+
+                                                        var hora_reserva_inicio_string = horaI.toString()
+                                                        console.log("Hora Inicio em string",hora_reserva_inicio_string)
+
+                                                        var minutos_reserva_inicio_string = minutosI.toString()
+                                                        console.log("Minutos Inicio em string",minutos_reserva_inicio_string)
+
+                                                        if(minutos_reserva_inicio_string.length === 1){
+                                                            var minutos_reserva_inicio_string = "0" + minutos_reserva_inicio_string
+                                                            console.log("Minutos Iniciais em String:",minutos_reserva_inicio_string)
+                                                        }
+
+                                                        var horas_reserva_inicio_numero = Number(hora_reserva_inicio_string+minutos_reserva_inicio_string)
+                                                        console.log("Horas Inicio em numero",horas_reserva_inicio_numero)
+
+                                                        if(horaspedidasNumero < horas_reserva_inicio_numero){
+                                                            console.log('Passei aqui ')
+                                                            Disponivel = true;
                                                             break
                                                         }
                                                     }
+                                                    
                                                     //Nao sobrepoem a reserva logo pode ser prolongada
                                                     if(Disponivel){
                                                         const reservasdata = await reserva.update({
@@ -2264,12 +2328,15 @@ controllers.adiar = async(req,res) =>{
                                             }
                                         }
                                     }else{
-                                        if(HorasPedidas_em_Numero < horaInicioCentroNumber || HorasPedidas_em_Numero > horaFimCentroNumber){
-                                            res.json({sucesso:false, message:'A hora inserida tem que estar entre ' +CentroData.Hora_abertura+' e '+CentroData.Hora_fecho})
+                                        if((horaspedidasNumero < horaInicioCentroNumber) || (horaspedidasNumero > horaFimCentroNumber)){
+                                            res.json({sucesso: false, message: 'O horário do centro é entre as '+CentroData.Hora_abertura+' e as ' + CentroData.Hora_fecho+ ' !'});
                                         }else{
-                                            if(HorasPedidas_em_Numero < Horas_em_Numero){
+                                            if(horasfinaispedidas < hora_fim_numero){
                                                 res.json({sucesso: false, message:'Insira uma hora superior a ' + reservaData.HoraFim})
                                             }else{
+                                                if(horasfinaispedidas == hora_fim_numero){
+                                                    res.json({sucesso:false, message:'Hora Final não pode ser igual a hora final anterior'})
+                                                }else{
                                                 //Nao existem reservas com essa data entao pode-se adiar a vontade 
                                                 const reservasdata = await reserva.update({
                                                         HoraFim:ValorHora 
@@ -2287,6 +2354,7 @@ controllers.adiar = async(req,res) =>{
                                                     res.json({sucesso: true, message: 'Reserva adiada com sucesso'})
                                                 else
                                                     res.json({sucesso: false, message: 'Impossível adiar a reserva'})
+                                                }
                                             }
                                         }
                                     }
