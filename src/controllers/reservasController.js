@@ -302,7 +302,7 @@ controllers.add = async (req, res) =>{
 
                         if(minutos_fim_limpeza_numero >= 60){  //Se for maior ou igual a 60 entao passa de 1 hora
 
-                            let resto = minutos_fim_limpeza_numero % 60
+                            let resto = Math.trunc(minutos_fim_limpeza_numero / 60 ) 
                             //console.log("Resto:", resto)
 
                             let diferenca = minutos_fim_limpeza_numero - 60 //Vamos buscar a diferenca
@@ -311,7 +311,7 @@ controllers.add = async (req, res) =>{
                             var novosminutos_fim = diferenca
                             //console.log("Novos minutos mais limpeza", novosminutos_fim)
 
-                            var novashoras_fim = horas_fim_limpeza_numero + resto + 1
+                            var novashoras_fim = horas_fim_limpeza_numero + resto
                             //console.log("Novos Horas mais limpeza", novashoras_fim)
                         }else{
                             novosminutos_fim = minutos_fim_limpeza_numero
@@ -410,7 +410,7 @@ controllers.add = async (req, res) =>{
 
                                                         if(MinutosmaisLimpeza >= 60){  //Se for maior ou igual a 60 entao passa de 1 hora
 
-                                                            let resto = MinutosmaisLimpeza % 60
+                                                            let resto = Math.trunc(MinutosmaisLimpeza / 60 ) 
                                                             //console.log("Resto:", resto)
 
                                                             let diferenca = MinutosmaisLimpeza - 60 //Vamos buscar a diferenca
@@ -419,7 +419,7 @@ controllers.add = async (req, res) =>{
                                                             var novosminutos_fim_Reserva = diferenca
                                                             //console.log("Novos minutos mais limpeza", novosminutos_fim_Reserva)
 
-                                                            var novashoras_fim_Reserva = HoramaisLimpeza + resto + 1
+                                                            var novashoras_fim_Reserva = HoramaisLimpeza + resto
                                                             //console.log("Novos Horas mais limpeza", novashoras_fim_Reserva)
                                                         }else{
                                                             novosminutos_fim_Reserva = MinutosmaisLimpeza 
@@ -607,7 +607,7 @@ controllers.add = async (req, res) =>{
 
                         if(minutos_fim_limpeza_numero >= 60){  //Se for maior ou igual a 60 entao passa de 1 hora
 
-                            let resto = minutos_fim_limpeza_numero % 60
+                            let resto = Math.trunc(minutos_fim_limpeza_numero / 60 ) 
                             console.log("Resto:", resto)
 
                             let diferenca = minutos_fim_limpeza_numero - 60 //Vamos buscar a diferenca
@@ -616,7 +616,7 @@ controllers.add = async (req, res) =>{
                             var novosminutos_fim = diferenca
                             console.log("Novos minutos mais limpeza", novosminutos_fim)
 
-                            var novashoras_fim = horas_fim_limpeza_numero + resto + 1
+                            var novashoras_fim = horas_fim_limpeza_numero + resto 
                             console.log("Novos Horas mais limpeza", novashoras_fim)
                         }else{
                             novosminutos_fim = minutos_fim_limpeza_numero
@@ -720,7 +720,7 @@ controllers.add = async (req, res) =>{
 
                                                         if(MinutosmaisLimpeza >= 60){  //Se for maior ou igual a 60 entao passa de 1 hora
 
-                                                            let resto = MinutosmaisLimpeza % 60
+                                                            let resto = Math.trunc(MinutosmaisLimpeza / 60 ) 
                                                             //console.log("Resto:", resto)
 
                                                             let diferenca = MinutosmaisLimpeza - 60 //Vamos buscar a diferenca
@@ -729,7 +729,7 @@ controllers.add = async (req, res) =>{
                                                             var novosminutos_fim_Reserva = diferenca
                                                             //console.log("Novos minutos mais limpeza", novosminutos_fim_Reserva)
 
-                                                            var novashoras_fim_Reserva = HoramaisLimpeza + resto + 1
+                                                            var novashoras_fim_Reserva = HoramaisLimpeza + resto
                                                             //console.log("Novos Horas mais limpeza", novashoras_fim_Reserva)
                                                         }else{
                                                             novosminutos_fim_Reserva = MinutosmaisLimpeza 
@@ -1010,7 +1010,7 @@ controllers.update = async (req, res) =>{
 
                                             if(minutos_fim_limpeza_numero >= 60){  //Se for maior ou igual a 60 entao passa de 1 hora
 
-                                                let resto = minutos_fim_limpeza_numero % 60
+                                                let resto = Math.trunc(minutos_fim_limpeza_numero / 60 ) 
                                                 //console.log("Resto:", resto)
 
                                                 let diferenca = minutos_fim_limpeza_numero - 60 //Vamos buscar a diferenca
@@ -1019,7 +1019,7 @@ controllers.update = async (req, res) =>{
                                                 var novosminutos_fim = diferenca
                                                 //console.log("Novos minutos mais limpeza", novosminutos_fim)
 
-                                                var novashoras_fim = horas_fim_limpeza_numero + resto + 1
+                                                var novashoras_fim = horas_fim_limpeza_numero + resto
                                                 //console.log("Novos Horas mais limpeza", novashoras_fim)
                                             }else{
                                                 novosminutos_fim = minutos_fim_limpeza_numero
@@ -1119,7 +1119,7 @@ controllers.update = async (req, res) =>{
 
                                                                                 if(MinutosmaisLimpeza >= 60){  //Se for maior ou igual a 60 entao passa de 1 hora
 
-                                                                                    let resto = MinutosmaisLimpeza % 60
+                                                                                    let resto = Math.trunc(MinutosmaisLimpeza / 60 ) 
                                                                                     //console.log("Resto:", resto)
 
                                                                                     let diferenca = MinutosmaisLimpeza - 60 //Vamos buscar a diferenca
@@ -1128,7 +1128,7 @@ controllers.update = async (req, res) =>{
                                                                                     var novosminutos_fim_Reserva = diferenca
                                                                                     //console.log("Novos minutos mais limpeza", novosminutos_fim_Reserva)
 
-                                                                                    var novashoras_fim_Reserva = HoramaisLimpeza + resto + 1
+                                                                                    var novashoras_fim_Reserva = HoramaisLimpeza + resto
                                                                                     //console.log("Novos Horas mais limpeza", novashoras_fim_Reserva)
                                                                                 }else{
                                                                                     novosminutos_fim_Reserva = MinutosmaisLimpeza 
@@ -1286,94 +1286,94 @@ controllers.update = async (req, res) =>{
                                             var tempoLimpezaArray = TempLimpSala.split(':')
 
                                             var horaLimpeza = Number(tempoLimpezaArray[0])
-                                            console.log("Horas Limpeza", horaLimpeza)
+                                            //console.log("Horas Limpeza", horaLimpeza)
 
                                             var minutoLimpeza = Number(tempoLimpezaArray[1])
-                                            console.log("Minutos Limpeza", minutoLimpeza)
+                                            //console.log("Minutos Limpeza", minutoLimpeza)
 
                                             //Tempo da reserva
                                             var hora_fim_array =  HoraFim.split(':')
 
                                             var horas_fim = Number(hora_fim_array[0])
-                                            console.log("Hora fim", horas_fim)
+                                            //console.log("Hora fim", horas_fim)
 
                                             var minutos_fim = Number(hora_fim_array[1])
-                                            console.log("Minutos fim", minutos_fim)
+                                            //console.log("Minutos fim", minutos_fim)
 
                                             var hora_fim_numero = Number(hora_fim_array[0] + hora_fim_array[1])
-                                            console.log('Hora + minutos fim: '+ hora_fim_numero)
+                                            //console.log('Hora + minutos fim: '+ hora_fim_numero)
 
                                             var horas_fim_limpeza_numero = horas_fim + horaLimpeza
-                                            console.log('Horas fim mais limpeza: '+horas_fim_limpeza_numero)
+                                            //console.log('Horas fim mais limpeza: '+horas_fim_limpeza_numero)
 
                                             var minutos_fim_limpeza_numero = minutos_fim + minutoLimpeza
-                                            console.log('Minutos fim mais limpeza: '+ minutos_fim_limpeza_numero)
+                                            //console.log('Minutos fim mais limpeza: '+ minutos_fim_limpeza_numero)
 
                                             var hora_inicio_array =  HoraInicio.split(':')
 
                                             var hora_inicio = Number(hora_inicio_array[0])
-                                            console.log("Horas Inicio: ", hora_inicio)
+                                            //console.log("Horas Inicio: ", hora_inicio)
 
                                             var minutos_inicio = Number(hora_inicio_array[1])
-                                            console.log("Minutos Inicio: ", minutos_inicio)
+                                            //console.log("Minutos Inicio: ", minutos_inicio)
 
                                             var hora_incio_numero = Number(hora_inicio_array[0] + hora_inicio_array[1])
-                                            console.log('Horas + minutos Inicio: ' + hora_incio_numero);
+                                            //console.log('Horas + minutos Inicio: ' + hora_incio_numero);
 
                                             if(minutos_fim_limpeza_numero >= 60){  //Se for maior ou igual a 60 entao passa de 1 hora
 
-                                                let resto = minutos_fim_limpeza_numero % 60
-                                                console.log("Resto:", resto)
+                                                let resto = Math.trunc(minutos_fim_limpeza_numero / 60 ) 
+                                                //console.log("Resto:", resto)
 
                                                 let diferenca = minutos_fim_limpeza_numero - 60 //Vamos buscar a diferenca
-                                                console.log("Diferenca:", diferenca)
+                                                //console.log("Diferenca:", diferenca)
 
                                                 var novosminutos_fim = diferenca
-                                                console.log("Novos minutos mais limpeza", novosminutos_fim)
+                                                //console.log("Novos minutos mais limpeza", novosminutos_fim)
 
-                                                var novashoras_fim = horas_fim_limpeza_numero + resto + 1
-                                                console.log("Novos Horas mais limpeza", novashoras_fim)
+                                                var novashoras_fim = horas_fim_limpeza_numero + resto
+                                                //console.log("Novos Horas mais limpeza", novashoras_fim)
                                             }else{
                                                 novosminutos_fim = minutos_fim_limpeza_numero
-                                                console.log("Novos minutos mais limpeza", novosminutos_fim)
+                                                //console.log("Novos minutos mais limpeza", novosminutos_fim)
 
                                                 novashoras_fim = horas_fim_limpeza_numero
-                                                console.log("Novos Horas mais limpeza", novashoras_fim)
+                                                //console.log("Novos Horas mais limpeza", novashoras_fim)
                                             }
 
-                                            console.log("Hora Reserva a editar")
+                                            //console.log("Hora Reserva a editar")
 
                                             //Inicio
 
                                             var hora_inicio_string = hora_inicio.toString()
-                                            console.log("Hora Inicio",hora_inicio_string)
+                                            //console.log("Hora Inicio",hora_inicio_string)
 
                                             var minutos_inicio_string = minutos_inicio.toString()
-                                            console.log("Minutos Inicio",minutos_inicio_string)
+                                            //console.log("Minutos Inicio",minutos_inicio_string)
 
                                             if(minutos_inicio_string.length === 1){
                                                 var minutos_inicio_string = "0" + minutos_inicio_string
-                                                console.log("Minutos Iniciais em String:",minutos_inicio_string)
+                                                //console.log("Minutos Iniciais em String:",minutos_inicio_string)
                                             }
 
                                             var horas_inicio_numero = Number(hora_inicio_string+minutos_inicio_string)
-                                            console.log("Horas Inicio em numero",horas_inicio_numero)
+                                            //console.log("Horas Inicio em numero",horas_inicio_numero)
 
                                             //Fim
 
                                             var hora_fim_string = novashoras_fim.toString()
-                                            console.log("Hora Fim",hora_fim_string)
+                                            //console.log("Hora Fim",hora_fim_string)
 
                                             var minutos_fim_string = novosminutos_fim.toString()
-                                            console.log("Minutos Fim",minutos_fim_string)
+                                            //console.log("Minutos Fim",minutos_fim_string)
 
                                             if(minutos_fim_string.length === 1){
                                                 var minutos_fim_string = "0" + minutos_fim_string
-                                                console.log("Minutos Iniciais em String:",minutos_fim_string)
+                                                //console.log("Minutos Iniciais em String:",minutos_fim_string)
                                             }
 
                                             var horas_fim_numero = Number(hora_fim_string+minutos_fim_string)
-                                            console.log("Horas Fim em numero",horas_fim_numero)
+                                            //console.log("Horas Fim em numero",horas_fim_numero)
 
                                                 if(hora_incio_numero < hora_fim_numero){
                                                     var participantesPermitidos = (data.Alocacao * (data.Capacidade/100));
@@ -1389,12 +1389,12 @@ controllers.update = async (req, res) =>{
                                                                 var horaInicioCentro = dataCentros.Hora_abertura
                                                                 var horaInicioCentroArray = horaInicioCentro.split(':')
                                                                 var horaInicioCentroNumber = Number(horaInicioCentroArray[0] + horaInicioCentroArray[1])
-                                                                console.log('Hora de abertura: ' + horaInicioCentroNumber)
+                                                                //console.log('Hora de abertura: ' + horaInicioCentroNumber)
 
                                                                 var horaFimCentro = dataCentros.Hora_fecho
                                                                 var horaFimCentroArray = horaFimCentro.split(':')
                                                                 var horaFimCentroNumber = Number(horaFimCentroArray[0] + horaFimCentroArray[1])
-                                                                console.log('Hora de fechar: ' + horaFimCentroNumber)
+                                                                //console.log('Hora de fechar: ' + horaFimCentroNumber)
 
                                                                 if((horas_inicio_numero < horaInicioCentroNumber) || (horas_fim_numero > horaFimCentroNumber)){
                                                                     res.json({sucesso: false, message: 'O horário do centro é entre as '+dataCentros.Hora_abertura+' e as ' + dataCentros.Hora_fecho+ ' !'});
@@ -1407,83 +1407,83 @@ controllers.update = async (req, res) =>{
                                                                             if(reservas[i].id !== reservaData.id){
                                                                                 //Reserva para comparar
                                                                                 //Hora inicio
-                                                                                console.log("Reserva para comparar nº",i)
+                                                                                //console.log("Reserva para comparar nº",i)
 
                                                                                 const horasInicio = reservas[i].HoraInicio;
                                                                                 const horasInicio_Array = horasInicio.split(':')
 
                                                                                 const horaI = Number(horasInicio_Array[0])
-                                                                                console.log('Hora Inicio:' + horaI)
+                                                                                //console.log('Hora Inicio:' + horaI)
 
                                                                                 const minutosI = Number(horasInicio_Array[1])
-                                                                                console.log('Minutos Inicio:' + minutosI)
+                                                                                //console.log('Minutos Inicio:' + minutosI)
 
                                                                                 //Hora Fim
                                                                                 const horasFim = reservas[i].HoraFim;
                                                                                 const horasFim_Array = horasFim.split(':')
 
                                                                                 const horaF = Number(horasFim_Array[0])
-                                                                                console.log('Hora Fim:' + horaF)
+                                                                                //console.log('Hora Fim:' + horaF)
 
                                                                                 const minutosF = Number(horasFim_Array[1])
-                                                                                console.log('Minutos Fim:' + minutosF)
+                                                                                //console.log('Minutos Fim:' + minutosF)
 
                                                                                 const HoramaisLimpeza = horaF + horaLimpeza 
-                                                                                console.log("Horas final mais limpeza", HoramaisLimpeza)
+                                                                                //console.log("Horas final mais limpeza", HoramaisLimpeza)
 
                                                                                 const MinutosmaisLimpeza = minutosF + minutoLimpeza 
-                                                                                console.log("Minutos final mais limpeza", MinutosmaisLimpeza)
+                                                                                //console.log("Minutos final mais limpeza", MinutosmaisLimpeza)
 
                                                                                 if(MinutosmaisLimpeza >= 60){  //Se for maior ou igual a 60 entao passa de 1 hora
 
-                                                                                    let resto = MinutosmaisLimpeza % 60
-                                                                                    console.log("Resto:", resto)
+                                                                                    let resto = Math.trunc(MinutosmaisLimpeza / 60 )
+                                                                                    //console.log("Resto:", resto)
 
                                                                                     let diferenca = MinutosmaisLimpeza - 60 //Vamos buscar a diferenca
-                                                                                    console.log("Diferenca:", diferenca)
+                                                                                    //console.log("Diferenca:", diferenca)
 
                                                                                     var novosminutos_fim_Reserva = diferenca
-                                                                                    console.log("Novos minutos mais limpeza", novosminutos_fim_Reserva)
+                                                                                    //console.log("Novos minutos mais limpeza", novosminutos_fim_Reserva)
 
-                                                                                    var novashoras_fim_Reserva = HoramaisLimpeza + resto + 1
-                                                                                    console.log("Novos Horas mais limpeza", novashoras_fim_Reserva)
+                                                                                    var novashoras_fim_Reserva = HoramaisLimpeza + resto
+                                                                                    //console.log("Novos Horas mais limpeza", novashoras_fim_Reserva)
                                                                                 }else{
                                                                                     novosminutos_fim_Reserva = MinutosmaisLimpeza 
-                                                                                    console.log("Novos minutos mais limpeza", novosminutos_fim_Reserva)
+                                                                                    //console.log("Novos minutos mais limpeza", novosminutos_fim_Reserva)
 
                                                                                     novashoras_fim_Reserva = HoramaisLimpeza
-                                                                                    console.log("Novos Horas mais limpeza", novashoras_fim_Reserva)
+                                                                                    //console.log("Novos Horas mais limpeza", novashoras_fim_Reserva)
                                                                                 }
 
-                                                                                console.log("Hora Reserva a Comparar")
+                                                                                //console.log("Hora Reserva a Comparar")
 
                                                                                 var hora_reserva_inicio_string = horaI.toString()
-                                                                                console.log("Hora Inicio",hora_reserva_inicio_string)
+                                                                                //console.log("Hora Inicio",hora_reserva_inicio_string)
 
                                                                                 var minutos_reserva_inicio_string = minutosI.toString()
-                                                                                console.log("Minutos Inicio",minutos_reserva_inicio_string)
+                                                                                //console.log("Minutos Inicio",minutos_reserva_inicio_string)
 
                                                                                 if(minutos_reserva_inicio_string.length === 1){
                                                                                     var minutos_reserva_inicio_string = "0" + minutos_reserva_inicio_string
-                                                                                    console.log("Minutos Iniciais em String:",minutos_reserva_inicio_string)
+                                                                                    //console.log("Minutos Iniciais em String:",minutos_reserva_inicio_string)
                                                                                 }
 
                                                                                 var horas_reserva_inicio_numero = Number(hora_reserva_inicio_string+minutos_reserva_inicio_string)
-                                                                                console.log("Horas Inicio em numero",horas_reserva_inicio_numero)
+                                                                                //console.log("Horas Inicio em numero",horas_reserva_inicio_numero)
 
                                                                                 var hora_reserva_fim_string = novashoras_fim_Reserva.toString()
-                                                                                console.log("Hora Fim",hora_reserva_fim_string)
+                                                                                //console.log("Hora Fim",hora_reserva_fim_string)
 
                                                                                 var minutos_reserva_fim_string = novosminutos_fim_Reserva.toString()
-                                                                                console.log("Minutos Fim",minutos_reserva_fim_string)
+                                                                                //console.log("Minutos Fim",minutos_reserva_fim_string)
 
                                                                                 if(minutos_reserva_fim_string.length === 1){
                                                                                     var minutos_reserva_fim_string = "0" + minutos_reserva_fim_string
-                                                                                    console.log("Minutos Iniciais em String:",minutos_reserva_fim_string)
+                                                                                   // console.log("Minutos Iniciais em String:",minutos_reserva_fim_string)
                                                                                 }
 
                                                                                 var horas_reserva_fim_numero = Number(hora_reserva_fim_string+minutos_reserva_fim_string)
-                                                                                console.log("Horas Fim em numero",horas_reserva_fim_numero)
+                                                                                //console.log("Horas Fim em numero",horas_reserva_fim_numero)
 
                                                                                 /*
                                                                                 ***********************Variaveis***********************
@@ -1732,7 +1732,7 @@ controllers.ativar = async (req, res) =>{
 
                                 if(minutos_fim_limpeza_numero >= 60){  //Se for maior ou igual a 60 entao passa de 1 hora
 
-                                let resto = minutos_fim_limpeza_numero % 60
+                                let resto = Math.trunc(minutos_fim_limpeza_numero / 60 )
                                 //console.log("Resto:", resto)
 
                                 let diferenca = minutos_fim_limpeza_numero - 60 //Vamos buscar a diferenca
@@ -1741,7 +1741,7 @@ controllers.ativar = async (req, res) =>{
                                 var novosminutos_fim = diferenca
                                 //console.log("Novos minutos mais limpeza", novosminutos_fim)
 
-                                var novashoras_fim = horas_fim_limpeza_numero + resto + 1
+                                var novashoras_fim = horas_fim_limpeza_numero + resto
                                 //console.log("Novos Horas mais limpeza", novashoras_fim)
                             }else{
                                 novosminutos_fim = minutos_fim_limpeza_numero
@@ -1816,7 +1816,7 @@ controllers.ativar = async (req, res) =>{
 
                                 if(MinutosmaisLimpeza >= 60){  //Se for maior ou igual a 60 entao passa de 1 hora
 
-                                    let resto = MinutosmaisLimpeza % 60
+                                    let resto = Math.trunc(MinutosmaisLimpeza / 60 )
                                     //console.log("Resto:", resto)
 
                                     let diferenca = MinutosmaisLimpeza - 60 //Vamos buscar a diferenca
@@ -1825,7 +1825,7 @@ controllers.ativar = async (req, res) =>{
                                     var novosminutos_fim_Reserva = diferenca
                                     //console.log("Novos minutos mais limpeza", novosminutos_fim_Reserva)
 
-                                    var novashoras_fim_Reserva = HoramaisLimpeza + resto + 1
+                                    var novashoras_fim_Reserva = HoramaisLimpeza + resto
                                     //console.log("Novos Horas mais limpeza", novashoras_fim_Reserva)
                                 }else{
                                     novosminutos_fim_Reserva = MinutosmaisLimpeza 
@@ -2137,10 +2137,10 @@ controllers.adiar = async(req,res) =>{
                 var tempoLimpezaArray = TempLimpSala.split(':')
 
                 var horaLimpeza = Number(tempoLimpezaArray[0])
-                console.log("Horas Limpeza", horaLimpeza)
+                //console.log("Horas Limpeza", horaLimpeza)
 
                 var minutoLimpeza = Number(tempoLimpezaArray[1])
-                console.log("Minutos Limpeza", minutoLimpeza)
+                //console.log("Minutos Limpeza", minutoLimpeza)
 
                 if(Saladata.EstadoId == 1){
 
@@ -2192,67 +2192,67 @@ controllers.adiar = async(req,res) =>{
                                     var hora_fim_array =  (reservaData.HoraFim).split(':')
 
                                     var horas_fim = Number(hora_fim_array[0])
-                                    console.log("Hora fim", horas_fim)
+                                    //console.log("Hora fim", horas_fim)
 
                                     var minutos_fim = Number(hora_fim_array[1])
-                                    console.log("Minutos fim", minutos_fim)
+                                    //console.log("Minutos fim", minutos_fim)
 
                                     var hora_fim_numero = Number(hora_fim_array[0] + hora_fim_array[1])
-                                    console.log('Hora + minutos fim: '+ hora_fim_numero)
+                                    //console.log('Hora + minutos fim: '+ hora_fim_numero)
 
                                     //Hora pedida
 
                                     var HoraFimPedida_Array = ValorHora.split(':')
 
                                     var horaFimPedida = Number(HoraFimPedida_Array[0])
-                                    console.log('Hora pretendida:' + horaFimPedida)
+                                    //console.log('Hora pretendida:' + horaFimPedida)
 
                                     var minutosFimPedida = Number(HoraFimPedida_Array[1])
-                                    console.log('Minutos pretendidos:' + minutosFimPedida)
+                                    //console.log('Minutos pretendidos:' + minutosFimPedida)
 
                                     var horasfinaispedidas = Number(HoraFimPedida_Array[0] + HoraFimPedida_Array[1])
-                                    console.log("Horas pedidas sem limpeza", horasfinaispedidas)
+                                    //console.log("Horas pedidas sem limpeza", horasfinaispedidas)
 
                                     var horafimpedida_limpeza = horaFimPedida + horaLimpeza
-                                    console.log('Horas finais pretendidos mais limpeza:' + horafimpedida_limpeza)
+                                    //console.log('Horas finais pretendidos mais limpeza:' + horafimpedida_limpeza)
 
                                     var minutosfimpedida_limpeza = minutosFimPedida + minutoLimpeza
-                                    console.log('Minutos finais pretendidos mais limpeza:' + minutosfimpedida_limpeza)
+                                    //console.log('Minutos finais pretendidos mais limpeza:' + minutosfimpedida_limpeza)
 
                                     if(minutosfimpedida_limpeza >= 60){  //Se for maior ou igual a 60 entao passa de 1 hora
 
-                                        let resto = minutosfimpedida_limpeza % 60
-                                        console.log("Resto:", resto)
+                                        let resto = Math.trunc(minutosfimpedida_limpeza / 60 )  
+                                        //console.log("Resto:", resto)
 
                                         let diferenca = minutosfimpedida_limpeza - 60 //Vamos buscar a diferenca
-                                        console.log("Diferenca:", diferenca)
+                                        //console.log("Diferenca:", diferenca)
 
                                         var novosminutos_fim = diferenca
-                                        console.log("Novos minutos mais limpeza", novosminutos_fim)
+                                        //console.log("Novos minutos mais limpeza", novosminutos_fim)
 
                                         var novashoras_fim = horafimpedida_limpeza + resto + 1
-                                        console.log("Novos Horas mais limpeza", novashoras_fim)
+                                        //console.log("Novos Horas mais limpeza", novashoras_fim)
                                     }else{
                                             novosminutos_fim = minutosfimpedida_limpeza
-                                            console.log("Novos minutos mais limpeza", novosminutos_fim)
+                                            //console.log("Novos minutos mais limpeza", novosminutos_fim)
 
                                             novashoras_fim = horafimpedida_limpeza
-                                            console.log("Novos Horas mais limpeza", novashoras_fim)
+                                            //console.log("Novos Horas mais limpeza", novashoras_fim)
                                     }
 
                                     var horafimstring = novashoras_fim.toString()
-                                    console.log("Novos Horas mais limpeza em string", novashoras_fim)
+                                    //console.log("Novos Horas mais limpeza em string", novashoras_fim)
 
                                     var minutosfimstring = novosminutos_fim.toString()
-                                    console.log("Novos minutos mais limpeza em string", novosminutos_fim)
+                                    //console.log("Novos minutos mais limpeza em string", novosminutos_fim)
 
                                     if(minutosfimstring.length === 1){
                                         var minutosfimstring = "0" + minutosfimstring
-                                        console.log("Minutos finais pedidos em String:",minutosfimstring)
+                                        //console.log("Minutos finais pedidos em String:",minutosfimstring)
                                     }
 
                                     var horaspedidasNumero = Number(horafimstring + minutosfimstring)
-                                    console.log("Novas horas finais pretendidas em numero", horaspedidasNumero)
+                                    //console.log("Novas horas finais pretendidas em numero", horaspedidasNumero)
 
                                     const query = `select * from public."Reservas" where "Reservas"."EstadoId" = 1 and "Reservas"."DataReserva" = '${reservaData.DataReserva}' and "Reservas"."SalaId" = ${Saladata.id} and "Reservas"."id" != ${id} and "Reservas"."HoraInicio" > '${reservaData.HoraFim}' order by "Reservas"."HoraInicio"`
                                     const reservas = await bd.query(query,{ type: QueryTypes.SELECT })
@@ -2271,33 +2271,33 @@ controllers.adiar = async(req,res) =>{
 
                                                     for(let i = 0; i < reservas.length; i++){
                                                         //Hora inicio
-                                                        console.log("Reserva para comparar nº",i)
+                                                        //console.log("Reserva para comparar nº",i)
 
                                                         const horasInicio = reservas[i].HoraInicio;
                                                         const horasInicio_Array = horasInicio.split(':')
 
                                                         const horaI = Number(horasInicio_Array[0])
-                                                        console.log('Hora Inicio:' + horaI)
+                                                        //console.log('Hora Inicio:' + horaI)
 
                                                         const minutosI = Number(horasInicio_Array[1])
-                                                        console.log('Minutos Inicio:' + minutosI)
+                                                        //console.log('Minutos Inicio:' + minutosI)
 
                                                         var hora_reserva_inicio_string = horaI.toString()
-                                                        console.log("Hora Inicio em string",hora_reserva_inicio_string)
+                                                        //console.log("Hora Inicio em string",hora_reserva_inicio_string)
 
                                                         var minutos_reserva_inicio_string = minutosI.toString()
-                                                        console.log("Minutos Inicio em string",minutos_reserva_inicio_string)
+                                                        //console.log("Minutos Inicio em string",minutos_reserva_inicio_string)
 
                                                         if(minutos_reserva_inicio_string.length === 1){
                                                             var minutos_reserva_inicio_string = "0" + minutos_reserva_inicio_string
-                                                            console.log("Minutos Iniciais em String:",minutos_reserva_inicio_string)
+                                                            //console.log("Minutos Iniciais em String:",minutos_reserva_inicio_string)
                                                         }
 
                                                         var horas_reserva_inicio_numero = Number(hora_reserva_inicio_string+minutos_reserva_inicio_string)
-                                                        console.log("Horas Inicio em numero",horas_reserva_inicio_numero)
+                                                        //console.log("Horas Inicio em numero",horas_reserva_inicio_numero)
 
                                                         if(horaspedidasNumero < horas_reserva_inicio_numero){
-                                                            console.log('Passei aqui ')
+                                                            //console.log('Passei aqui ')
                                                             Disponivel = true;
                                                             break
                                                         }
