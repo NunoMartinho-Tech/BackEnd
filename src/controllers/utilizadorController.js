@@ -422,48 +422,70 @@ controllers.inativar = async(req,res) =>{
                 .catch(err=>console.log(err))
                 //console.log(reservaData)
                 if(reservaData.length != 0 ){
-                    ///console.log("Entrei")
+                    var data_atual = new Date()
+
+                    var AnoAtual = (data_atual.getFullYear()).toString()
+                    var MesAtual = (data_atual.getMonth() + 1).toString()
+                    var DiaAtual = (data_atual.getDate()).toString()
+                    var DataAtualString = (AnoAtual + MesAtual + DiaAtual)
+
                     for(let i =0; i < reservaData.length; i++){
 
+                            var dateReserva = new Date(reservaData[i].DataReserva) 
+                            
+                            var AnoReserva = (dateReserva.getFullYear()).toString()
+                            var MesReserva = (dateReserva.getMonth() + 1).toString()
+                            var DiaReserva = (dateReserva.getDate()).toString()
+                            var DataReservaString = (AnoReserva + MesReserva + DiaReserva)
+                            //console.log('Data da reserva: '+ DataReservaString)
+
                             var horas_atuais = (data_atual.getHours()).toString()
-                            console.log('Hora atual: ' + horas_atuais)
+                            //console.log('Hora atual: ' + horas_atuais)
 
                             var minutos_atuais = (data_atual.getMinutes()).toString()
-                            console.log('Minutos atuais: ' + minutos_atuais)
+                            //console.log('Minutos atuais: ' + minutos_atuais)
 
                             if(minutos_atuais.length === 1){
                                 var minutos_atuais = "0" + minutos_atuais
-                                console.log("Minutos Iniciais em String:",minutos_inicio_string)
+                                //console.log("Minutos Iniciais em String:",minutos_inicio_string)
                             }
 
                             var hora_atual_numero = Number(horas_atuais + minutos_atuais)
-                            console.log('Horas atuais em numero: '+hora_atual_numero)
+                            //console.log('Horas atuais em numero: '+hora_atual_numero)
 
                             //Hora Inicio
 
-                            var hora_inicio_array =  reservaData[i].split(':')
+                            var hora_inicio_array =  reservaData[i].HoraInicio.split(':')
 
                             var hora_incio_numero = Number(hora_inicio_array[0] + hora_inicio_array[1])
-                            console.log('Horas + minutos Inicio: ' + hora_incio_numero);
+                            //console.log('Horas Inicio: ' + hora_incio_numero);
 
                             //Hora Fim
-                            var hora_fim_array =  reservaData[i].split(':')
+                            var hora_fim_array =  reservaData[i].HoraFim.split(':')
 
                             var hora_fim_numero = Number(hora_fim_array[0] + hora_fim_array[1])
-                            console.log('Hora + minutos fim: '+ hora_fim_numero)
+                            //console.log('Horas fim: '+ hora_fim_numero)
 
-                            if(hora_incio_numero < hora_atual_numero && hora_fim_numero > hora_atual_numero){
-                                //Esta a decorrer logo nao pode desativar
-                                res.json({sucesso: false, message:'Impossível desativar um utilizador com uma reserva a decorrer'})
-                            }else{
-                                if(hora_incio_numero < hora_atual_numero && hora_fim_numero < hora_atual_numero)
+                            if(DataAtualString == DataReservaString){
+                                if(hora_incio_numero < hora_atual_numero && hora_fim_numero > hora_atual_numero){
+                                    //Esta a decorrer logo nao pode desativar
                                     continue;
-                                else{
-                                    //esta para acontecer, logo desativa se
-                                    const reservaupdated = await reserva.update({
-                                        EstadoId: 2
-                                    },{where:{id:reservaData[i].id}})
+                                }else{
+                                    if(hora_incio_numero < hora_atual_numero && hora_fim_numero < hora_atual_numero)
+                                        continue;
+                                    else{
+                                        //esta para acontecer, logo desativa se
+                                        const reservaupdated = await reserva.update({
+                                            EstadoId: 2
+                                        },{where:{id:reservaData[i].id}})
+                                        //console.log("Desativei reserva")
+                                    }
                                 }
+                            }else{
+                                const reservaupdated1 = await reserva.update({
+                                    EstadoId: 2
+                                },{where:{id:reservaData[i].id}})
+                                //console.log("Desativei reserva")
                             }
                     }
                     //Reservas desativadas e so desativar o utilizador
